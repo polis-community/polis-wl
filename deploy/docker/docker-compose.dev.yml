@@ -1,0 +1,75 @@
+
+version: "3.4"
+
+services:
+  server:
+    env_file: ../../server/.envrc
+    # The following overrides the env_file ...
+    environment:
+      STATIC_FILES_HOST: file-server
+      STATIC_FILES_PORT: 8080
+      DATABASE_URL: postgres://postgres:mypassword@postgres:5432/postgres
+      DOMAIN_OVERRIDE: server:8000
+    image: polis-server:latest
+    build:
+      context: ../../server
+      dockerfile: ../deploy/docker/server.Dockerfile
+    depends_on:
+      - "postgres"
+      - "file-server"
+    ports:
+      - 8000:8000
+    networks:
+      - "polis-net"
+    # Scale the server container to a given number of instances.
+    scale: 1
+
+  math:
+    container_name: polis-math
+    env_file: ../../math/.envrc
+    # The following overrides the env_file ...
+    environment:
+      DATABASE_URL: postgres://postgres:mypassword@postgres:5432/postgres
+    image: polis-math:latest
+    depends_on:
+      - "postgres"
+    build:
+      context: ../../math
+      dockerfile: ../deploy/docker/math.Dockerfile
+    networks:
+      - "polis-net"
+
+  postgres:
+    container_name: polis-postgres
+    env_file: ../../database/.envrc
+    image: polis-postgres:latest
+    restart: always
+    build:
+      context: ../../database
+      dockerfile: ../deploy/docker/postgres.Dockerfile
+    ports:
+      - 5432:5432
+    networks:
+      - "polis-net"
+    # volumes:
+    #   - "backups:/backups"
+    #   - "postgres:/var/lib/postgresql/data"
+
+
+  file-server:
+    container_name: polis-file-server
+    image: polis-file-server:latest
+    build:
+      context: ../../
+      dockerfile: ./deploy/docker/file-server.Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - "polis-net"
+
+networks:
+  polis-net:
+
+# volumes:
+#   backups:
+#   postgres:
