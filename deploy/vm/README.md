@@ -1,23 +1,9 @@
-# Developer setup for Docker
-
-> **Warning**
-> The Docker development environment is a work in progress, although it provides a quick way to get the code running locally, the development loop is much quicker and more flexible using the Virtual Machine setup detailed below.
-
-Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-
-```sh
-cd deploy/docker
-npm run build:compose
-npm run run:compose
-```
-
-Visit [http://localhost:8000](http://localhost:8000)
 
 # Developer setup for Ubuntu 20.04.5 LTS Virtual Machine
 
-This is a server playbook on how to setup a production environment for polis.
+This is a guide on how to setup a running Pol.is instance. This is meant primarily for easy development but could be adapted for production use with some further hardening.
 
-## Development Virtual Machine setup
+## Setup
 
 You can use [Ubuntu Multipass](https://multipass.run/) to easily setup a virtual machine on your local laptop. You will need at least 8GB RAM and 16GB of disk
 
