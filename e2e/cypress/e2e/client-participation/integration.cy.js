@@ -1,7 +1,8 @@
-describe.skip('Integrated Conversations', () => {
+describe('Integrated Conversations', () => {
   // This test requires overriding client-admin/embed.html with
   // e2e/cypress/fixtures/html/embeds.html - see https://github.com/compdemocracy/polis/issues/839
   const POLIS_DOMAIN = Cypress.config().baseUrl.replace('https://', '')
+  const EMBED_URL = Cypress.config().embedUrl
   const CONVO_TOPIC = 'Integration test topic'
   const CONVO_DEFAULTS = {
     topic: null,
@@ -39,14 +40,12 @@ describe.skip('Integrated Conversations', () => {
   it('creates a convo with defaults', function () {
     cy.logout()
     const pageId = Math.floor(Date.now() / 1000)
-    const integrationUrl = `${
-      Cypress.config().baseUrl
-    }/embed.html?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
+    const integrationUrl = `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
       this.siteId
     }`
     cy.visit(integrationUrl)
     cy.enter(`#polis_${this.siteId}_${pageId}`).then((cyframe) => {
-      cyframe().find('div[data-view-name="root"]').as('iframe')
+      cyframe().find('div[data-view-name="root"]', { timeout: 6000 }).as('iframe')
       cy.get('@iframe').should('be.visible')
     })
 
@@ -58,7 +57,11 @@ describe.skip('Integrated Conversations', () => {
     ).then((resp) => {
       const mostRecentConvo = resp.body.shift()
       for (const [field, val] of Object.entries(CONVO_DEFAULTS)) {
-        cy.wrap(mostRecentConvo).its(field).should('equal', val)
+        if (val === null) {
+          cy.wrap(mostRecentConvo).its(field).should('be.null')
+        } else {
+          cy.wrap(mostRecentConvo).its(field).should('equal', val)
+        }
       }
       cy.wrap(mostRecentConvo).its('parent_url').should('equal', integrationUrl)
 
@@ -75,9 +78,7 @@ describe.skip('Integrated Conversations', () => {
   it('creates a convo with topic', function () {
     cy.logout()
     const pageId = Math.floor(Date.now() / 1000)
-    const integrationUrl = `${
-      Cypress.config().baseUrl
-    }/embed.html?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
+    const integrationUrl = `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
       this.siteId
     }&data-topic=${CONVO_TOPIC}`
     cy.visit(integrationUrl)
@@ -100,9 +101,7 @@ describe.skip('Integrated Conversations', () => {
   it('creates a convo with vis enabled', function () {
     cy.logout()
     const pageId = Math.floor(Date.now() / 1000)
-    const integrationUrl = `${
-      Cypress.config().baseUrl
-    }/embed.html?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
+    const integrationUrl = `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
       this.siteId
     }&data-show_vis=true`
     cy.visit(integrationUrl)
@@ -125,9 +124,7 @@ describe.skip('Integrated Conversations', () => {
   it('creates a convo with login required to vote', function () {
     cy.logout()
     const pageId = Math.floor(Date.now() / 1000)
-    const integrationUrl = `${
-      Cypress.config().baseUrl
-    }/embed.html?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
+    const integrationUrl = `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
       this.siteId
     }&data-auth_needed_to_vote=true`
     cy.visit(integrationUrl)
@@ -150,9 +147,7 @@ describe.skip('Integrated Conversations', () => {
   it('creates a convo with login required to comment', function () {
     cy.logout()
     const pageId = Math.floor(Date.now() / 1000)
-    const integrationUrl = `${
-      Cypress.config().baseUrl
-    }/embed.html?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
+    const integrationUrl = `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
       this.siteId
     }&data-auth_needed_to_write=true`
     cy.visit(integrationUrl)
@@ -175,9 +170,7 @@ describe.skip('Integrated Conversations', () => {
   it('creates a convo with facebook login button enabled', function () {
     cy.logout()
     const pageId = Math.floor(Date.now() / 1000)
-    const integrationUrl = `${
-      Cypress.config().baseUrl
-    }/embed.html?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
+    const integrationUrl = `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
       this.siteId
     }&data-auth_opt_fb=true`
     cy.visit(integrationUrl)
@@ -200,9 +193,7 @@ describe.skip('Integrated Conversations', () => {
   it('creates a convo with twitter login button enabled', function () {
     cy.logout()
     const pageId = Math.floor(Date.now() / 1000)
-    const integrationUrl = `${
-      Cypress.config().baseUrl
-    }/embed.html?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
+    const integrationUrl = `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-page_id=${pageId}&data-site_id=${
       this.siteId
     }&data-auth_opt_tw=true`
     cy.visit(integrationUrl)

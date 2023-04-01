@@ -20,5 +20,11 @@ services:
       POSTGRES_USER: node
       POSTGRES_DB: node
 
+  maildev:
+    image: maildev/maildev:latest
+    ports:
+      - 1080:1080
+      - 1025:1025
+
 volumes:
   postgres-data:

@@ -1,17 +1,11 @@
 describe('Emails', () => {
-  const MAILDEV_HTTP_PORT = '1080'
   // See: https://github.com/maildev/maildev/blob/master/docs/rest.md
   // Maildev only available over HTTP, even if using SSL for app.
-  const MAILDEV_API_BASE = `${
-    Cypress.config().baseUrl
-  }:${MAILDEV_HTTP_PORT}`.replace('https://', 'http://')
+  const MAILDEV_API_BASE = `${Cypress.config().maildevApiBaseUrl}`.replace('https://', 'http://')
 
   beforeEach(() => {
-    cy.server()
-    cy.route('POST', Cypress.config().apiPath + '/auth/pwresettoken').as(
-      'resetPassword'
-    )
-
+    cy.intercept('POST', Cypress.config().apiPath + '/auth/pwresettoken').as('resetPassword')
+    console.log('MAILDEV_API_BASE:' + MAILDEV_API_BASE)
     cy.request('DELETE', MAILDEV_API_BASE + '/email/all')
   })
 
@@ -20,7 +14,7 @@ describe('Emails', () => {
     cy.visit('/pwresetinit')
     cy.get('input[placeholder="email"]').type(nonExistingEmail)
     cy.contains('button', 'Send password reset email').click()
-    cy.wait('@resetPassword').its('status').should('eq', 200)
+    cy.wait('@resetPassword').its('response.statusCode').should('eq', 200)
     cy.location('pathname').should('eq', '/pwresetinit/done')
 
     cy.request('GET', MAILDEV_API_BASE + '/email').then((resp) => {
@@ -54,7 +48,7 @@ describe('Emails', () => {
     cy.visit('/pwresetinit')
     cy.get('input[placeholder="email"]').type(newUser.email)
     cy.contains('button', 'Send password reset email').click()
-    cy.wait('@resetPassword').its('status').should('eq', 200)
+    cy.wait('@resetPassword').its('response.statusCode').should('eq', 200)
     cy.location('pathname').should('eq', '/pwresetinit/done')
 
     cy.request('GET', MAILDEV_API_BASE + '/email').then((resp) => {
@@ -82,7 +76,7 @@ describe('Emails', () => {
       // Submit password reset form with new password.
       cy.visit(`/pwreset/${passwordResetToken}`)
 
-      cy.route('POST', Cypress.config().apiPath + '/auth/password').as(
+      cy.intercept('POST', Cypress.config().apiPath + '/auth/password').as(
         'newPassword'
       )
 
@@ -94,9 +88,7 @@ describe('Emails', () => {
         cy.get('button').click()
       })
 
-      cy.wait('@newPassword').then((xhr) => {
-        expect(xhr.status).to.equal(200)
-      })
+      cy.wait('@newPassword').its('response.statusCode').should('eq', 200)
     })
 
     cy.logout()

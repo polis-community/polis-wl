@@ -1,7 +1,6 @@
-describe.skip('Embedded Conversations', () => {
-  // This test requires overriding client-admin/embed.html with
-  // e2e/cypress/fixtures/html/embeds.html - see https://github.com/compdemocracy/polis/issues/839
+describe('Embedded Conversations', () => {
   const POLIS_DOMAIN = Cypress.config().baseUrl.replace('https://', '')
+  const EMBED_URL = Cypress.config().embedUrl
   const CONVO_DESCRIPTION = 'This is dummy description for embed tests.'
   const CONVO_TOPIC = 'Embed test topic'
 
@@ -14,11 +13,8 @@ describe.skip('Embedded Conversations', () => {
   })
 
   it('renders a default embed', function () {
-    cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }`
     )
@@ -46,9 +42,7 @@ describe.skip('Embedded Conversations', () => {
   it('hides voting when user-can-vote (ucv) is OFF', function () {
     cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }&data-ucv=false`
     )
@@ -64,9 +58,7 @@ describe.skip('Embedded Conversations', () => {
   it('hides commenting when user-can-write (ucw) is OFF', function () {
     cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }&data-ucw=false`
     )
@@ -82,9 +74,7 @@ describe.skip('Embedded Conversations', () => {
   it('hides help text when user-can-see-help (ucsh) is OFF', function () {
     cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }&data-ucsh=false`
     )
@@ -100,9 +90,7 @@ describe.skip('Embedded Conversations', () => {
   it('hides description when user-can-see-description (ucsd) is OFF', function () {
     cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }&data-ucsd=false`
     )
@@ -115,31 +103,25 @@ describe.skip('Embedded Conversations', () => {
     cy.get('@headline').should('not.contain', CONVO_DESCRIPTION)
   })
 
-  // Seems convo owner needs special permission to disable branding.
-  it.skip('hides footer when user-can-see-footer (ucsf) is OFF', function () {
+  it('hides footer when user-can-see-footer (ucsf) is OFF', function () {
     cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }&data-ucsf=false`
     )
     cy.enter(`#polis_${this.convoId}`).then((cyframe) => {
       cyframe().find('div[data-view-name="root"]').as('iframe')
-      cyframe().find('svg.svgCenter').as('footer-logo')
+      cyframe().find('svg.svgCenter').should('not.exist')
     })
 
     cy.get('@iframe').should('be.visible')
-    cy.get('@footer-logo').should('not.be.visible')
   })
 
   it('hides vis when user-can-see-vis (ucsv) is OFF', function () {
     cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }&data-ucsv=false`
     )
@@ -155,9 +137,7 @@ describe.skip('Embedded Conversations', () => {
   it('hides topic when user-can-see-topic (ucst) is OFF', function () {
     cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }&data-ucst=false`
     )
@@ -179,9 +159,7 @@ describe.skip('Embedded Conversations', () => {
   it.skip('creates xid when provided', function () {
     cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }`
     )
@@ -196,12 +174,10 @@ describe.skip('Embedded Conversations', () => {
     })
   })
 
-  it.skip('does not create xid when not provided', function () {
+  it('does not create xid when not provided', function () {
     cy.logout()
     cy.visit(
-      `${
-        Cypress.config().baseUrl
-      }/embed.html?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
+      `${EMBED_URL}?polisDomain=${POLIS_DOMAIN}&data-conversation_id=${
         this.convoId
       }&xid=foobar`
     )

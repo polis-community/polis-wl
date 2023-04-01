@@ -6,6 +6,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "npm run e2e:all",
+    "embed-test-server": "node embed-test-server/index.js",
     "e2e:all": "cypress run --spec 'cypress/e2e/**' --browser=electron",
     "e2e:minimal": "cypress run --spec '**/kitchensink.cy.js' --browser=electron",
     "e2e:standalone": "cypress run --spec 'cypress/e2e/**/!(*.secrets).cy.js' --browser=electron",
@@ -13,7 +14,7 @@
     "e2e:subset": "cypress run --spec **/*${TEST_FILTER:-kitchensink}*.cy.js --browser=electron --no-exit"
   },
   "devDependencies": {
-    "cypress": "10.8.0",
+    "cypress": "^12.9.0",
     "cypress-iframe": "^1.0.1",
     "cypress-terminal-report": "4.1.2",
     "eslint": "8.23.1",
@@ -26,6 +27,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-promise": "6.0.1",
     "eslint-plugin-standard": "4.1.0",
+    "lodash": "^4.17.21",
     "prettier": "2.7.1",
     "prettier-config-standard": "5.0.0"
   }
