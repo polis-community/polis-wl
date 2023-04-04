@@ -2,6 +2,8 @@
 
 var s = {};
 
+s.direction = "rtl";
+
 s.agree = "موافق";
 s.disagree = "مخالف";
 s.pass = "رد کن/مطمئن نیستم";
@@ -29,6 +31,8 @@ s.majorityOpinionShort = "اکثریت";
 s.info = "اطلاعات";
 s.addPolisToYourSite = "<img style='height: 20px; margin: 0px 4px;' src='{{URL}}'/>";
 s.privacy = "سیاست حفظ حریم خصوصی";
+s.accessibility = "";
+s.cookies = "";
 s.TOS = "شرایط استفاده از خدمات";
 s.writePrompt = "دیدگاه خود را به اشتراک بگذارید";
 s.anonPerson = "ناشناس";
