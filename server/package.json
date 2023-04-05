@@ -12,10 +12,9 @@
   },
   "dependencies": {
     "@google-cloud/translate": "^7.0.4",
-    "@slack/client": "^5.0.2",
     "akismet": "0.0.11",
     "async": "0.1.22",
-    "aws-sdk": "^2.78.0",
+    "aws-sdk": "^2.230.1",
     "badwords": "0.0.3",
     "bcryptjs": "2.4.3",
     "bluebird": "3.5.0",

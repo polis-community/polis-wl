@@ -15,7 +15,6 @@ import request from "request-promise"; // includes Request, but adds promise met
 import LruCache from "lru-cache";
 import _ from "underscore";
 import zlib from "zlib";
-import { WebClient } from "@slack/client";
 import { Request, Response } from 'express'
 
 import { addInRamMetric, MPromise } from "./utils/metered";
@@ -64,8 +63,6 @@ let twitterUserInfoCache = new LruCache({
 let votesForZidPidCache = new LruCache({
   max: 5000,
 });
-
-var web = new WebClient(process.env.SLACK_API_TOKEN);
 
 const resolveWith = (x: { body?: { user_id: string } }) => {
   return Promise.resolve(x);
@@ -3050,7 +3047,7 @@ function addNotificationTask(zid: any) {
 function doVotesPost(
   uid?: any,
   pid?: any,
-  conv?: { zid: any; is_slack: any },
+  conv?: { zid: any },
   tid?: any,
   voteType?: any,
   weight?: number,
@@ -3081,18 +3078,6 @@ function doVotesPost(
         }
 
         const vote = result.rows[0];
-
-        if (shouldNotify && conv && conv.is_slack) {
-          Session.sendSlackEvent({
-            type: "vote",
-            data: Object.assign(
-              {
-                uid: uid,
-              },
-              vote
-            ),
-          });
-        }
 
         resolve({
           conv: conv,
@@ -5347,48 +5332,6 @@ function doFamousQuery(
   });
 } // end doFamousQuery
 
-function postMessageUsingHttp(o: {
-  channel: any;
-  team?: any;
-  text: any;
-  attachments?: {
-    text: number;
-    fallback: string;
-    callback_id: string;
-    color: string;
-    attachment_type: string;
-    actions: (
-      | { name: string; text: string; type: string; value: string }
-      | {
-          name: string;
-          text: string;
-          style: string;
-          type: string;
-          value: string;
-          confirm: {
-            title: string;
-            text: string;
-            ok_text: string;
-            dismiss_text: string;
-          };
-        }
-    )[];
-  }[];
-}) {
-  return new Promise(function (
-    resolve: (arg0: any) => void,
-    reject: (arg0: any) => void
-  ) {
-    web.chat.postMessage(o.channel, o.text, o, (err: any, info: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(info);
-      }
-    });
-  });
-}
-
 function sendEinviteEmail(req: any, email: any, einvite: any) {
   let serverName = Config.getServerNameWithProtocol(req);
   const body = `Welcome to pol.is!
@@ -6318,7 +6261,6 @@ export {
   removeNullOrUndefinedProperties,
   pullFbTwIntoSubObjects,
   doFamousQuery,
-  postMessageUsingHttp,
   doSendEinvite,
   renderLtiLinkagePage,
   addCanvasAssignmentConversationCallbackParamsIfNeeded,
