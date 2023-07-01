@@ -3,7 +3,6 @@
 import ConversationHasCommentsCheck from './conversation-has-comments-check'
 import React from 'react'
 import PropTypes from 'prop-types'
-import Url from '../../util/url'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Heading } from 'theme-ui'
@@ -52,8 +51,8 @@ class ShareAndEmbed extends React.Component {
           <p>
             <a
               target="blank"
-              href={Url.urlPrefix + match.params.conversation_id}>
-              {Url.urlPrefix + match.params.conversation_id}
+              href={'/' + match.params.conversation_id}>
+              {new URL(window.location.href).origin + '/' + match.params.conversation_id}
             </a>
           </p>
         </div>
