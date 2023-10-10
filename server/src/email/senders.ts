@@ -36,6 +36,16 @@ function getMailOptions(transportType: string | undefined): SMTPTransport.Option
         port: parseIntOrFallback(process.env.MAILDEV_SMTP_PORT, undefined),
         ignoreTLS: true,
       };
+    case "scaleway":
+      return {
+        host: process.env.SCALEWAY_HOST,
+        port: parseIntOrFallback(process.env.SCALEWAY_SMTP_PORT, undefined),
+        secure: false,
+	auth: {
+	  user: process.env.SCALEWAY_USER,
+          pass: process.env.SCALEWAY_PASS,
+	}
+      };
     case "mailgun":
       return mg({
         auth: {
@@ -77,6 +87,10 @@ function sendTextEmail(
   const mailOptions = getMailOptions(thisTransportType);
   const transporter = nodemailer.createTransport(mailOptions);
 
+  transporter.verify((err, success) => {
+    if (err) console.error(err);
+    console.log('Your config is correct');
+  });
   return transporter
     .sendMail({ from: sender, to: recipient, subject: subject, text: text })
     .catch(function (err: any) {
