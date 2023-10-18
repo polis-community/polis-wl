@@ -79,6 +79,8 @@ function isPolisDev(uid?: any) {
 const POLIS_FROM_ADDRESS = process.env.POLIS_FROM_ADDRESS;
 const devMode = isTrue(process.env.DEV_MODE);
 
+const API_DEV_HOSTNAME = process.env.API_DEV_HOSTNAME;
+
 let HMAC_SIGNATURE_PARAM_NAME = "signature";
 
 let LOCATION_SOURCES = {
@@ -174,7 +176,11 @@ let pcaCache = new LruCache({
 });
 
 function createProdModerationUrl(zinvite: string) {
-  return "https://pol.is/m/" + zinvite;
+   if (typeof API_DEV_HOSTNAME !== 'undefined') {
+       return "https://" + API_DEV_HOSTNAME + "/m/"+ zinvite;
+   } else {
+         return "https://pol.is/m/" + zinvite;
+   }
 }
 
 function processMathObject(o: { [x: string]: any }) {
