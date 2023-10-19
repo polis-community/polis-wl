@@ -43,6 +43,7 @@
          x_name: d.getAttribute("data-x_name"),
          x_profile_image_url: d.getAttribute("data-x_profile_image_url"),
 
+         stylesheet: d.getAttribute("data-stylesheet"),
          border: d.getAttribute("data-border"),
          border_radius: d.getAttribute("data-border_radius"),
          padding: d.getAttribute("data-padding"),
@@ -140,6 +141,8 @@
     appendIfPresent("ucsf");
 
     appendIfPresent("ui_lang");
+
+    appendIfPresent("stylesheet");
 
     appendIfPresent("subscribe_type");
 

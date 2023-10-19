@@ -7,8 +7,6 @@
 
     <!-- REPLACE_THIS_WITH_FB_META_TAGS -->
 
-    <link rel="stylesheet" type="text/css" href="/css/polis.css"> <!-- proxy all CSS through server for respond.js -->
-
     <script>
       window.userObject = {};
 
@@ -76,6 +74,10 @@
           var params = parseQueryParams(window.location.search);
           return params.ui_lang;
         }
+        function getStylesheet() {
+          var params = parseQueryParams(window.location.search);
+          return params.stylesheet;
+        }
 
         function ajaxGet(url, success, fail) {
           var xmlhttp;
@@ -93,6 +95,13 @@
           xmlhttp.open("GET", url, true);
           xmlhttp.send();
         }
+
+        var stylesheet = getStylesheet();
+        var linkEl = document.createElement("link");
+        linkEl.rel = "stylesheet";
+        linkEl.type = "text/css";
+        linkEl.href = (stylesheet) ? stylesheet : "/css/polis.css";
+        document.querySelector("head").appendChild(linkEl);
 
         // bootstrap initial bulk ajax call.
         // we don't have promises until main bundle loads, so this is going to be a bit messy.
