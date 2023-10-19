@@ -27,7 +27,7 @@ const Content = ({conversation}) => {
         }}>
         <a
           style={{color: "#03A9F4", fontWeight: 700, textDecoration: "none"}}
-          href={`https://pol.is/${conversation.conversation_id}`}>pol.is/{conversation.conversation_id}
+          href={`${window.location.origin}/${conversation.conversation_id}`}>{window.location.origin}/{conversation.conversation_id}
         </a>
       </p>
     </div>
