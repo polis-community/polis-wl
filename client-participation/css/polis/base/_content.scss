@@ -27,6 +27,10 @@
   white-space: nowrap;
 }
 
+h2.HeadingA {
+  margin-bottom: 10px;
+}
+
 .HeadingB {
   // color: $dark-gray;
   color: rgb(0,0,0);
@@ -161,4 +165,11 @@
     @include font-size(24px);
     line-height: 32px;
   }
+}
+
+.description {
+  border-inline-start: 4px solid #2980b9;
+  padding-inline-start: 10px;
+  font-family: chaparral-pro;
+  word-wrap:break-word;
 }

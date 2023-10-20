@@ -105,6 +105,8 @@ img {
 .conversationViewRoot {
   overflow: hidden; // trim carousel contents. carousel lives in an overflow: visible container, this crops it.
   padding: 10px;
+  max-width: 768px; // check pixel ratio?
+  margin: auto; // use flexbox rather than auto, or add a container for this container?
 }
 
 .write-hint-pane {
@@ -152,6 +154,13 @@ img {
 //   border-width: 1px;
 //   border-color: #333;
 // }
+
+#helpTextWelcome {
+  color: black;
+  padding: 5px 0px 5px 0px;
+  font-style: italic;
+  font-family: chaparral-pro;
+}
 
 .affix {
   position: fixed;
@@ -329,6 +338,10 @@ img {
   text-align: right; // for the "show legend" button
 }
 
+#visualization_parent_div {
+  background-color: rgba(0,0,0,0);
+}
+
 .nudgeLeft {
   margin-inline-start: -20px;
 }
@@ -499,11 +512,66 @@ svg {
    // border-radius: 10px;
 }
 
+#comment_shower .socialImg {
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
+
+#comment_shower .socialName {
+    font-weight: 300;
+}
+
+#comment_shower .statementsRemaining {
+    font-weight: 300;
+    font-family: Georgia;
+    font-size: 12px;
+    font-style: italic;
+    color: rgb(0, 0, 0);
+}
+
+#comment_shower .statementTxt {
+    font-weight: 400;
+    line-height: 1.3;
+    font-size: 18px;
+}
+
+/* Protips */
+
+.protipsColumn {
+    color: black;
+    font-style: italic;
+    font-family: chaparral-pro;
+}
+
 /* Comment Input Form */
+
+.POLIS_COMMENT_FORM .profilePic {
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0, 0.1);
+}
 
 #comment_form_textarea{
     white-space: pre-wrap;
     resize: none;
+}
+
+#commentCharCountExceeded {
+    color: red;
+}
+
+#comment_button {
+    text-transform: none;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #0090ff;
+    color: white;
+    letter-spacing: 0.07em;
+    min-width: 110px;
+    height: 40px;
+    margin-inline-start: 5px;
 }
 
 .margin_bottom_20 {
@@ -803,7 +871,17 @@ svg {
   font-size: 10px;
 }
 
+.footer {
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
 
+.footerLink {
+  font-family: Georgia;
+  color: rgb(150,150,150);
+  font-size: 18px;
+  letter-spacing: 2px;
+}
 
 /* mobile */
 @media (max-width: 767px) {
