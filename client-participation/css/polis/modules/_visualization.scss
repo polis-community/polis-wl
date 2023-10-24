@@ -185,7 +185,7 @@ $HULL_HOVER_COLOR: #f5f5f5;
 }
 
 .help_text_you {
-  font-family: $sans-font;
+  font-family: var(--serif-font-family, var(--polis-serif-font-family));
 }
 
 

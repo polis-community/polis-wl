@@ -10,20 +10,16 @@
 //
 .HeadingA {
   // color: $dark-gray;
-  color: rgb(0,0,0);
-  font-family: $headline-font;
-  font-weight: 700;
-  font-size: 36px;
+  color: var(--fg-color, var(--polis-fg-color));
+  font: var(--heading-a-font, var(--polis-heading-a-font));
   line-height: $default-leading;
 }
 
 .HeadingA-aside {
   // color: $darker4;
-  color: rgb(0,0,0);
+  color: var(--fg-color, var(--polis-fg-color));
 
-  font-family: $serif-font;
-  font-weight: normal;
-  font-size: 18px;
+  font: var(--heading-a-aside, var(--polis-heading-a-aside));
   white-space: nowrap;
 }
 
@@ -33,11 +29,9 @@ h2.HeadingA {
 
 .HeadingB {
   // color: $dark-gray;
-  color: rgb(0,0,0);
+  color: var(--fg-color, var(--polis-fg-color));
 
-  font-family: $headline-font;
-  font-weight: 900;
-  font-size: 18px;
+  font: var(--heading-b-font, var(--polis-heading-b-font));
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -47,13 +41,11 @@ h2.HeadingA {
 }
 
 .HeadingC {
-  border-bottom: 1px solid $default-border-color;
+  border-bottom: 1px solid var(--default-border-color, var(--polis-default-border-color));
   // color: $darker5;
-  color: rgb(0,0,0);
+  color: var(--fg-color, var(--polis-fg-color));
 
-  font-weight: normal;
-  font-family: $headline-font;
-  font-size: 18px;
+  font: var(--heading-c-font, var(--polis-heading-c-font));
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -61,11 +53,9 @@ h2.HeadingA {
 /* colin created for tabs in conversation view, modify or rename if necessary and update conversationTabs.handlebars */
 .HeadingD {
   // color: $dark-gray;
-  color: rgb(0,0,0);
+  color: var(--fg-color, var(--polis-fg-color));
 
-  font-family: $headline-font;
-  font-weight: 900;
-  font-size: 13px;
+  font: var(--heading-d-font, var(--polis-heading-d-font));
   text-transform: uppercase;
   // letter-spacing: 0.04em; // causes tabs to be too wide on Chrome on Linux
   letter-spacing: 0.01em;
@@ -77,75 +67,65 @@ h2.HeadingA {
 
 // colin created this as a color-free variant of heading B for the green text that shows when a group is clicked, modifies commentCarouselGroup.js and analyze global
 .HeadingE {
-  font-family: $headline-font;
-  font-weight: 700;
-  font-size: 18px;
+  font: var(--heading-e-font, var(--polis-heading-e-font));
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 //micro caps
 .HeadingF {
-  font-family: $headline-font;
-  font-size: 12px;
+  font: var(--heading-f-font, var(--polis-heading-f-font));
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .HeadingF--light {
-  font-weight: 300;
+  font: var(--heading-f-font-light, var(--polis-heading-f-font-light));
 }
 
 .HeadingF--heavy {
-  font-weight: 700;
+  font: var(--heading-f-font-heavy, var(--polis-heading-f-font-heavy));
 }
 
 .Heading--darkgray {
   // color: $dark-gray;
-  color: rgb(0,0,0);
+  color: var(--fg-color, var(--polis-fg-color));
 
 }
 
 .Heading--gray {
   // color: $gray;
-  color: rgb(0,0,0);
+  color: var(--fg-color, var(--polis-fg-color));
 
 }
 
 /**** Begin Lander Headings ****/
 .HeadingL {
-  font-size: 44px;
-  font-weight: 300;
-  font-family: $headline-font;
+  font: var(--heading-l-font, var(--polis-heading-l-font));
   letter-spacing: 0.04em;
   // color: $dark-gray;
-  color: rgb(0,0,0);
+  color: var(--fg-color, var(--polis-fg-color));
 
 }
 
 .HeadingG {
-  font-size: 24px;
-  font-weight: 300;
-  font-family: $headline-font;
+  font: var(--heading-g-font, var(--polis-heading-g-font));
   letter-spacing: 0.04em;
   // color: $darker4;
-  color: rgb(0,0,0);
+  color: var(--fg-color, var(--polis-fg-color));
 
 }
 
 
 .HeadingH {
-  font-family: $headline-font;
-  font-weight: 700;
-  font-size: 14px;
-  text-style: italic;
+  font: var(--heading-h-font, var(--polis-heading-h-font));
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .HeadingH--dark {
   // color: $dark-gray;
-  color: rgb(0,0,0);
+  color: var(--fg-color, var(--polis-fg-color));
 
 }
 /**** End Lander Headings ****/
@@ -168,8 +148,8 @@ h2.HeadingA {
 }
 
 .description {
-  border-inline-start: 4px solid #2980b9;
+  border-inline-start: 4px solid var(--description-border-color, var(--polis-description-border-color));
   padding-inline-start: 10px;
-  font-family: chaparral-pro;
+  font: var(--description-font, var(--polis-description-font));
   word-wrap:break-word;
 }
