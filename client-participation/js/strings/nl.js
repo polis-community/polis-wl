@@ -76,7 +76,7 @@ s.commentTooLongByChars = "De lengte van jouw stelling werd met  {{CHARACTERS_CO
 s.notSentSinceDemo = "(niet echt, dit is een demo)";
 s.submitComment = "Indienen";
 s.tipStarred = "Gemarkeerd als belangrijk.";
-s.participantHelpWelcomeText = "Welkom! - <span style='font-weight: 700.'>stem</span> Geef je mening op stellingen en deel je eigen stelling.";
+s.participantHelpWelcomeText = "Welkom! - <span style='font-weight: 700.'></span> Geef je mening op stellingen en deel je eigen stelling.";
 s.participantHelpGroupsText = "Mensen die hetzelfde stemmen, <span style='font-weight: 700.'>worden bij elkaar geplaatst.</span> Klik op een groep om te zien met welke stellingen ze heteens zijn <a style='font-weight: 700. cursor: pointer. text-decoration: underline' id='helpTextGroupsExpand'>...more</a>";
 s.participantHelpGroupsNotYetText = "De visualisatie zal verschijnen zodra er 7 personen zijn begonnen met stemmen";
 s.helpWhatAreGroupsDetail = "<p>Je hebt allicht al 'aanbevolen artikels' op Amazon, of ‘aanbevolen films' op Netflix. Elk van deze services gebruiken statistieken om je te groeperen in bij personen die dezelfde dingen kopen of bekijken, vervolgend wordt er je getoond wat deze mensen kochten of naar welke film ze keken.</p> <p> Wanneer je een stem uitbrengt op een stelling wordt je vervolgens gegroepeerd met mensen die dezelfde stem uitbrachten! Onderaan kan je deze groepen bekijken. Elk van deze groepen bestaan uit personen met dezelfde mening. Er zijn fascinerende inzichten de ontdekken elk van deze gesprekken. Wacht niet langer – klik op een groep om te zien wat hun bijeen bracht en wat hun uniek maakt! </p>";
