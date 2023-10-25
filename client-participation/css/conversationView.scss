@@ -34,10 +34,10 @@ body {
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857;
-  color: #000;
-  background-color: #fff;
+  color: var(--fg-color, var(--polis-fg-color));
+  background-color: var(--bg-color, var(--polis-bg-color));
   background-image: none;
-  border: 1px solid #ccc;
+  border: 1px solid var(--form-border-color, var(--polis-form-border-color));
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -56,17 +56,15 @@ img {
   border: 0;
 }
 .Btn-alt {
-  background-color: #e3e4e5;
-  color: #3498db;
+  background-color: var(--btn-alt-bg, var(--polis-btn-alt-bg));
+  color: var(--btn-alt-fg, var(--polis-btn-alt-fg));
   letter-spacing: 0.05em;
 }
 .Btn-small {
   padding: 0.4em 1em;
   border-radius: 4px;
   border: 0;
-  font-size: 12px;
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
-  font-weight: 700;
+  font: var(--btn-small-font, var(--polis-btn-small-font));
   text-transform: uppercase;
   -webkit-box-shadow: 2px 2px 2px -2px #ACACAC;
 }
@@ -75,16 +73,14 @@ img {
   padding: 0.5em 1.25em;
   border-radius: 4px;
   border: 0;
-  font-size: 16px;
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
-  font-weight: 700;
+  font: var(--btn-font, var(--polis-btn-font));
   text-transform: uppercase;
 }
 
 @-webkit-keyframes pulse {
-  from { background-color: rgba(0,0,0,0);  }
-  10% { background-color: rgb(202, 227, 255); }
-  to { background-color: rgba(0,0,0,0);  }
+  from { background-color: var(--pulse-effect-bg-from, var(--polis-pulse-effect-bg-from))  }
+  10% { background-color: var(--pulse-effect-bg-10pct); }
+  to { background-color: var(--pulse-effect-bg-to, var(--polis-pulse-effect-bg-to));  }
 }
 
 .pulseEffect {
@@ -105,6 +101,8 @@ img {
 .conversationViewRoot {
   overflow: hidden; // trim carousel contents. carousel lives in an overflow: visible container, this crops it.
   padding: 10px;
+  max-width: 768px; // check pixel ratio?
+  margin: auto; // use flexbox rather than auto, or add a container for this container?
 }
 
 .write-hint-pane {
@@ -153,24 +151,30 @@ img {
 //   border-color: #333;
 // }
 
+#helpTextWelcome {
+  color: var(--fg-color, var(--polis-fg-color));
+  padding: 5px 0px 5px 0px;
+  font: var(--help-text-welcome-font, var(--polis-help-text-welcome-font));
+}
+
 .affix {
   position: fixed;
   // top: 200px;
 }
 
 .lightPanel {
-  background-color: white;
-  border: solid 1px lightgray;
+  background-color: var(--bg-color, var(--polis-bg-color));
+  border: solid 1px var(--panel-border-color, var(--polis-panel-border-color));
   border-radius: 5px;
 }
 .darkPanel {
   background-color: $panel-color;
 }
 .darkPanelBorderTop {
-  border-top: 1px solid lightgray;
+  border-top: 1px solid var(--panel-border-color, var(--polis-panel-border-color));
 }
 .darkPanelBorderBottom {
-  border-bottom: 1px solid lightgray;
+  border-bottom: 1px solid var(--panel-border-color, var(--polis-panel-border-color));
 }
 
 #agreeButton, #disagreeButton {
@@ -198,14 +202,14 @@ img {
   // Only allow hovering when not on iOS ( see https://github.com/twbs/bootstrap/issues/12832 )
   &.vote-btn-w-hover {
     &:hover {
-      border-color: #bbb;
-      background: #eee;
+      border-color: var(--vote-btn-hover-border-color, var(--polis-vote-btn-hover-border-color));
+      background: var(--vote-btn-hover-bg-color, var(--polis-vote-btn-hover-bg-color));
     }
   }
 }
 
 .groupButton {
-    color: rgb(0,0,0);
+    color: var(--group-button-fg-color, var(--polis-group-button-fg-color));
     text-shadow: 0px 1px 0px rgba(255,255,255,0.59);
     font-size: 12px;
     display: inline;
@@ -213,25 +217,25 @@ img {
     margin: 0px 1px 0px 1px;
     width: auto;
     height: auto;
-    background: #ececec;
+    background: var(--group-button-bg-color, var(--polis-group-button-bg-color));
     padding: 6px 10px 6px 10px;
     outline: none;
-    border: 1px solid #d8d8d8;
-    border-bottom: 1px solid #ccc;
+    border: 1px solid var(--group-button-border-color, var(--polis-group-button-border-color));
+    border-bottom: 1px solid var(--group-button-bottom-color, var(--polis-group-button-bottom-color));
     border-radius: 3px;
     cursor: pointer;
 }
 
 .groupButton:hover {
-    background: #D2D2D2;
+    background: var(--group-button-hover-color, var(--polis-group-button-hover-color));
 }
 
 .selectedGroupButton {
-    color: rgb(0,0,0);
-    background: #D2D2D2;
+    color: var(--group-button-fg-color, var(--polis-group-button-fg-color));
+    background: var(--group-button-selected-bg-color, var(--polis-group-button-selected-bg-color));
     text-shadow: 0px 1px 0px rgba(255,255,255,0.53);
-    border: 1px solid #d2d2d2;
-    border-bottom: 1px solid #d8d8d8;
+    border: 1px solid var(--group-button-selected-bg-color, var(--polis-group-button-selected-bg-color));
+    border-bottom: 1px solid var(--group-button-border-color, var(--polis-group-button-border-color));
     -webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 1px 6px rgba(0,0,0,0.07), inset 0px -14px 13px rgba(255,255,255,0.20);
     -moz-box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 1px 6px rgba(0,0,0,0.07), inset 0px -14px 13px rgba(255,255,255,0.20);
     -o-box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 1px 6px rgba(0,0,0,0.07), inset 0px -14px 13px rgba(255,255,255,0.20);
@@ -241,9 +245,7 @@ img {
 
 .btn-vote {
   // set this independently of the overall font size, since they're difficult to get right.
-  font-family: $sans-font;
-  font-size: 14px;
-  font-weight: 700;
+  font: var(--btn-vote-font, var(--polis-btn-vote-font));
   display: inline;
   padding: 10px 0px; // no horizontal padding - to prevent the right edge of "disagree" from being clipped on iOS
 }
@@ -273,10 +275,10 @@ img {
 }
 
 .moderateButton {
-  background-color: rgb(230,230,230);
+  background-color: var(--moderate-button-bg-color, var(--polis-moderate-button-bg-color));
   margin-inline-end: 20px;
   border-radius: 3px;
-  font-weight: 500;
+  font-weight: var(--moderate-button-font-weight, var(--polis-moderate-button-font-weight));
   transition: all .2s ease-in-out;
 }
 
@@ -290,26 +292,25 @@ img {
 .moderateSubmitButton {
   font-size: 16px;
   border-radius: 3px;
-  background-color: #3498db;
-  color: white;
-  font-weight: 500;
+  background-color: var(--moderate-submit-button-bg-color, var(--polis-moderate-submit-button-bg-color));
+  color: var(--moderate-submit-button-fg-color, var(--polis-moderate-submit-button-fg-color));
+  font-weight: var(--moderate-button-font-weight, var(--polis-moderate-button-font-weight));
   display: inline;
 }
 
 .selectedModerateButton {
-  background-color: #3498db;
-  color: white;
+  background-color: var(--moderate-button-selected-bg-color, var(--polis-moderate-button-selected-bg-color));
+  color: var(--moderate-button-selected-fg-color, var(--polis-moderate-button-selected-fg-color));
 }
 
 .reactionButton{
   cursor: pointer;
   transition: all .2s ease-in-out;
-  color: rgb(0,0,0);
-  border-color: rgba(0,0,0,0);
-  background-color: rgba(0,0,0,0);
+  color: var(--reaction-button-fg-color, var(--polis-reaction-button-fg-color));
+  border-color: var(--reaction-button-bg-color, var(--polis-reaction-button-bg-color));
+  background-color: var(--reaction-button-border-color, var(--polis-reaction-button-border-color));
   text-decoration: none;
-  font-size: 14px;
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  font: var(--reaction-button-font, var(--polis-reaction-button-font));
   text-rendering: optimizeLegibility;
 }
 .reactionButton:hover{
@@ -327,6 +328,10 @@ img {
   min-width: 270px;
   min-height: 145px;
   text-align: right; // for the "show legend" button
+}
+
+#visualization_parent_div {
+  background-color: var(--visualization-parent-div-bg-color, var(--polis-visualization-parent-div-bg-color));
 }
 
 .nudgeLeft {
@@ -477,19 +482,19 @@ svg {
 /* Comment Shower */
 
 .nav-tabs > li.active {
-  background-color: rgba(0,0,0,0) !important;
-  border-bottom: 4px solid rgb(13, 121, 192);
+  background-color: var(--nav-tabs-active-bg-color, var(--polis-nav-tabs-active-bg-color)) !important;
+  border-bottom: 4px solid var(--nav-tabs-active-underline-color, var(--polis-nav-tabs-active-underline-color));
 }
 
 
 .nav-tabs > li > a, .nav-tabs > li > a:hover, .nav-tabs > li > a:focus {
-  color: #777;
+  color: var(--nav-tabs-link-fg-color, var(--polis-nav-tabs-link-fg-color));
 }
 
 
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-  background-color: rgba(0,0,0,0) !important;
-  color: #0a77bf;
+  background-color: var(--nav-tabs-active-link-bg-color, var(--polis-nav-tabs-active-link-bg-color)) !important;
+  color: var(--nav-tabs-active-link-fg-color, var(--polis-nav-tabs-active-link-fg-color));
 }
 
 #comment_shower p, #comment_shower h3 {
@@ -499,11 +504,60 @@ svg {
    // border-radius: 10px;
 }
 
+#comment_shower .socialImg {
+    border-radius: 3px;
+    border: 1px solid var(--social-img-border-color, var(--polis-social-img-border-color));
+}
+
+#comment_shower .socialName {
+    font: var(--social-name-font, var(--polis-social-name-font));
+}
+
+#comment_shower .statementsRemaining {
+    font: var(--remaining-statements-font, var(--polis-remaining-statements-font));
+    color: var(--fg-color, var(--polis-fg-color));
+}
+
+#comment_shower .statementTxt {
+    font: var(--statement-text-font, var(--polis-statement-text-font));
+    line-height: 1.3;
+}
+
+/* Protips */
+
+.protipsColumn {
+    color: var(--fg-color, var(--polis-fg-color));
+    font: var(--protips-font, var(--polis-protips-font));
+}
+
 /* Comment Input Form */
+
+.POLIS_COMMENT_FORM .profilePic {
+    border-radius: 3px;
+    border: 1px solid var(--profile-pic-border-color, var(--polis-profile-pic-border-color));
+}
 
 #comment_form_textarea{
     white-space: pre-wrap;
     resize: none;
+}
+
+#commentCharCountExceeded {
+    color: var(--error-color, var(--polis-error-color));
+}
+
+#comment_button {
+    text-transform: none;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--comment-button-bg-color, var(--polis-comment-button-bg-color));
+    color: var(--comment-button-fg-color, var(--polis-comment-button-fg-color));
+    font: var(--comment-button-font, var(--polis-comment-button-font));
+    letter-spacing: 0.07em;
+    min-width: 110px;
+    height: 40px;
+    margin-inline-start: 5px;
 }
 
 .margin_bottom_20 {
@@ -523,7 +577,7 @@ svg {
 }
 
 .query_result_item.selected {
-  background-color: $color_selected_comment;
+  background-color: var(--selected-comment-bg-color, var(--polis-selected-comment-bg-color));
 }
 
 .vote-histogram-bar:hover {
@@ -543,7 +597,7 @@ svg {
 .query_result_item {
     min-height: 50px;
     padding: 0px 10px 0px 10px;
-    background-color: rgba(255,255,255,0.7);
+    background-color: var(--query-result-item-bg-color, var(--polis-query-result-item-bg-color));
     margin-inline-end: 10px;
     cursor: hand;
 }
@@ -568,10 +622,10 @@ svg {
 // }
 
 .a {
-  color: $color_agree;
+  color: var(--agree-fg-color, var(--polis-agree-fg-color));
 }
 .d {
-  color: $color_disagree;
+  color: var(--disagree-fg-color, var(--polis-disagree-fg-color));
 }
 
 
@@ -659,38 +713,35 @@ svg {
 }
 
   .fa-twitter {
-    color: #55ACEE;
+    color: var(--twitter-color, var(--polis-twitter-color));
   }
 
   .fa-facebook {
-    color: #3b5998;
+    color: var(--facebook-color, var(--polis-facebook-color));
   }
 
 .facebookButton, .twitterButton {
   cursor: pointer;
   border: 0px;
-  color: white;
-  font-family: $sans-font;
-  font-weight: 300;
+  color: var(--social-media-fg-color, var(--polis-social-media-fg-color));
   padding: 8px 12px;
   border-radius: 5px;
-  font-size: 14px;
+  font: var(--social-media-button-font, var(--polis-social-media-button-font));
 
   i {
     font-size: 24px;
-    color: white;
     position: relative;
     top: 4px;
   }
 }
 
 .twitterButton {
-  background-color: #55ACEE;
+  background-color: var(--twitter-color, var(--polis-twitter-color));
 }
 
 .facebookButton {
   margin-inline-end: 10px;
-  background-color: #3b5998;
+  background-color: var(--facebook-color, var(--polis-facebook-color));
 }
 
 .facebookCaveatText {
@@ -709,25 +760,23 @@ svg {
 }
 
 #fbNotNowBtn {
-  border-bottom: 1px solid gray;
+  border-bottom: 1px solid var(--fb-not-now-button-border-color, var(--polis-fb-not-now-button-border-color));
   padding-bottom: 2px;
 }
 
 #fbNotNowBtn:hover {
-  color: $hover-color;
-  border-bottom: 1px solid $hover-color;
+  color: var(--hover-color, var(--polis-hover-color));
+  border-bottom: 1px solid var(--hover-color, var(--polis-hover-color));
 }
 
 .twitterShareButton {
     cursor: pointer;
     border: 0px;
-    color: white;
-    font-family: $sans-font;
-    font-weight: 500;
+    color: var(--social-media-fg-color, var(--polis-social-media-fg-color));
+    font: var(--social-media-share-button-font, var(--polis-social-media-share-button-font));
     padding: 2px 6px;
     border-radius: 2px;
-    background-color: #55ACEE;
-    font-size: 12px;
+    background-color: var(--twitter-color, var(--polis-twitter-color));
     position: relative;
 }
 
@@ -735,19 +784,16 @@ svg {
   font-size: 16px;
   position: relative;
   top: 2px;
-  color: white;
 }
 
 .facebookShareButton {
   cursor: pointer;
   border: 0px;
-  color: white;
-  font-family: $sans-font;
-  font-weight: 500;
+  color: var(--social-media-fg-color, var(--polis-social-media-fg-color));
+  font: var(--social-media-share-button-font, var(--polis-social-media-share-button-font));
   padding: 2px 6px;
   border-radius: 2px;
-  background-color: #3b5998;
-  font-size: 12px;
+  background-color: var(--facebook-color, var(--polis-facebook-color));
   position: relative;
 
 }
@@ -762,8 +808,8 @@ svg {
   // text-align: center;
   position: relative;
   top: 0px;
-  background: #ffffff;
-  border: 1px solid rgb(155,155,155);
+  background-color: var(--social-media-fg-color, var(--polis-social-media-fg-color));
+  border: 1px solid var(--arrow-box-border-color, var(--polis-arrow-box-border-color));
   display: inline;
   margin: 0px 10px 0px 5px;
   padding: 2px 5px;
@@ -784,13 +830,13 @@ svg {
 
 .arrow_box:after {
   border-top: 4px solid transparent;
-  border-inline-end: 5px solid #fff;
+  border-inline-end: 5px solid var(--social-media-fg-color, var(--polis-social-media-fg-color));
   border-bottom: 4px solid transparent;
   margin-top: -4px;
 }
 .arrow_box:before {
   border-top: 5px solid transparent;
-  border-inline-end: 6.5px solid #9b9b9b;
+  border-inline-end: 6.5px solid var(--arrow-box-border-color, var(--polis-arrow-box-border-color));
   border-bottom: 5px solid transparent;
   margin-top: -5px;
 }
@@ -803,7 +849,15 @@ svg {
   font-size: 10px;
 }
 
+.footer {
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
 
+.footerLink {
+  font: var(--footer-link-font, var(--polis-footer-link-font));
+  color: var(--footer-link-fg-color, var(--polis-footer-link-fg-color));
+}
 
 /* mobile */
 @media (max-width: 767px) {
@@ -860,8 +914,8 @@ svg {
 }
 
   .nav-tabs > li > a:hover {
-    background-color: rgba(0,0,0,0);
-    color: black;
+    background-color: transparent;
+    color: var(--nav-tabs-link-hover-fg-color, var(--polis-nav-tabs-link-hover-fg-color));
   }
 
 

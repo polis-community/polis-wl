@@ -2,6 +2,192 @@
 
 $FontAwesomePath:    '../font';
 
+:root {
+    /*
+     * customizable theme properties with their default values
+     */
+    /*
+    --nav-tabs-link-hover-fg-color: black;
+    --bg-color: #fff;
+    --fg-color: #000;
+    --default-border-color: #e4e4e4;
+    --btn-alt-fg: #3498db;
+    --btn-alt-bg: #e3e4e5;
+    --pulse-effect-bg-from: transparent;
+    --pulse-effect-bg-10pct: rgb(202, 227, 255);
+    --pulse-effect-bg-to: transparent;
+    --form-border-color: var(--default-border-color);
+    --link-color: #0a77bf;
+    --hover-color: #0565a6;
+    --panel-border-color: lightgray;
+    --vote-btn-hover-bg-color: #eee;
+    --vote-btn-hover-border-color: #bbb;
+    --group-button-fg-color: var(--fg-color);
+    --group-button-bg-color: #ececec;
+    --group-button-border-color: #d8d8d8;
+    --group-button-bottom-color: #ccc;
+    --group-button-hover-color: #D2D2D2;
+    --group-button-selected-bg-color: #D2D2D2;
+    --moderate-button-bg-color: rgb(230,230,230);
+    --moderate-button-selected-bg-color: #3498db;
+    --moderate-button-selected-fg-color: white;
+    --moderate-submit-button-bg-color: #3498db;
+    --moderate-submit-button-fg-color: white;
+    --reaction-button-fg-color: rgb(0,0,0);
+    --reaction-button-bg-color: transparent;
+    --reaction-button-border-color: transparent;
+    --visualization-parent-div-bg-color: transparent;
+    --nav-tabs-active-bg-color: transparent;
+    --nav-tabs-active-underline-color: rgb(13, 121, 192);
+    --nav-tabs-link-fg-color: #777;
+    --nav-tabs-active-link-fg-color: #0a77bf;
+    --nav-tabs-active-link-bg-color: transparent;
+    --profile-pic-border-color: rgba(0,0,0, 0.1);
+    --error-color: red;
+    --comment-button-fg-color: white;
+    --comment-button-bg-color: #0090ff;
+    --selected-comment-bg-color: #f7f7f7;
+    --query-result-item-bg-color: rgba(255,255,255,0.7);
+    --social-img-border-color: #ccc;
+    --active-result-item-bg-color: #FFFBE8;
+    --agree-fg-color: rgb(0, 181, 77);
+    --disagree-fg-color: #e74c3c // ALIZARIN
+    --twitter-color: #55ACEE;
+    --facebook-color: #3b5998;
+    --social-media-fg-color: white;
+    --fb-not-now-button-border-color: gray;
+    --hover-color: #0565a6;
+    --arrow-box-border-color: rgb(155,155,155);
+    --footer-link-fg-color: rgb(150,150,150);
+    --header-footer-bg-color: #F4F4F4;
+    --description-border-color: #2980b9;
+
+    --sans-serif-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --serif-font-family: chaparral-pro, serif;
+    --default-font-family: var(--sans-serif-font-family);
+    --headline-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --reaction-button-font: 14px var(--default-font-family);
+    --heading-a-font: 700 36px var(--headline-font-family);
+    --heading-a-aside-font: normal 18px var(--headline-font-family);
+    --heading-b-font: 900 18px var(--headline-font-family);
+    --heading-c-font: normal 18px var(--headline-font-family);
+    --heading-d-font: 900 13px var(--headline-font-family);
+    --heading-e-font: 700 18px var(--headline-font-family);
+    --heading-f-font: 12px var(--headline-font-family);
+    --heading-f-font-light: 300 12px var(--headline-font-family);
+    --heading-f-font-heavy: 700 12px var(--headline-font-family);
+    --heading-g-font: 300 24px var(--headline-font-family);
+    --heading-h-font: italic 700 14px var(--headline-font-family);
+    --heading-l-font: 300 44px var(--headline-font-family);
+    --btn-font: 700 16px var(--default-font-family);
+    --btn-small-font: 700 12px var(--default-font-family);
+    --btn-vote-font: 700 14px var(--default-font-family);
+    --moderate-button-font-weight: 500;
+    --help-text-welcome-font: italic 16px var(--serif-font-family);
+    --social-name-font-weight: 300;
+    --remaining-statements-font: italic 300 12px Georgia, serif;
+    --statement-text-font: 400 18px var(--default-font-family);
+    --protips-font: italic 16px chaparral-pro, serif;
+    --comment-button-font: 500 16px var(--default-font-family);
+    --social-media-button-font: 300 14px var(--default-font-family);
+    --social-media-share-button-font: 500 12px var(--default-font-family);
+    --footer-link-font: 18px Georgia, serif;
+    --description-font: 16px var(--serif-font-family);
+    --nav-tabs-link-hover-fg-color: black;
+    */
+
+    /*
+     * theme default values
+     */
+    --polis-nav-tabs-link-hover-fg-color: black;
+    --polis-bg-color: #fff;
+    --polis-fg-color: #000;
+    --polis-default-border-color: #e4e4e4;
+    --polis-btn-alt-fg: #3498db;
+    --polis-btn-alt-bg: #e3e4e5;
+    --polis-pulse-effect-bg-from: transparent;
+    --polis-pulse-effect-bg-10pct: rgb(202, 227, 255);
+    --polis-pulse-effect-bg-to: transparent;
+    --polis-form-border-color: var(--polis-default-border-color);
+    --polis-link-color: #0a77bf;
+    --polis-hover-color: #0565a6;
+    --polis-panel-border-color: lightgray;
+    --polis-vote-btn-hover-bg-color: #eee;
+    --polis-vote-btn-hover-border-color: #bbb;
+    --polis-group-button-fg-color: var(--polis-fg-color);
+    --polis-group-button-bg-color: #ececec;
+    --polis-group-button-border-color: #d8d8d8;
+    --polis-group-button-bottom-color: #ccc;
+    --polis-group-button-hover-color: #D2D2D2;
+    --polis-group-button-selected-bg-color: #D2D2D2;
+    --polis-moderate-button-bg-color: rgb(230,230,230);
+    --polis-moderate-button-selected-bg-color: #3498db;
+    --polis-moderate-button-selected-fg-color: white;
+    --polis-moderate-submit-button-bg-color: #3498db;
+    --polis-moderate-submit-button-fg-color: white;
+    --polis-reaction-button-fg-color: rgb(0,0,0);
+    --polis-reaction-button-bg-color: transparent;
+    --polis-reaction-button-border-color: transparent;
+    --polis-visualization-parent-div-bg-color: transparent;
+    --polis-nav-tabs-active-bg-color: transparent;
+    --polis-nav-tabs-active-underline-color: rgb(13, 121, 192);
+    --polis-nav-tabs-link-fg-color: #777;
+    --polis-nav-tabs-active-link-fg-color: #0a77bf;
+    --polis-nav-tabs-active-link-bg-color: transparent;
+    --polis-profile-pic-border-color: rgba(0,0,0, 0.1);
+    --polis-error-color: red;
+    --polis-comment-button-fg-color: white;
+    --polis-comment-button-bg-color: #0090ff;
+    --polis-selected-comment-bg-color: #f7f7f7;
+    --polis-query-result-item-bg-color: rgba(255,255,255,0.7);
+    --polis-social-img-border-color: #ccc;
+    --polis-active-result-item-bg-color: #FFFBE8;
+    --polis-agree-fg-color: rgb(0, 181, 77);
+    --polis-disagree-fg-color: #e74c3c // ALIZARIN
+    --polis-twitter-color: #55ACEE;
+    --polis-facebook-color: #3b5998;
+    --polis-social-media-fg-color: white;
+    --polis-fb-not-now-button-border-color: gray;
+    --polis-hover-color: #0565a6;
+    --polis-arrow-box-border-color: rgb(155,155,155);
+    --polis-footer-link-fg-color: rgb(150,150,150);
+    --polis-header-footer-bg-color: #F4F4F4;
+    --polis-description-border-color: #2980b9;
+
+    --polis-sans-serif-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --polis-serif-font-family: chaparral-pro, serif;
+    --polis-default-font-family: var(--polis-sans-serif-font-family);
+    --polis-headline-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --polis-reaction-button-font: 14px var(--polis-default-font-family);
+    --polis-heading-a-font: 700 36px var(--polis-headline-font-family);
+    --polis-heading-a-aside-font: normal 18px var(--polis-headline-font-family);
+    --polis-heading-b-font: 900 18px var(--polis-headline-font-family);
+    --polis-heading-c-font: normal 18px var(--polis-headline-font-family);
+    --polis-heading-d-font: 900 13px var(--polis-headline-font-family);
+    --polis-heading-e-font: 700 18px var(--polis-headline-font-family);
+    --polis-heading-f-font: 12px var(--polis-headline-font-family);
+    --polis-heading-f-font-light: 300 12px var(--polis-headline-font-family);
+    --polis-heading-f-font-heavy: 700 12px var(--polis-headline-font-family);
+    --polis-heading-g-font: 300 24px var(--polis-headline-font-family);
+    --polis-heading-h-font: italic 700 14px var(--polis-headline-font-family);
+    --polis-heading-l-font: 300 44px var(--polis-headline-font-family);
+    --polis-btn-font: 700 16px var(--polis-default-font-family);
+    --polis-btn-small-font: 700 12px var(--polis-default-font-family);
+    --polis-btn-vote-font: 700 14px var(--polis-default-font-family);
+    --polis-moderate-button-font-weight: 500;
+    --polis-help-text-welcome-font: italic 16px var(--polis-serif-font-family);
+    --polis-social-name-font-weight: 300;
+    --polis-remaining-statements-font: italic 300 12px Georgia, serif;
+    --polis-statement-text-font: 400 18px var(--polis-default-font-family);
+    --polis-protips-font: italic 16px chaparral-pro, serif;
+    --polis-comment-button-font: 500 16px var(--polis-default-font-family);
+    --polis-social-media-button-font: 300 14px var(--polis-default-font-family);
+    --polis-social-media-share-button-font: 500 12px var(--polis-default-font-family);
+    --polis-footer-link-font: 18px Georgia, serif;
+    --polis-description-font: 16px var(--polis-serif-font-family);
+    --polis-nav-tabs-link-hover-fg-color: black;
+}
+
 .svgIcon {
   display: inline-block;
   position: relative;
@@ -12,15 +198,16 @@ $FontAwesomePath:    '../font';
 }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--default-font-family, var(--polis-default-font-family));
   // font-size: 14px;
   line-height: 1.42857;
-  color: #000;
-  background-color: #fff;
+  color: var(--fg-color, --polis-fg-color);
+  background-color: var(--bg-color, --polis-bg-color);
+  margin: 0;
 }
 
 textarea {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: var(--default-font-family, var(--polis-default-font-family));
 }
 
 @import "bootstrap_config/bootstrap";
@@ -39,7 +226,7 @@ textarea {
 
 // TODO set the bootstrap variable instead.
 .navbar-default {
-  background-color: $header-footer-color;
+  background-color: var(--header-footer-bg-color, var(--polis-header-footer-bg-color));
   padding: 10px 0px 10px 0px;
 }
 

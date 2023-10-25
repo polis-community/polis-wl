@@ -17,12 +17,7 @@
   {{/if}}
   "
   dir={{direction}}
-
-  style="
-    max-width: 768px; {{!-- check pixel ratio? --}}
-    margin: auto; {{!-- use flexbox rather than auto, or add a container for this container? --}}
-    background-color: {{polis_bgcolor}};
-  "> {{! PARTICIPATION VIEW DIV }}
+  > {{! PARTICIPATION VIEW DIV }}
 
   {{#if useBannerHeader}}
     {{> headerWhatIsPolis}}
@@ -171,7 +166,6 @@
       <h2
         class="HeadingA"
         style="
-         margin-bottom: 10px;
         " 
         dir="auto">
         {{topic}}
@@ -195,13 +189,7 @@
 
     {{#unless no_description}}
     {{#ifDefined description}}
-        <p
-          style="
-            border-inline-start: 4px solid #2980b9;
-            padding-inline-start: 10px;
-            font-family: chaparral-pro;
-            word-wrap:break-word;
-          "
+        <p class="description"
           dir="auto">
           {{{description}}}
         </p>
@@ -209,13 +197,7 @@
     {{/unless}}
 
     {{#if link_url}}
-        <p
-          style="
-            border-inline-start: 4px solid #2980b9;
-            padding-inline-start: 10px;
-            font-family: chaparral-pro;
-            word-wrap:break-word;
-          "
+        <p class="description"
           dir="auto">
         {{linkExternal link_url link_url}}
         </p>
@@ -229,16 +211,7 @@
 
 <div
   id="helpTextWelcome"
-  style="
-    {{!-- background-color: {{help_bgcolor}}; --}}
-    {{!-- border: 1px solid rgb(85, 172, 238); --}}
-    {{!-- color: rgb(68, 136, 189); --}}
-    {{!-- color: {{help_color}}; --}}
-    color: black;
-    padding: 5px 0px 5px 0px;
-    font-style: italic;
-    font-family: chaparral-pro;
-  " class="
+  class="
   clickDoesNotDeselectHull
   {{#if hideHelp}} displayNone{{/if}}
   {{#if no_voting}} displayNone{{/if}} {{!-- this line is here because the help text references voting --}}
@@ -385,7 +358,7 @@
 <div
   id="visualization_parent_div"
   class="clickDoesNotDeselectHull"
-  style="text-align: end; visibility: hidden; background-color: rgba(0,0,0,0);"
+  style="text-align: end; visibility: hidden;"
   >
   <div
     id="visualization_div"
@@ -437,7 +410,7 @@
 {{!  ------------ BEGIN FOOTER ---------------  }}
 {{#unless no_footer}}
 
-  <div style="margin-top: 40px; margin-bottom: 20px;">
+  <div class="footer" style="margin-top: 40px; margin-bottom: 20px;">
     <a href="https://pol.is" target="_blank" dir="auto">
       {{> logo}}
     </a>

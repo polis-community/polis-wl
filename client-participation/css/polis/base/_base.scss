@@ -26,8 +26,8 @@ html {
 
 body {
   // background: $bg-color;
-  color: rgb(0,0,0);
-  font-family: $sans-font;
+  color: var(--fg-color, var(--polis-fg-color));
+  font-family: var(--default-font-family, var(--polis-default-font-family));
   line-height: $default-leading;
   text-rendering: optimizeLegibility;
 }
@@ -50,11 +50,11 @@ p, ul, ol {
 //
 a {
   &, &:link {
-    color: $link-color;
+    color: var(--link-color, var(--polis-link-color));
     text-decoration: none;
   }
   &:hover {
-    color: $hover-color;
+    color: var(--over-color, var(--polis-over-color));
   }
 }
 

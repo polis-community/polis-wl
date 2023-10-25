@@ -12,10 +12,10 @@
   padding: 6px 12px;
   font-size: 14px;
   line-height: 1.42857;
-  color: #000;
-  background-color: #fff;
+  color: var(--fg-color, var(--polis-fg-color));
+  background-color: var(--bg-color, var(--polis-bg-color));
   background-image: none;
-  border: 1px solid #ccc;
+  border: 1px solid var(--form-border-color, var(--polis-form-border-color));
   border-radius: 4px;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
