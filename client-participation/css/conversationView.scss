@@ -535,7 +535,7 @@ svg {
 }
 
 #comment_shower .socialName {
-    font: var(--social-name-font, var(--polis-social-name-font));
+    font-weight: var(--social-name-font-weight, var(--polis-social-name-font-weight));
 }
 
 #comment_shower .statementsRemaining {

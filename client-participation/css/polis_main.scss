@@ -51,7 +51,7 @@ $FontAwesomePath:    '../font';
     --social-img-border-color: #ccc;
     --active-result-item-bg-color: #FFFBE8;
     --agree-fg-color: rgb(0, 181, 77);
-    --disagree-fg-color: #e74c3c // ALIZARIN
+    --disagree-fg-color: #e74c3c; // ALIZARIN
     --twitter-color: #55ACEE;
     --facebook-color: #3b5998;
     --social-media-fg-color: white;
@@ -63,6 +63,7 @@ $FontAwesomePath:    '../font';
     --description-border-color: #2980b9;
     --btn-primary-fg: white;
     --btn-primary-bg: #0090ff;
+    --nav-tabs-link-hover-fg-color: black;
 
     --sans-serif-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     --serif-font-family: chaparral-pro, serif;
@@ -95,7 +96,6 @@ $FontAwesomePath:    '../font';
     --social-media-share-button-font: 500 12px var(--default-font-family);
     --footer-link-font: 18px Georgia, serif;
     --description-font: 16px var(--serif-font-family);
-    --nav-tabs-link-hover-fg-color: black;
     --help-text-small-screen-font-size: 12px;
     */
 
@@ -146,7 +146,7 @@ $FontAwesomePath:    '../font';
     --polis-social-img-border-color: #ccc;
     --polis-active-result-item-bg-color: #FFFBE8;
     --polis-agree-fg-color: rgb(0, 181, 77);
-    --polis-disagree-fg-color: #e74c3c // ALIZARIN
+    --polis-disagree-fg-color: #e74c3c; // ALIZARIN
     --polis-twitter-color: #55ACEE;
     --polis-facebook-color: #3b5998;
     --polis-social-media-fg-color: white;
@@ -158,6 +158,7 @@ $FontAwesomePath:    '../font';
     --polis-description-border-color: #2980b9;
     --polis-btn-primary-fg: white;
     --polis-btn-primary-bg: #0090ff;
+    --polis-nav-tabs-link-hover-fg-color: black;
 
     --polis-sans-serif-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     --polis-serif-font-family: chaparral-pro, serif;
@@ -190,7 +191,6 @@ $FontAwesomePath:    '../font';
     --polis-social-media-share-button-font: 500 12px var(--polis-default-font-family);
     --polis-footer-link-font: 18px Georgia, serif;
     --polis-description-font: 16px var(--polis-serif-font-family);
-    --polis-nav-tabs-link-hover-fg-color: black;
     --polis-help-text-small-screen-font-size: 12px;
 }
 
