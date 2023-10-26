@@ -61,6 +61,8 @@ $FontAwesomePath:    '../font';
     --footer-link-fg-color: rgb(150,150,150);
     --header-footer-bg-color: #F4F4F4;
     --description-border-color: #2980b9;
+    --btn-primary-fg: white;
+    --btn-primary-bg: #0090ff;
 
     --sans-serif-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     --serif-font-family: chaparral-pro, serif;
@@ -83,7 +85,7 @@ $FontAwesomePath:    '../font';
     --btn-small-font: 700 12px var(--default-font-family);
     --btn-vote-font: 700 14px var(--default-font-family);
     --moderate-button-font-weight: 500;
-    --help-text-welcome-font: italic 16px var(--serif-font-family);
+    --help-text-font: italic 16px var(--serif-font-family);
     --social-name-font-weight: 300;
     --remaining-statements-font: italic 300 12px Georgia, serif;
     --statement-text-font: 400 18px var(--default-font-family);
@@ -94,6 +96,7 @@ $FontAwesomePath:    '../font';
     --footer-link-font: 18px Georgia, serif;
     --description-font: 16px var(--serif-font-family);
     --nav-tabs-link-hover-fg-color: black;
+    --help-text-small-screen-font-size: 12px;
     */
 
     /*
@@ -153,6 +156,8 @@ $FontAwesomePath:    '../font';
     --polis-footer-link-fg-color: rgb(150,150,150);
     --polis-header-footer-bg-color: #F4F4F4;
     --polis-description-border-color: #2980b9;
+    --polis-btn-primary-fg: white;
+    --polis-btn-primary-bg: #0090ff;
 
     --polis-sans-serif-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     --polis-serif-font-family: chaparral-pro, serif;
@@ -175,7 +180,7 @@ $FontAwesomePath:    '../font';
     --polis-btn-small-font: 700 12px var(--polis-default-font-family);
     --polis-btn-vote-font: 700 14px var(--polis-default-font-family);
     --polis-moderate-button-font-weight: 500;
-    --polis-help-text-welcome-font: italic 16px var(--polis-serif-font-family);
+    --polis-help-text-font: italic 16px var(--polis-serif-font-family);
     --polis-social-name-font-weight: 300;
     --polis-remaining-statements-font: italic 300 12px Georgia, serif;
     --polis-statement-text-font: 400 18px var(--polis-default-font-family);
@@ -186,6 +191,7 @@ $FontAwesomePath:    '../font';
     --polis-footer-link-font: 18px Georgia, serif;
     --polis-description-font: 16px var(--polis-serif-font-family);
     --polis-nav-tabs-link-hover-fg-color: black;
+    --polis-help-text-small-screen-font-size: 12px;
 }
 
 .svgIcon {
