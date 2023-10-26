@@ -87,7 +87,7 @@ s.notSentSinceDemo = "(ddim mewn gwirionedd, demo yw hwn)";
 s.submitComment = "Cyflwyno";
 s.tipStarred = "Wedi'i farcio fel rhywbeth pwysig.";
 s.participantHelpWelcomeText = "Croeso i fath newydd o sgwrs - <em> pleidleisiwch </em> ar ddatganiadau pobl eraill.";
-s.participantHelpGroupsText = "Mae'r bobl sy'n pleidleisio'r un fath  <span style='font-weight: 700;'>wedi'u grwpio.</span> Cliciwch grŵp i weld pa safbwyntiau maen nhw'n eu rhannu. <a style='font-weight: 700; cursor: pointer; text-decoration: underline' id='helpTextGroupsExpand'>...mwy</a>";
+s.participantHelpGroupsText = "Mae'r bobl sy'n pleidleisio'r un fath  <b>wedi'u grwpio.</b> Cliciwch grŵp i weld pa safbwyntiau maen nhw'n eu rhannu. <a id='helpTextGroupsExpand'>...mwy</a>";
 s.participantHelpGroupsNotYetText = "Bydd y ddelwedd yn ymddangos unwaith y bydd 7 cyfrannwr wedi dechrau pleidleisio.";
 s.helpWhatAreGroupsDetail = "<p>Mae'n debyg eich bod wedi gweld 'recommended products' ar Amazon, neu 'recommended films' ar Netflix. Mae pob un o'r gwasanaethau hynny'n defnyddio ystadegau i grwpio'r defnyddiwr gyda phobl sy'n prynu ac yn gwylio pethau tebyg, yna'n dangos pethau iddyn nhw'n seiliedig ar beth ddaru'r grŵp brynu neu wylio. </p> <p> Pan fydd defnyddiwr yn pleidleisio ar ddatganiadau, maen nhw'n cael eu grwpio gyda phobl sydd wedi pleidleisio yn yr un ffordd! Gallwch weld y grwpiau hynny isod. Mae pob un yn cynnwys pobl sydd â barn debyg. Mae syniadau hynod ddiddorol i'w darganfod ym mhob sgwrs. Ewch ymlaen - cliciwch grŵp i weld beth ddaeth â nhw at ei gilydd a beth sy'n eu gwneud yn unigryw! </p>";
 s.socialConnectPrompt = "Dewiswch i gysylltu i weld ffrindiau a phobl rydych chi'n eu dilyn yn y ddelwedd.";

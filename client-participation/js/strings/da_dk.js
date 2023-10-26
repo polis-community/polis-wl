@@ -78,8 +78,8 @@ s.commentTooLongByChars = "Længde på kommentar overskrider grænsen med {{CHAR
 s.notSentSinceDemo = "(not really, this is a demo)";
 s.submitComment = "Indsend";
 s.tipStarred = "Markeret som vigtig.";
-s.participantHelpWelcomeText = "Velkommen til en ny slags samtale - <span style='font-weight: 700;'>stem</span> på personers holdninger og <span style='font-weight: 700;'>bidrag</span> med dine egne.";
-s.participantHelpGroupsText = "Personer der stemmer lig hinanden <span style='font-weight: 700;'>grupperes.</span> Klik på en gruppe for at se, hvilke synspunkter de deler <a style='font-weight: 700; cursor: pointer; text-decoration: underline' id='helpTextGroupsExpand'>...mere</a>";
+s.participantHelpWelcomeText = "Velkommen til en ny slags samtale - <b>stem</b> på personers holdninger og <b>bidrag</b> med dine egne.";
+s.participantHelpGroupsText = "Personer der stemmer lig hinanden <b>grupperes.</b> Klik på en gruppe for at se, hvilke synspunkter de deler <a id='helpTextGroupsExpand'>...mere</a>";
 s.participantHelpGroupsNotYetText = "Visualisering kan først ses når 7 deltagere har stemt";
 s.helpWhatAreGroupsDetail = "<p>Du har sikkert set 'anbefalede produkter' på Amazon eller 'anbefalede film' på Netflix. Tjenesterne grupperer dig med personer, der køber eller ser lignende ting, så du får anbefalet, hvad de købte eller så.</p> <p> Når du stemmer på en kommentar, bliver du grupperet med personer der stemte ligesom dig. Du kan se grupperne her. Hver gruppe er sammensat af personer med lignende holdninger. Der kan være fascinerende indsigt i dette - gå på opdagelse og se, hvad der gør grupperne unikke. </p>";
 s.socialConnectPrompt = "Du kan forbinde for at se venner og personer du følger i visualiseringen.";

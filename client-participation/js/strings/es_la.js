@@ -78,8 +78,8 @@ s.commentTooLongByChars = "Excedió el límite de carácters por {{CHARACTERS_CO
 s.notSentSinceDemo = "(en realidad no, este es un demo)";
 s.submitComment = "Enviar";
 s.tipStarred = "Marcado como importante.";
-s.participantHelpWelcomeText = "Bienvenido a un nuevo tipo de discusión - <span style='font-weight: 700;'>vota</span> en las opiniones de los demás y <span style='font-weight: 700;'>contribuye</span> opiniones propias.";
-s.participantHelpGroupsText = "<span style='font-weight: 700;'>Se agrupa</span> toda la gente que vota de manera similar. Haz clic en un grupo para ver los puntos de vista que comparten sus miembros <a style='font-weight: 700; cursor: pointer; text-decoration: underline' id='helpTextGroupsExpand'>...más</a>";
+s.participantHelpWelcomeText = "Bienvenido a un nuevo tipo de discusión - <b>vota</b> en las opiniones de los demás y <b>contribuye</b> opiniones propias.";
+s.participantHelpGroupsText = "<b>Se agrupa</b> toda la gente que vota de manera similar. Haz clic en un grupo para ver los puntos de vista que comparten sus miembros <a id='helpTextGroupsExpand'>...más</a>";
 s.participantHelpGroupsNotYetText = "La visualización aparecerá cuando 7 participantes votan";
 s.helpWhatAreGroupsDetail = "<p>Probablemente has visto los 'productos recomendados' en Amazon, o las 'películas recomendadas' en Netflix. Esos servicios usan la estadística para agruparte con la demás gente que compra y mira cosas similares y entonces mostrarte cosas compradas o miradas por ellos.</p> <p> Cuando votas en un comentario de Pol.is, ¡serás agrupado con gente que ha votado de manera similar! Aquí abajo puedes explorar los grupos. Cada grupo se compone de gente con opiniones similares. Cada conversación tiene percepciones nuevas y fascinantes para descubrir. ¡Dale! - ¡haz clic en un grupo para ver cuáles opiniones lo unen y cuáles lo hace único! </p>";
 s.socialConnectPrompt = "Conéctate para ver tus amigos y la gente que sigues en la visualización.";

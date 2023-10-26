@@ -74,7 +74,7 @@ s.notSentSinceDemo = "(これはデモンストレーションです)";
 s.submitComment = "提出";
 s.tipStarred = "重要マークを付ける";
 s.participantHelpWelcomeText = "新しい形式の会話へようこそ。他の人の意見に<em>投票</em>してみてください。";
-s.participantHelpGroupsText = "意見が似ている人は<span style='font-weight: 700;'>グループにまとめられます。</span>グループをクリックすると、そこの人の視点になれます。<a style='font-weight: 700; cursor: pointer; text-decoration: underline' id='helpTextGroupsExpand'>...more</a>";
+s.participantHelpGroupsText = "意見が似ている人は<b>グループにまとめられます。</b>グループをクリックすると、そこの人の視点になれます。<a id='helpTextGroupsExpand'>...more</a>";
 s.participantHelpGroupsNotYetText = "7人以上が投票していると、図形が表示されます。";
 s.helpWhatAreGroupsDetail = "<p>Amazonの「お勧めの商品」、Netflixの「お勧めの映画」は、統計を使用して、類似のものを購入したり視聴しているユーザをグループ化し、同じグループの他のユーザが購入または視聴しているものを表示します。</p><p>Pol.isでも同様です。グループは以下で確認でき、似たような意見を持つ人々で構成されています。グループをクリックすると、何がそのグループの特徴となっているのかがわかります。</p>";
 s.socialConnectPrompt = "ログインしていると、ビジュアルにあなたの位置が表示それます。";

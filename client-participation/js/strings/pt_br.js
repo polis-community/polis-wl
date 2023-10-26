@@ -60,8 +60,8 @@ s.tipNoQuestions = "Comentários podem ser afirmações em vez de perguntas. Os 
 s.notSentSinceDemo = "(na real não, esse é um demo)";
 s.submitComment = "Enviar";
 s.tipStarred = "Marcado como importante.";
-s.participantHelpWelcomeText = "Bem vindo a um novo jeito de discutir - <span style='font-weight: 700;'>opine</span> sobre os comentários das pessoas e <span style='font-weight: 700;'>contribua</span> com o seu.";
-s.participantHelpGroupsText = "Pessoas que participam de forma parecida <span style='font-weight: 700;'>são agrupadas.</span> Clique num grupo para ver que pontos de vista elas compartilham <a style='font-weight: 700; cursor: pointer; text-decoration: underline' id='helpTextGroupsExpand'>...mais</a>";
+s.participantHelpWelcomeText = "Bem vindo a um novo jeito de discutir - <b>opine</b> sobre os comentários das pessoas e <b>contribua</b> com o seu.";
+s.participantHelpGroupsText = "Pessoas que participam de forma parecida <b>são agrupadas.</b> Clique num grupo para ver que pontos de vista elas compartilham <a id='helpTextGroupsExpand'>...mais</a>";
 s.participantHelpGroupsNotYetText = "A visualização dos grupos ira aparecer só depois de 7 participantes terem opinado";
 s.helpWhatAreGroupsDetail = "<p> Quando você opina sobre um ou mais comentários, é agrupado com pessoas que opinaram de um jeito parecido contigo! Você pode ver esses grupos abaixo. Cada um é formado por pessoas que tem opiniões parecidas. Há ideias fascinantes para descobrir em cada conversa. Vá em frente - clique num grupo para ver o que os uniu e o que faz eles serem únicos! </p>";
 s.socialConnectPrompt = "Conecte para visualizar os amigos e pessoas que você segue.";

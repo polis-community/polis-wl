@@ -182,6 +182,12 @@ img {
   font: var(--help-text-font, var(--polis-help-text-font));
 }
 
+#helpTextGroupsExpand {
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .affix {
   position: fixed;
   // top: 200px;
