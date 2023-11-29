@@ -1,5 +1,8 @@
 module.exports = {
 
+  // Whether to enable Twitter integration
+  ENABLE_TWITTER: false,
+
   // Whether to enable Facebook integration
   ENABLE_FACEBOOK: false,
 
