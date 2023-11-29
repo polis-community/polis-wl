@@ -122,6 +122,7 @@ module.exports = (env, options) => {
         templateParameters: {
           domainWhitelist: `["${polisConfig.domainWhitelist.join('","')}"]`,
           versionString: pkg.version,
+          enableFacebook: polisConfig.ENABLE_FACEBOOK,
           fbAppId: polisConfig.FB_APP_ID
         }
       }),

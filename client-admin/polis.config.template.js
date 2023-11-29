@@ -1,5 +1,8 @@
 module.exports = {
 
+  // Whether to enable Facebook integration
+  ENABLE_FACEBOOK: false,
+
   FB_APP_ID: '661042417336977',
 
   // Leaving any of these blank will not show them

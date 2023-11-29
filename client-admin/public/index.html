@@ -9,6 +9,7 @@
   <body>
     <div id="root"></div>
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <% if (enableFacebook && fbAppId) { %>
     <div id="fb-root"></div>
     <script>
       window.fbAsyncInit = function () {
@@ -32,6 +33,7 @@
         fjs.parentNode.insertBefore(js, fjs);
       })(document, "script", "facebook-jssdk");
     </script>
+    <% } %>
     <script>
       window.version = "NULL_VERSION";
     </script>

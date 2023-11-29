@@ -110,6 +110,7 @@ module.exports = (env, options) => {
         filename: (isDevBuild || isDevServer) ? 'index.html' : 'index_admin.html',
         inject: "body",
         templateParameters: {
+          enableFacebook: polisConfig.ENABLE_FACEBOOK,
           fbAppId: polisConfig.FB_APP_ID
         },
       }),
