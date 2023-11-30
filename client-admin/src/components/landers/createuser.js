@@ -5,7 +5,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { doCreateUser, doFacebookSignin } from '../../actions'
 import { Heading, Box, Text, Button, jsx } from 'theme-ui'
-import { PRIVACY_URL, TERMS_OF_SERVICE_URL } from '../../../polis.config'
+import { ENABLE_FACEBOOK, PRIVACY_URL, TERMS_OF_SERVICE_URL } from '../../../polis.config'
 
 import { Link } from 'react-router-dom'
 import StaticLayout from './lander-layout'
@@ -161,17 +161,20 @@ class Createuser extends React.Component {
           </Link>
         </Box>
 
-        <Button
-          sx={{ my: [2] }}
-          id="signupFacebookButton"
-          onClick={this.facebookButtonClicked.bind(this)}>
-          Sign up with Facebook
-        </Button>
-        <Text>
-          If you click &apos;Sign in with Facebook&apos; and are not a pol.is
-          user, you will be registered and you agree to the pol.is terms and
-          privacy policy
-        </Text>
+        {ENABLE_FACEBOOK && <>
+            <Button
+              sx={{ my: [2] }}
+              id="signupFacebookButton"
+              onClick={this.facebookButtonClicked.bind(this)}>
+              Sign up with Facebook
+            </Button>
+            <Text>
+              If you click &apos;Sign in with Facebook&apos; and are not a pol.is
+              user, you will be registered and you agree to the pol.is terms and
+              privacy policy
+            </Text>
+        </>
+        }
       </Box>
     )
   }

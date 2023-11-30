@@ -9,6 +9,7 @@ export const CheckboxField = ({
   field,
   label = '',
   children,
+  disabled = false,
   isIntegerBool = false
 }) => {
   const { zid_metadata } = useSelector((state) => state.zid_metadata)
@@ -37,6 +38,7 @@ export const CheckboxField = ({
         <input
           type="checkbox"
           label={label}
+          disabled={disabled}
           data-test-id={field}
           checked={
             isIntegerBool ? zid_metadata[field] === 1 : zid_metadata[field]

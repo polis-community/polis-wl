@@ -6,6 +6,7 @@ import { doSignin, doFacebookSignin } from '../../actions'
 import { Link, Redirect } from 'react-router-dom'
 import { Heading, Box, Text, Button, jsx } from 'theme-ui'
 import StaticLayout from './lander-layout'
+import { ENABLE_FACEBOOK } from '../../../polis.config'
 
 import strings from '../../strings/strings'
 
@@ -116,6 +117,7 @@ class SignIn extends React.Component {
             <Link to={'/createuser'}>Sign up</Link>
           </Text>
         </Box>
+        {ENABLE_FACEBOOK &&
         <Box sx={{ my: 4 }}>
           <Button
             id="facebookSigninButton"
@@ -128,6 +130,7 @@ class SignIn extends React.Component {
             privacy policy
           </Text>
         </Box>
+        }
       </Box>
     )
   }

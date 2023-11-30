@@ -57,6 +57,23 @@ function writeHeadersJsonForOutputFiles(isDev) {
     writeHeadersJson('css/*.css', headersData)
   }
 
+  function writeHeadersJsonSvg() {
+    const headersData = {
+      ...(!isDev && { 'Content-Encoding': 'gzip' }),
+      'Content-Type': 'image/svg+xml',
+      'Cache-Control':isDev ? 'no-cache' : 'public,max-age=3600,s-maxage=3600'
+    }
+    writeHeadersJson('images/**/*.svg', headersData)
+  }
+
+  function writeHeadersJsonPng() {
+    const headersData = {
+      'Content-Type': 'image/png',
+      'Cache-Control':isDev ? 'no-cache' : 'public,max-age=3600,s-maxage=3600'
+    }
+    writeHeadersJson('images/**/*.png', headersData)
+  }
+
   function writeHeadersJsonMisc() {
     const headersData = {
       'Content-Type': 'image/vnd.microsoft.icon',
@@ -68,6 +85,8 @@ function writeHeadersJsonForOutputFiles(isDev) {
   writeHeadersJsonCss()
   writeHeadersJsonHtml()
   writeHeadersJsonJs()
+  writeHeadersJsonSvg()
+  writeHeadersJsonPng()
   writeHeadersJsonMisc()
 }
 
@@ -103,6 +122,7 @@ module.exports = (env, options) => {
       new CopyPlugin({
         patterns: [
           { from: 'public', globOptions: { ignore: ['**/index.html']}},
+          { from: path.resolve(__dirname, 'node_modules', 'twemoji-emojis', 'vendor'), to: 'images/twemoji/' },
         ],
       }),
       new HtmlWebPackPlugin({
@@ -110,6 +130,8 @@ module.exports = (env, options) => {
         filename: (isDevBuild || isDevServer) ? 'index.html' : 'index_admin.html',
         inject: "body",
         templateParameters: {
+          enableTwitter: polisConfig.ENABLE_TWITTER,
+          enableFacebook: polisConfig.ENABLE_FACEBOOK,
           fbAppId: polisConfig.FB_APP_ID
         },
       }),
