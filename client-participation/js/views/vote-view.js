@@ -9,6 +9,7 @@ var preloadHelper = require("../util/preloadHelper");
 var template = require("../templates/vote-view.handlebars");
 var Utils = require("../util/utils");
 var Strings = require("../strings");
+var config = require("../../polis.config");
 var $ = require("jquery");
 
 var iOS = Utils.isIos();
@@ -74,8 +75,8 @@ module.exports = Handlebones.ModelView.extend({
       ctx.floatStyle = "float:right;"
     }
 
-    ctx.auth_opt_tw = preload.firstConv.auth_opt_tw;
-    ctx.auth_opt_fb = preload.firstConv.auth_opt_fb;
+    ctx.auth_opt_tw = config.ENABLE_TWITTER && preload.firstConv.auth_opt_tw;
+    ctx.auth_opt_fb = config.ENABLE_FACEBOOK && preload.firstConv.auth_opt_fb;
     var social = ctx.social;
     var socialCtx = {
       name: Strings.anonPerson,
