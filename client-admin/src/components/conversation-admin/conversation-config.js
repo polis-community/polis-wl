@@ -16,7 +16,7 @@ import emoji from '../framework/custom-emoji'
 import { CheckboxField } from './CheckboxField'
 import ModerateCommentsSeed from './seed-comment'
 // import ModerateCommentsSeedTweet from "./seed-tweet";
-import { ENABLE_FACEBOOK, ENABLE_TWITTER } from '../../../polis.config'
+import { ENABLE_FACEBOOK, ENABLE_TWITTER } from '../../../../client-participation/polis.config'
 
 @connect((state) => state.user)
 @connect((state) => state.zid_metadata)
