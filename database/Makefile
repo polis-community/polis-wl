@@ -23,3 +23,13 @@ start:
 stop:
 	$(info Stop PostgreSQL)
 	PGDATA=postgres-data/ pg_ctl stop
+
+flyway-migrate:
+	docker run --rm --network host -v ${PWD}/flyway:/flyway/conf -v ${PWD}/flyway:/flyway/sql flyway/flyway migrate
+
+flyway-undo:
+	docker run --rm --network host -v ${PWD}/flyway:/flyway/conf -v ${PWD}/flyway:/flyway/sql flyway/flyway undo
+
+flyway-clean:
+	docker run --rm --network host -v ${PWD}/flyway:/flyway/conf -v ${PWD}/flyway:/flyway/sql flyway/flyway clean
+
