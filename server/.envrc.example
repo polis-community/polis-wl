@@ -30,7 +30,7 @@ export WEBSERVER_USERNAME=ws-user
 export WEBSERVER_PASS=ws-pass
 
 # Some URL confguration
-export PRIVACY_URL="/privacy",
+export PRIVACY_URL="/privacy"
 export TERMS_OF_SERVICE_URL="/tos"
 
 # Set to `true` and copy across Google Translate credentials file from the Cloud Console and reference here
