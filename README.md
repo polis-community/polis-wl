@@ -1,4 +1,16 @@
-# Pol.is Whitelabel
+# Pol.is as a blackbox API service called by one's backend
+
+## polis-community change
+
+This a fork from the fork that:
+- correct various bugs (see the latest PRs)
+- extract the PGSQL database from the compose to an external DB
+- make authentication optional to interact with the API for creating users, conversations, opinions, votes
+- allow to use external `conversation_id`, `user_id` (mapped to `ownername` and `users.hname`) and `opinion_id` (mapped to unique `comments.txt` SQL column)
+- (work-in-progress) allow to delete comments/votes
+- see the Bruno API Collection for details
+
+# Initial REAMDE:  Pol.is Whitelabel
 
 Pol.is Whitelabel is a fork of [Pol.is](https://github.com/compdemocracy/polis). Pol.is is
 a system for understanding what large groups of people think about an issue. Pol.is Whitelabel is a pared down version of Pol.is with the goals of separating out deployment code from application code, make the system more configurable and refactoring to make feature development more straightforward.

@@ -195,11 +195,11 @@ export type Demo = {
 };
 
 export type Vote = {
-  uid?: any;
+  uid: any;
   zid: any;
   pid: any;
   lang: any;
-  tid: any;
+  txt: any;
   vote: any;
   weight: any;
   starred: any;

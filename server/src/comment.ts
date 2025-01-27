@@ -67,6 +67,27 @@ function getComment(zid: Id, tid: Id) {
   );
 }
 
+function getTidFromTxt(zid: Id, txt: string) {
+  console.log(`Get tid from txt: ${zid} "${txt}"`);
+  return new Promise(function (resolve, reject: (arg0: string) => void) {
+    pg.queryP("select * from comments where zid = ($1) and txt = ($2);", [
+      zid,
+      txt,
+    ])
+      // Argument of type '(rows: Row[]) => Row' is not assignable to parameter of type '(value: unknown) => Row | PromiseLike<Row>'.
+      // Types of parameters 'rows' and 'value' are incompatible.
+      // Type 'unknown' is not assignable to type 'Row[]'.ts(2345)
+      // @ts-ignore
+      .then((rows: Row[]) => {
+        if (rows !== null && rows.length !== 0) {
+          resolve(rows[0].tid);
+        } else {
+          reject("polis_err_txt_does_not_match_any_pid");
+        }
+      });
+  });
+}
+
 function getComments(o: CommentType) {
   let commentListPromise = o.moderation
     ? _getCommentsForModerationList(o)
@@ -121,7 +142,7 @@ function getComments(o: CommentType) {
         });
         let uids = _.pluck(nonAnonComments, "uid");
         return User.getSocialInfoForUsers(uids, o.zid).then(function (
-          socialInfos: any[]
+          socialInfos: any[],
         ) {
           let uidToSocialInfo: UidToSocialInfo = {};
           socialInfos.forEach(function (info: {
@@ -157,7 +178,7 @@ function getComments(o: CommentType) {
               } catch (e) {
                 console.error(
                   "error parsing JSON of fb_public_profile for uid: ",
-                  info.uid
+                  info.uid,
                 );
               }
             }
@@ -247,7 +268,7 @@ function _getCommentsForModerationList(o: {
       return pg.queryP_metered_readOnly(
         "_getCommentsForModerationList",
         "select * from comments where comments.zid = ($1)" + modClause,
-        params
+        params,
       );
     }
 
@@ -256,7 +277,7 @@ function _getCommentsForModerationList(o: {
         "_getCommentsForModerationList",
         "select * from (select tid, vote, count(*) from votes_latest_unique where zid = ($1) group by tid, vote) as foo full outer join comments on foo.tid = comments.tid where comments.zid = ($1)" +
           modClause,
-        params
+        params,
       )
       .then((rows: Row[]) => {
         // each comment will have up to three rows. merge those into one with agree/disagree/pass counts.
@@ -307,7 +328,7 @@ function _getCommentsList(o: {
   // @ts-ignore
   return new MPromise("_getCommentsList", function (
     resolve: (rows: Row[]) => void,
-    reject: (arg0: any) => void
+    reject: (arg0: any) => void,
   ) {
     Conversation.getConversationInfo(o.zid).then(function (conv: {
       strict_moderation: any;
@@ -334,8 +355,8 @@ function _getCommentsList(o: {
               .subQuery()
               .select(SQL.sql_votes_latest_unique.tid)
               .where(SQL.sql_votes_latest_unique.zid.equals(o.zid))
-              .and(SQL.sql_votes_latest_unique.pid.equals(o.not_voted_by_pid))
-          )
+              .and(SQL.sql_votes_latest_unique.pid.equals(o.not_voted_by_pid)),
+          ),
         );
       }
 
@@ -391,7 +412,7 @@ function getNumberOfCommentsRemaining(zid: any, pid: any) {
       "remaining as (select count(*) as remaining from c left join v on c.tid = v.tid where v.vote is null), " +
       "total as (select count(*) as total from c) " +
       "select cast(remaining.remaining as integer), cast(total.total as integer), cast(($2) as integer) as pid from remaining, total;",
-    [zid, pid]
+    [zid, pid],
   );
 }
 
@@ -404,7 +425,7 @@ function translateAndStoreComment(zid: any, tid: any, txt: any, lang: any) {
         pg
           .queryP(
             "insert into comment_translations (zid, tid, txt, lang, src) values ($1, $2, $3, $4, $5) returning *;",
-            [zid, tid, translation, lang, src]
+            [zid, tid, translation, lang, src],
           )
           //       Argument of type '(rows: Row[]) => Row' is not assignable to parameter of type '(value: unknown) => Row | PromiseLike<Row>'.
           // Types of parameters 'rows' and 'value' are incompatible.
@@ -450,6 +471,7 @@ export {
 
 export default {
   getComment,
+  getTidFromTxt,
   getComments,
   _getCommentsForModerationList,
   _getCommentsList,

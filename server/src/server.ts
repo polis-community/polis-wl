@@ -221,7 +221,7 @@ setInterval(function () {
     "heapTotal:",
     heapTotal,
     "rss:",
-    rss
+    rss,
   );
 }, 10 * 1000);
 
@@ -258,7 +258,7 @@ function haltOnTimeout(req: { timedout: any }, res: any, next: () => void) {
 function getUidForApiKey(apikey: any) {
   return dbPgQuery.queryP_readOnly_wRetryIfEmpty(
     "select uid from apikeysndvweifu WHERE apikey = ($1);",
-    [apikey]
+    [apikey],
   );
 }
 
@@ -268,7 +268,7 @@ function doApiKeyBasicAuth(
   isOptional: any,
   req: any,
   res: any,
-  next: (err: any) => void
+  next: (err: any) => void,
 ) {
   let token = header.split(/\s+/).pop() || "", // and the encoded auth token
     auth = new Buffer(token, "base64").toString(), // convert from base64
@@ -285,7 +285,7 @@ function doApiKeyAuth(
   isOptional: any,
   req: any,
   res: { status: (arg0: number) => void },
-  next: { (err: any): void; (err: any): void; (arg0?: string): void }
+  next: { (err: any): void; (err: any): void; (arg0?: string): void },
 ) {
   getUidForApiKey(apikey)
     //   Argument of type '(rows: string | any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
@@ -320,7 +320,7 @@ function doXidApiKeyAuth(
     (err: any): void;
     (err: any): void;
     (arg0?: string | undefined): void;
-  }
+  },
 ) {
   getUidForApiKey(apikey)
     .then(
@@ -343,7 +343,7 @@ function doXidApiKeyAuth(
           req.body.x_profile_image_url || req?.query?.x_profile_image_url,
           req.body.x_name || req?.query?.x_name || null,
           req.body.x_email || req?.query?.x_email || null,
-          !!req.body.agid || !!req?.query?.agid || null
+          !!req.body.agid || !!req?.query?.agid || null,
           //         Argument of type '(rows: string | any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
           // Types of parameters 'rows' and 'value' are incompatible.
           //   Type 'unknown' is not assignable to type 'string | any[]'.
@@ -371,7 +371,7 @@ function doXidApiKeyAuth(
         res.status(403);
         console.error(err.stack);
         next("polis_err_auth_no_such_api_token3");
-      }
+      },
     )
     .catch(function (err: { stack: any }) {
       res.status(403);
@@ -385,7 +385,7 @@ function doHeaderAuth(
   isOptional: any,
   req: { headers?: { [x: string]: any }; body: { uid?: any } },
   res: { status: (arg0: number) => void },
-  next: { (err: any): void; (arg0?: string | undefined): void }
+  next: { (err: any): void; (arg0?: string | undefined): void },
 ) {
   let token = "";
   if (req && req.headers) token = req?.headers?.["x-polis"];
@@ -406,7 +406,7 @@ function doHeaderAuth(
       }
       assigner(req, "uid", Number(uid));
       next();
-    }
+    },
   );
 }
 
@@ -415,7 +415,7 @@ function doPolisLtiTokenHeaderAuth(
   isOptional: any,
   req: { headers?: { [x: string]: any } },
   res: { status: (arg0: number) => void },
-  next: { (err: any): void; (arg0?: string): void }
+  next: { (err: any): void; (arg0?: string): void },
 ) {
   let token = req?.headers?.["x-polis"];
 
@@ -468,7 +468,7 @@ function initializePolisHelpers() {
                   const firstResult = x[0];
                   console.log(
                     "backfill",
-                    firstResult.language + "\t\t" + c.txt
+                    firstResult.language + "\t\t" + c.txt,
                   );
                   dbPgQuery
                     .queryP(
@@ -478,17 +478,17 @@ function initializePolisHelpers() {
                         firstResult.confidence,
                         c.zid,
                         c.tid,
-                      ]
+                      ],
                     )
                     .then(() => {
                       doNext();
                     });
-                }
+                },
               );
             }
           }
           doNext();
-        }
+        },
       );
   }
 
@@ -501,7 +501,7 @@ function initializePolisHelpers() {
         Connection: string;
       }) => void;
     },
-    next: () => void
+    next: () => void,
   ) {
     res.set({
       "Content-Type": "application/json",
@@ -519,7 +519,7 @@ function initializePolisHelpers() {
       writeHead: (arg0: number, arg1: { Location: string }) => void;
       end: () => any;
     },
-    next: () => any
+    next: () => any,
   ) {
     let exempt = devMode;
 
@@ -547,7 +547,7 @@ function initializePolisHelpers() {
       writeHead: (arg0: number, arg1: { Location: string }) => void;
       end: () => any;
     },
-    next: () => any
+    next: () => any,
   ) {
     if (/www.pol.is/.test(req?.headers?.host || "")) {
       res.writeHead(302, {
@@ -564,7 +564,7 @@ function initializePolisHelpers() {
       writeHead: (arg0: number, arg1: { Location: string }) => void;
       end: () => any;
     },
-    next: () => any
+    next: () => any,
   ) {
     if (/api.pol.is/.test(req?.headers?.host || "")) {
       if (req.url === "/" || req.url === "") {
@@ -589,7 +589,7 @@ function initializePolisHelpers() {
     isOptional: any,
     req: AuthRequest,
     res: { status: (arg0: number) => void },
-    onDone: { (err: any): void; (arg0?: string): void }
+    onDone: { (err: any): void; (arg0?: string): void },
   ) {
     return Conversation.getConversationInfoByConversationId(conversation_id)
       .then((conv: { org_id: any; zid: any }) => {
@@ -600,7 +600,7 @@ function initializePolisHelpers() {
           req.body.x_profile_image_url || req?.query?.x_profile_image_url,
           req.body.x_name || req?.query?.x_name || null,
           req.body.x_email || req?.query?.x_email || null,
-          !!req.body.agid || !!req?.query?.agid || null
+          !!req.body.agid || !!req?.query?.agid || null,
           //         Argument of type '(rows: string | any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
           // Types of parameters 'rows' and 'value' are incompatible.
           //   Type 'unknown' is not assignable to type 'string | any[]'.
@@ -633,7 +633,7 @@ function initializePolisHelpers() {
         headers?: Headers;
         query?: Query;
       },
-      key: string
+      key: string,
     ) {
       return req.body[key] || req?.headers?.[key] || req?.query?.[key];
     }
@@ -645,7 +645,7 @@ function initializePolisHelpers() {
         p: { uid?: any };
         body: Body;
       },
-      res: { status: (arg0: number) => void }
+      res: { status: (arg0: number) => void },
     ) {
       //var token = req.body.token;
       let token = req.cookies[cookies.COOKIES.TOKEN];
@@ -653,7 +653,7 @@ function initializePolisHelpers() {
 
       return new Promise(function (
         resolve: (arg0: any) => void,
-        reject: (arg0: string) => void
+        reject: (arg0: string) => void,
       ) {
         function onDone(err?: string) {
           if (err) {
@@ -679,7 +679,7 @@ function initializePolisHelpers() {
             isOptional,
             req,
             res,
-            onDone
+            onDone,
           );
         } else if (getKey(req, "polisApiKey") && getKey(req, "xid")) {
           console.log("authtype", "doXidApiKeyAuth");
@@ -690,7 +690,7 @@ function initializePolisHelpers() {
             isOptional,
             req,
             res,
-            onDone
+            onDone,
           );
         } else if (getKey(req, "xid") && getKey(req, "conversation_id")) {
           console.log("authtype", "doXidConversationIdAuth");
@@ -701,7 +701,7 @@ function initializePolisHelpers() {
             isOptional,
             req,
             res,
-            onDone
+            onDone,
           );
         } else if (req?.headers?.["x-sandstorm-app-polis-apikey"]) {
           console.log("authtype", "doApiKeyAuth");
@@ -711,7 +711,7 @@ function initializePolisHelpers() {
             isOptional,
             req,
             res,
-            onDone
+            onDone,
           );
         } else if (req.body["polisApiKey"]) {
           console.log("authtype", "doApiKeyAuth");
@@ -721,7 +721,7 @@ function initializePolisHelpers() {
             isOptional,
             req,
             res,
-            onDone
+            onDone,
           );
         } else if (token) {
           console.log("authtype", "doCookieAuth");
@@ -734,7 +734,7 @@ function initializePolisHelpers() {
             isOptional,
             req,
             res,
-            onDone
+            onDone,
           );
         } else if (req.body.agid) {
           // Auto Gen user  ID
@@ -758,14 +758,14 @@ function initializePolisHelpers() {
                     res.status(500);
                     console.error(err);
                     onDone("polis_err_auth_token_error_2343");
-                  }
+                  },
                 );
               },
               function (err: any) {
                 res.status(500);
                 console.error(err);
                 onDone("polis_err_auth_token_error_1241");
-              }
+              },
             )
             .catch(function (err: any) {
               res.status(500);
@@ -783,7 +783,7 @@ function initializePolisHelpers() {
     return function (
       req: any,
       res: { status: (arg0: number) => void },
-      next: (arg0?: undefined) => void
+      next: (arg0?: undefined) => void,
     ) {
       doAuth(req, res)
         .then(() => {
@@ -829,7 +829,7 @@ function initializePolisHelpers() {
       headers: Headers;
     },
     res: { header: (arg0: string, arg1: string | boolean) => void },
-    next: (arg0?: string) => any
+    next: (arg0?: string) => any,
   ) {
     let host = "";
     if (Config.domainOverride) {
@@ -856,7 +856,7 @@ function initializePolisHelpers() {
       whitelistedCrossDomainRoutes,
       function (regex: { test: (arg0: any) => any }) {
         return regex.test(req.path);
-      }
+      },
     );
 
     if (
@@ -875,11 +875,11 @@ function initializePolisHelpers() {
       res.header("Access-Control-Allow-Origin", host);
       res.header(
         "Access-Control-Allow-Headers",
-        "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With"
+        "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With",
       );
       res.header(
         "Access-Control-Allow-Methods",
-        "GET, PUT, POST, DELETE, OPTIONS"
+        "GET, PUT, POST, DELETE, OPTIONS",
       );
       res.header("Access-Control-Allow-Credentials", true);
     }
@@ -900,7 +900,7 @@ function initializePolisHelpers() {
     dbPgQuery
       .queryP_readOnly(
         "select * from math_main where caching_tick > ($1) order by caching_tick limit 10;",
-        [lastPrefetchedMathTick]
+        [lastPrefetchedMathTick],
       )
       // Argument of type '(rows: any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
       // Types of parameters 'rows' and 'value' are incompatible.
@@ -934,7 +934,7 @@ function initializePolisHelpers() {
             processMathObject(item);
 
             return updatePcaCache(item.zid, item);
-          }
+          },
         );
         Promise.all(results).then((a: any) => {
           setTimeout(fetchAndCacheLatestPcaData, waitTime());
@@ -956,7 +956,7 @@ function initializePolisHelpers() {
       writeHead: (arg0: number, arg1: { Location: string }) => void;
       end: () => any;
     },
-    next: () => any
+    next: () => any,
   ) {
     if (req.body.zid && !req.body.conversation_id) {
       console.log("info", "redirecting old zid user to about page");
@@ -986,33 +986,36 @@ function initializePolisHelpers() {
         zid,
         atDate,
         format,
-        task_bucket
+        task_bucket,
       ).then(() => {
-        setTimeout(() => {
-          dbPgQuery
-            .queryP(
-              "select * from worker_tasks where task_type = 'generate_export_data' and task_bucket = ($1);",
-              [task_bucket]
-            )
-            //           Argument of type '(rows: string | any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
-            // Types of parameters 'rows' and 'value' are incompatible.
-            //   Type 'unknown' is not assignable to type 'string | any[]'.
-            //           Type 'unknown' is not assignable to type 'any[]'.ts(2345)
-            // @ts-ignore
-            .then((rows: string | any[]) => {
-              let ok = rows && rows.length;
-              let newOk;
-              if (ok) {
-                newOk = rows[0].finished_time > 0;
-              }
-              if (ok && newOk) {
-                console.log("runExportTest success");
-              } else {
-                console.log("runExportTest failed");
-                emailBadProblemTime("Math export didn't finish.");
-              }
-            });
-        }, 10 * 60 * 1000); // wait 10 minutes before verifying
+        setTimeout(
+          () => {
+            dbPgQuery
+              .queryP(
+                "select * from worker_tasks where task_type = 'generate_export_data' and task_bucket = ($1);",
+                [task_bucket],
+              )
+              //           Argument of type '(rows: string | any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
+              // Types of parameters 'rows' and 'value' are incompatible.
+              //   Type 'unknown' is not assignable to type 'string | any[]'.
+              //           Type 'unknown' is not assignable to type 'any[]'.ts(2345)
+              // @ts-ignore
+              .then((rows: string | any[]) => {
+                let ok = rows && rows.length;
+                let newOk;
+                if (ok) {
+                  newOk = rows[0].finished_time > 0;
+                }
+                if (ok && newOk) {
+                  console.log("runExportTest success");
+                } else {
+                  console.log("runExportTest failed");
+                  emailBadProblemTime("Math export didn't finish.");
+                }
+              });
+          },
+          10 * 60 * 1000,
+        ); // wait 10 minutes before verifying
       });
     };
     setInterval(runExportTest, 6 * 60 * 60 * 1000); // every 6 hours
@@ -1023,7 +1026,7 @@ function initializePolisHelpers() {
     isOptional: any,
     req: { cookies: { [x: string]: any }; body: { uid?: any } },
     res: { status: (arg0: number) => void },
-    next: { (err: any): void; (arg0?: string): void }
+    next: { (err: any): void; (arg0?: string): void },
   ) {
     let token = req.cookies[cookies.COOKIES.TOKEN];
 
@@ -1049,7 +1052,7 @@ function initializePolisHelpers() {
         }
         assigner(req, "uid", Number(uid));
         next();
-      }
+      },
     );
   }
 
@@ -1061,7 +1064,7 @@ function initializePolisHelpers() {
       (err: any, foo: any): void;
       (err: any): void;
       (arg0: number | null): void;
-    }
+    },
   ) {
     dbPgQuery.query_readOnly(
       "SELECT * FROM zinvites WHERE zid = ($1) AND zinvite = ($2);",
@@ -1072,7 +1075,7 @@ function initializePolisHelpers() {
         } else {
           callback(null); // ok
         }
-      }
+      },
     );
   }
 
@@ -1084,7 +1087,7 @@ function initializePolisHelpers() {
       (err: any, foo: any): void;
       (err: any): void;
       (arg0: number | null): void;
-    }
+    },
   ) {
     dbPgQuery.query(
       "SELECT * FROM suzinvites WHERE zid = ($1) AND suzinvite = ($2);",
@@ -1095,7 +1098,7 @@ function initializePolisHelpers() {
         } else {
           callback(null); // ok
         }
-      }
+      },
     );
   }
 
@@ -1111,7 +1114,7 @@ function initializePolisHelpers() {
         POLIS_FROM_ADDRESS,
         adminEmailEmailTest,
         "monday backup email system test",
-        "seems to be working"
+        "seems to be working",
       );
     }
   }
@@ -1136,7 +1139,7 @@ function initializePolisHelpers() {
   function maybeAddNotificationTask(zid: any, timeInMillis: any) {
     return dbPgQuery.queryP(
       "insert into notification_tasks (zid, modified) values ($1, $2) on conflict (zid) do nothing;",
-      [zid, timeInMillis]
+      [zid, timeInMillis],
     );
   }
 
@@ -1144,7 +1147,7 @@ function initializePolisHelpers() {
     return (
       dbPgQuery
         .queryP(
-          "delete from notification_tasks where zid = (select zid from notification_tasks order by random() for update skip locked limit 1) returning *;"
+          "delete from notification_tasks where zid = (select zid from notification_tasks order by random() for update skip locked limit 1) returning *;",
         )
         //   Argument of type '(rows: string | any[]) => any' is not assignable to parameter of type '(value: unknown) => any'.
         // Types of parameters 'rows' and 'value' are incompatible.
@@ -1168,7 +1171,7 @@ function initializePolisHelpers() {
       // @ts-ignore
       (rows: { now_as_millis: any }[]) => {
         return rows[0].now_as_millis;
-      }
+      },
     );
   }
 
@@ -1179,7 +1182,7 @@ function initializePolisHelpers() {
       dbPgQuery
         .queryP(
           "select * from participants where zid = ($1) and last_notified < ($2) and subscribed > 0;",
-          [zid, timeOfLastEvent]
+          [zid, timeOfLastEvent],
         )
         // Argument of type '(candidates: any[]) => Promise<{ pid: string | number; remaining: any; }[]
         // | null > | null' is not assignable to parameter of type '(value: unknown) => { pid: string | number; remaining: any; } []
@@ -1196,7 +1199,7 @@ function initializePolisHelpers() {
               ptpt.last_notified = Number(ptpt.last_notified);
               ptpt.last_interaction = Number(ptpt.last_interaction);
               return ptpt;
-            }
+            },
           );
           return Promise.all([
             getDbTime(),
@@ -1221,7 +1224,7 @@ function initializePolisHelpers() {
               (item: { zid: any; pid: any }, index: any, length: any) => {
                 return Comment.getNumberOfCommentsRemaining(
                   item.zid,
-                  item.pid
+                  item.pid,
                 ).then(
                   // Argument of type '(rows: any[]) => any' is not assignable to parameter of type '(value: unknown) => any'.
                   // Types of parameters 'rows' and 'value' are incompatible.
@@ -1229,9 +1232,9 @@ function initializePolisHelpers() {
                   // @ts-ignore
                   (rows: any[]) => {
                     return rows[0];
-                  }
+                  },
                 );
-              }
+              },
             ).then((results: any[]) => {
               const needNotification = results.filter(
                 (result: { pid: string | number; remaining: number }) => {
@@ -1275,7 +1278,7 @@ function initializePolisHelpers() {
                     console.log(
                       "doNotificationsForZid",
                       "shouldTryAgain",
-                      "last_notified"
+                      "last_notified",
                     );
                     shouldTryAgain = true;
                     needs = false;
@@ -1288,7 +1291,7 @@ function initializePolisHelpers() {
                     console.log(
                       "doNotificationsForZid",
                       "shouldTryAgain",
-                      "last_interaction"
+                      "last_interaction",
                     );
                     shouldTryAgain = true;
                     needs = false;
@@ -1298,7 +1301,7 @@ function initializePolisHelpers() {
                     needs = needs && isPolisDev(ptpt.uid);
                   }
                   return needs;
-                }
+                },
               );
 
               if (needNotification.length === 0) {
@@ -1315,7 +1318,7 @@ function initializePolisHelpers() {
                     "select uid, subscribe_email from participants_extended where uid in (select uid from participants where pid in (" +
                       pids.join(",") +
                       "));",
-                    []
+                    [],
                   )
                   // Argument of type '(rows: any[]) => Promise<{ pid: string | number; remaining: any; }[]>'
                   // is not assignable to parameter of type '(value: unknown) => { pid: string | number; remaining: any; }[]
@@ -1331,7 +1334,7 @@ function initializePolisHelpers() {
                         // No index signature with a parameter of type 'string' was found on type '{}'.ts(7053)
                         // @ts-ignore
                         uidToEmail[row.uid] = row.subscribe_email;
-                      }
+                      },
                     );
 
                     return Promise.each(
@@ -1339,7 +1342,7 @@ function initializePolisHelpers() {
                       (
                         item: { pid: string | number; remaining: any },
                         index: any,
-                        length: any
+                        length: any,
                       ) => {
                         // Element implicitly has an 'any' type because expression of type 'string | number' can't be used to index type '{}'.
                         // No index signature with a parameter of type 'string' was found on type '{}'.ts(7053)
@@ -1353,14 +1356,14 @@ function initializePolisHelpers() {
                           // No index signature with a parameter of type 'string' was found on type '{}'.ts(7053)
                           // @ts-ignore
                           uidToEmail[uid],
-                          item.remaining
+                          item.remaining,
                         ).then(() => {
                           return dbPgQuery.queryP(
                             "update participants set last_notified = now_as_millis(), nsli = nsli + 1 where uid = ($1) and zid = ($2);",
-                            [uid, zid]
+                            [uid, zid],
                           );
                         });
-                      }
+                      },
                     );
                   })
               );
@@ -1385,7 +1388,7 @@ function initializePolisHelpers() {
               "doNotificationsForZid",
               task.zid,
               "shouldTryAgain",
-              shouldTryAgain
+              shouldTryAgain,
             );
             if (shouldTryAgain) {
               // Since we claimed the task above, there will be no record, so we need to
@@ -1393,9 +1396,9 @@ function initializePolisHelpers() {
               // leave the new one.
               maybeAddNotificationTask(task.zid, task.modified);
             }
-          }
+          },
         );
-      }
+      },
     );
   }
 
@@ -1411,7 +1414,7 @@ function initializePolisHelpers() {
     url?: string,
     conversation_id?: string,
     email?: any,
-    remaining?: any
+    remaining?: any,
   ) {
     let subject =
       "New statements to vote on (conversation " + conversation_id + ")"; // Not sure if putting the conversation_id is ideal, but we need some way to ensure that the notifications for each conversation appear in separte threads.
@@ -1441,7 +1444,7 @@ function initializePolisHelpers() {
     domain: string,
     zid: any,
     isWithinIframe: any,
-    domain_whitelist_override_key: any
+    domain_whitelist_override_key: any,
   ) {
     return (
       dbPgQuery
@@ -1449,7 +1452,7 @@ function initializePolisHelpers() {
           "select * from site_domain_whitelist where site_id = " +
             "(select site_id from users where uid = " +
             "(select owner from conversations where zid = ($1)));",
-          [zid]
+          [zid],
         )
         //     Argument of type '(rows: string | any[]) => boolean' is not assignable to parameter of type '(value: unknown) => boolean | PromiseLike<boolean>'.
         // Types of parameters 'rows' and 'value' are incompatible.
@@ -1500,7 +1503,7 @@ function initializePolisHelpers() {
                   "isParentDomainWhitelisted",
                   33,
                   parts[p],
-                  wParts[p]
+                  wParts[p],
                 );
                 if (wParts[p] !== parts[p]) {
                   bad = true;
@@ -1524,7 +1527,7 @@ function initializePolisHelpers() {
                   "isParentDomainWhitelisted",
                   66,
                   parts[p2],
-                  wParts[p2]
+                  wParts[p2],
                 );
                 if (wParts[p2] !== parts[p2]) {
                   bad2 = true;
@@ -1550,7 +1553,7 @@ function initializePolisHelpers() {
       p: { zid: any; domain_whitelist_override_key: any };
     },
     res: { send: (arg0: number, arg1: string) => void },
-    next: (arg0?: string) => void
+    next: (arg0?: string) => void,
   ) {
     let isWithinIframe =
       req.headers &&
@@ -1563,7 +1566,7 @@ function initializePolisHelpers() {
     if (isWithinIframe) {
       if (ref) {
         const decodedRefString = decodeURIComponent(
-          ref.replace(/.*parent_url=/, "").replace(/&.*/, "")
+          ref.replace(/.*parent_url=/, "").replace(/&.*/, ""),
         );
         if (decodedRefString && decodedRefString.length)
           refParts = decodedRefString.split("/");
@@ -1579,7 +1582,7 @@ function initializePolisHelpers() {
       resultRef,
       zid,
       isWithinIframe,
-      req.p.domain_whitelist_override_key
+      req.p.domain_whitelist_override_key,
     )
       .then(function (isOk: any) {
         if (isOk) {
@@ -1608,11 +1611,11 @@ function initializePolisHelpers() {
       process.env.TWITTER_CONSUMER_SECRET, //'your application secret',
       "1.0A",
       null,
-      "HMAC-SHA1"
+      "HMAC-SHA1",
     );
     return new Promise(function (
       resolve: (arg0: any) => void,
-      reject: (arg0: any) => void
+      reject: (arg0: any) => void,
     ) {
       oauth.post(
         "https://api.twitter.com/1.1/users/lookup.json",
@@ -1634,7 +1637,7 @@ function initializePolisHelpers() {
             list_of_twitter_user_id.forEach(function (id: string) {
               console.log(
                 "adding twitter_user_id to suspendedOrPotentiallyProblematicTwitterIds: " +
-                  id
+                  id,
               );
               suspendedOrPotentiallyProblematicTwitterIds.push(id);
             });
@@ -1643,7 +1646,7 @@ function initializePolisHelpers() {
             data = JSON.parse(data);
             resolve(data);
           }
-        }
+        },
       );
     });
   }
@@ -1652,7 +1655,7 @@ function initializePolisHelpers() {
     return (
       dbPgQuery
         .queryP_readOnly(
-          "select uid, twitter_user_id from twitter_users where modified < (now_as_millis() - 30*60*1000) order by modified desc limit 100;"
+          "select uid, twitter_user_id from twitter_users where modified < (now_as_millis() - 30*60*1000) order by modified desc limit 100;",
         )
         //     Argument of type '(results: string | any[]) => never[] | undefined' is not assignable to parameter of type '(value: unknown) => never[] | PromiseLike<never[] | undefined> | undefined'.
         // Types of parameters 'results' and 'value' are incompatible.
@@ -1666,7 +1669,7 @@ function initializePolisHelpers() {
           }
           twitter_user_ids = _.difference(
             twitter_user_ids,
-            suspendedOrPotentiallyProblematicTwitterIds
+            suspendedOrPotentiallyProblematicTwitterIds,
           );
           if (twitter_user_ids.length === 0) {
             return [];
@@ -1715,7 +1718,7 @@ function initializePolisHelpers() {
             })
             .catch(function (err: any) {
               console.error(
-                "error updating twitter users:" + twitter_user_ids.join(" ")
+                "error updating twitter users:" + twitter_user_ids.join(" "),
               );
             });
         })
@@ -1751,13 +1754,13 @@ function initializePolisHelpers() {
         let httpsCount = JSON.parse(httpsResult).count;
         if (httpCount > 0 && httpsCount > 0 && httpCount === httpsCount) {
           console.warn(
-            "found matching http and https twitter share counts, if this is common, check twitter api to see if it has changed."
+            "found matching http and https twitter share counts, if this is common, check twitter api to see if it has changed.",
           );
         }
         let count = httpCount + httpsCount;
         twitterShareCountCache.set(conversation_id, count);
         return count;
-      }
+      },
     );
   }
 
@@ -1787,7 +1790,7 @@ function initializePolisHelpers() {
       res: {
         writeHead: (arg0: number, arg1: { Location: string }) => void;
         end: () => void;
-      }
+      },
     ) {
       let protocol = devMode ? "http://" : "https://";
       let url = protocol + req?.headers?.host + path;
@@ -1805,7 +1808,7 @@ function initializePolisHelpers() {
     res: {
       set: (arg0: { "Content-Type": string }) => void;
       send: (arg0: Buffer) => void;
-    }
+    },
   ) {
     res.set({ "Content-Type": "text/html" });
     res.send(
@@ -1815,8 +1818,8 @@ function initializePolisHelpers() {
           '  document.cookie="thirdparty=yes; Max-Age=3600; SameSite=None; Secure";\n' +
           '  document.location="thirdPartyCookieTestPt2.html";\n' +
           "</script>\n" +
-          "</body>"
-      )
+          "</body>",
+      ),
     );
   }
   function fetchThirdPartyCookieTestPt2(
@@ -1824,7 +1827,7 @@ function initializePolisHelpers() {
     res: {
       set: (arg0: { "Content-Type": string }) => void;
       send: (arg0: Buffer) => void;
-    }
+    },
   ) {
     res.set({ "Content-Type": "text/html" });
     res.send(
@@ -1840,8 +1843,8 @@ function initializePolisHelpers() {
           "   document.cookie = 'thirdparty=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';\n" +
           "  }\n" +
           "</script>\n" +
-          "</body>"
-      )
+          "</body>",
+      ),
     );
   }
 
@@ -1855,7 +1858,7 @@ function initializePolisHelpers() {
     "/unsupportedBrowser.html",
     {
       "Content-Type": "text/html",
-    }
+    },
   );
 
   function fetchIndex(
@@ -1866,7 +1869,7 @@ function initializePolisHelpers() {
     },
     preloadData: { conversation?: ConversationType },
     port: string | undefined,
-    buildNumber?: string | null | undefined
+    buildNumber?: string | null | undefined,
   ) {
     let headers = {
       "Content-Type": "text/html",
@@ -1884,7 +1887,7 @@ function initializePolisHelpers() {
       req,
       res,
       // @ts-ignore
-      cookies.shouldSetCookieOnPolisDomain(req)
+      cookies.shouldSetCookieOnPolisDomain(req),
     );
 
     if (devMode) {
@@ -1899,7 +1902,7 @@ function initializePolisHelpers() {
       port,
       indexPath,
       headers,
-      preloadData
+      preloadData,
     );
     if (isUnsupportedBrowser(req)) {
       // Argument of type '{ path: string; headers?: { host: string; } | undefined; }' is not assignable to parameter of type '{ headers?: { host: any; } | undefined; path: any; pipe: (arg0: any) => void; }'.
@@ -1936,7 +1939,7 @@ function initializePolisHelpers() {
 
   function fetchIndexForConversation(
     req: { path: string; query?: { build: any } },
-    res: any
+    res: any,
   ) {
     console.log("fetchIndexForConversation", req.path);
     let match = req.path.match(/[0-9][0-9A-Za-z]+/);
@@ -1957,19 +1960,19 @@ function initializePolisHelpers() {
       // TODO actually store these values in a cache that is shared between
       // the servers, probably just in the db.
       getTwitterShareCountForConversation(conversation_id).catch(function (
-        err: string
+        err: string,
       ) {
         console.log(
           "fetchIndexForConversation/getTwitterShareCountForConversation err " +
-            err
+            err,
         );
       });
       getFacebookShareCountForConversation(conversation_id).catch(function (
-        err: string
+        err: string,
       ) {
         console.log(
           "fetchIndexForConversation/getFacebookShareCountForConversation err " +
-            err
+            err,
         );
       });
     }, 100);
@@ -1985,7 +1988,7 @@ function initializePolisHelpers() {
           res,
           preloadData,
           portForParticipationFiles,
-          buildNumber
+          buildNumber,
         );
       })
       .catch(function (err: any) {
@@ -2001,7 +2004,7 @@ function initializePolisHelpers() {
   function middleware_log_request_body(
     req: { body: any; path: string },
     res: any,
-    next: () => void
+    next: () => void,
   ) {
     if (devMode) {
       let b = "";
@@ -2038,7 +2041,7 @@ function initializePolisHelpers() {
     err: { stack: any },
     req: any,
     res: any,
-    next: (arg0?: { stack: any }) => void
+    next: (arg0?: { stack: any }) => void,
   ) {
     if (!err) {
       return next();
@@ -2055,7 +2058,7 @@ function initializePolisHelpers() {
   function middleware_check_if_options(
     req: { method: string },
     res: { send: (arg0: number) => any },
-    next: () => any
+    next: () => any,
   ) {
     if (req.method.toLowerCase() !== "options") {
       return next();
@@ -2066,7 +2069,7 @@ function initializePolisHelpers() {
   let middleware_responseTime_start = responseTime(function (
     req: { route: { path: any } },
     res: any,
-    time: number
+    time: number,
   ) {
     if (req && req.route && req.route.path) {
       let path = req.route.path;
