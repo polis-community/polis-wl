@@ -13,8 +13,8 @@ import querystring from "querystring";
 import request from "request-promise"; // includes Request, but adds promise methods
 import _ from "underscore";
 import pg from "pg";
-import sanitizeHtml from 'sanitize-html';
-import { Request, Response } from 'express'
+import sanitizeHtml from "sanitize-html";
+import { Request, Response } from "express";
 
 import { METRICS_IN_RAM } from "./utils/metered";
 import CreateUser from "./auth/create-user";
@@ -189,7 +189,7 @@ function handle_GET_launchPrep(
     cookies: { [x: string]: any };
     p: { dest: any };
   },
-  res: { redirect: (arg0: any) => void }
+  res: { redirect: (arg0: any) => void },
 ) {
   let setOnPolisDomain = !Config.domainOverride;
   let origin = req?.headers?.origin || "";
@@ -202,7 +202,7 @@ function handle_GET_launchPrep(
       req,
       res,
       setOnPolisDomain,
-      Session.makeSessionToken()
+      Session.makeSessionToken(),
     );
   }
   cookies.setCookieTestCookie(req, res, setOnPolisDomain);
@@ -227,7 +227,7 @@ function handle_GET_tryCookie(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let setOnPolisDomain = !Config.domainOverride;
   let origin = req?.headers?.origin || "";
@@ -258,7 +258,7 @@ function handle_GET_math_pca(
       new (): any;
       end: { (): void; new (): any };
     };
-  }
+  },
 ) {
   // migrated off this path, old clients were causing timeout issues by polling repeatedly without waiting for a result for a previous poll.
   res.status(304).end();
@@ -282,7 +282,7 @@ function handle_GET_math_pca2(
       Etag: string;
     }) => void;
     send: (arg0: any) => void;
-  }
+  },
 ) {
   let zid = req.p.zid;
   let math_tick = req.p.math_tick;
@@ -293,7 +293,7 @@ function handle_GET_math_pca2(
       return Log.fail(
         res,
         400,
-        "Expected either math_tick param or If-Not-Match header, but not both."
+        "Expected either math_tick param or If-Not-Match header, but not both.",
       );
     }
     if (ifNoneMatch.includes("*")) {
@@ -304,7 +304,7 @@ function handle_GET_math_pca2(
           x
             .replace(/^[wW]\//, "")
             .replace(/^"/, "")
-            .replace(/"$/, "")
+            .replace(/"$/, ""),
         );
       });
       math_tick = _.min(entries); // supporting multiple values for the ifNoneMatch header doesn't really make sense, so I've arbitrarily chosen _.min to decide on one.
@@ -373,7 +373,7 @@ function handle_POST_math_update(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let uid = req.p.uid;
@@ -394,7 +394,7 @@ function handle_POST_math_update(
           }),
           zid,
           math_env,
-        ]
+        ],
       )
       .then(() => {
         res.status(200).json({});
@@ -414,7 +414,7 @@ function handle_GET_math_correlationMatrix(
       json: { (arg0: { status: string }): void; new (): any };
     };
     json: (arg0: any) => void;
-  }
+  },
 ) {
   let rid = req.p.rid;
   let math_env = process.env.MATH_ENV;
@@ -432,7 +432,7 @@ function handle_GET_math_correlationMatrix(
       dbPgQuery
         .queryP(
           "select * from report_comment_selections where rid = ($1) and selection = 1;",
-          [rid]
+          [rid],
         )
         // Argument of type '(rows: string | any[]) => boolean' is not assignable to parameter of type '(value: unknown) => boolean | PromiseLike<boolean>'.
         // Types of parameters 'rows' and 'value' are incompatible.
@@ -451,12 +451,12 @@ function handle_GET_math_correlationMatrix(
       // "and attempts < 3 " +
       "and (task_data->>'math_tick')::int >= ($3) " +
       "and finished_time is NULL;",
-    [rid, math_env, math_tick]
+    [rid, math_env, math_tick],
   );
 
   let resultExistsPromise = dbPgQuery.queryP(
     "select * from math_report_correlationmatrix where rid = ($1) and math_env = ($2) and math_tick >= ($3);",
-    [rid, math_env, math_tick]
+    [rid, math_env, math_tick],
   );
 
   Promise.all([resultExistsPromise, getZidForRid(rid)])
@@ -491,7 +491,7 @@ function handle_GET_math_correlationMatrix(
                     }),
                     rid,
                     math_env,
-                  ]
+                  ],
                 )
                 .then(finishAsPending);
             });
@@ -508,7 +508,7 @@ function handle_GET_math_correlationMatrix(
 
 function handle_GET_dataExport(
   req: { p: { uid?: any; zid: any; unixTimestamp: number; format: any } },
-  res: { json: (arg0: {}) => void }
+  res: { json: (arg0: {}) => void },
 ) {
   User.getUserInfoForUid2(req.p.uid)
     .then((user: { email: any }) => {
@@ -518,7 +518,7 @@ function handle_GET_dataExport(
         req.p.zid,
         req.p.unixTimestamp * 1000,
         req.p.format,
-        Math.abs((Math.random() * 999999999999) >> 0)
+        Math.abs((Math.random() * 999999999999) >> 0),
       )
         .then(() => {
           res.json({});
@@ -533,7 +533,7 @@ function handle_GET_dataExport(
 }
 function handle_GET_dataExport_results(
   req: { p: { filename: string } },
-  res: { redirect: (arg0: any) => void }
+  res: { redirect: (arg0: any) => void },
 ) {
   var url = s3Client.getSignedUrl("getObject", {
     Bucket: "polis-datadump",
@@ -552,7 +552,7 @@ function handle_GET_bidToPid(
       new (): any;
       end: { (): void; new (): any };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let math_tick = req.p.math_tick;
@@ -565,7 +565,7 @@ function handle_GET_bidToPid(
     },
     function (err: any) {
       res.status(304).end();
-    }
+    },
   );
 }
 
@@ -577,7 +577,7 @@ function handle_GET_xids(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
   let zid = req.p.zid;
@@ -591,7 +591,7 @@ function handle_GET_xids(
           },
           function (err: any) {
             Log.fail(res, 500, "polis_err_get_xids", err);
-          }
+          },
         );
       } else {
         Log.fail(res, 403, "polis_err_get_xids_not_authorized");
@@ -599,7 +599,7 @@ function handle_GET_xids(
     },
     function (err: any) {
       Log.fail(res, 500, "polis_err_get_xids", err);
-    }
+    },
   );
 }
 function handle_POST_xidWhitelist(
@@ -610,7 +610,7 @@ function handle_POST_xidWhitelist(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   const xid_whitelist = req.p.xid_whitelist;
   const len = xid_whitelist.length;
@@ -629,7 +629,7 @@ function handle_POST_xidWhitelist(
       "insert into xid_whitelist (xid, owner) values " +
         entries.join(",") +
         " on conflict do nothing;",
-      []
+      [],
     )
     .then((result: any) => {
       res.status(200).json({});
@@ -648,7 +648,7 @@ function handle_GET_bid(
       new (): any;
       end: { (): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
   let zid = req.p.zid;
@@ -691,7 +691,7 @@ function handle_GET_bid(
             "pid was",
             pid,
             "bidToPid was",
-            JSON.stringify(b2p)
+            JSON.stringify(b2p),
           );
           Log.yell("polis_err_math_index_mapping_mismatch");
           yourBid = -1;
@@ -703,7 +703,7 @@ function handle_GET_bid(
       },
       function (err: any) {
         res.status(304).end();
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_get_bid_misc", err);
@@ -718,7 +718,7 @@ function handle_POST_auth_password(
       new (): any;
       json: { (arg0: string): void; new (): any };
     };
-  }
+  },
 ) {
   let pwresettoken = req.p.pwresettoken;
   let newPassword = req.p.newPassword;
@@ -737,7 +737,7 @@ function handle_POST_auth_password(
           res,
           500,
           "Password Reset failed. Couldn't find matching pwresettoken.",
-          err
+          err,
         );
         return;
       }
@@ -750,7 +750,7 @@ function handle_POST_auth_password(
               "insert into jianiuevyew (uid, pwhash) values " +
                 "($1, $2) on conflict (uid) " +
                 "do update set pwhash = excluded.pwhash;",
-              [uid, hashedPassword]
+              [uid, hashedPassword],
             )
             .then(
               (rows: any) => {
@@ -765,11 +765,11 @@ function handle_POST_auth_password(
               (err: any) => {
                 console.error(err);
                 Log.fail(res, 500, "Couldn't reset password.", err);
-              }
+              },
             );
-        }
+        },
       );
-    }
+    },
   );
 }
 
@@ -781,7 +781,7 @@ function handle_POST_auth_pwresettoken(
       new (): any;
       json: { (arg0: string): void; new (): any };
     };
-  }
+  },
 ) {
   let email = req.p.email;
 
@@ -810,7 +810,7 @@ function handle_POST_auth_pwresettoken(
     function () {
       sendPasswordResetEmailFailure(email, server);
       finish();
-    }
+    },
   );
 }
 
@@ -824,7 +824,7 @@ function handle_POST_auth_deregister(
       send: { (arg0: string): void; new (): any };
     };
     set: (arg0: { "Content-Type": string }) => void;
-  }
+  },
 ) {
   req.p = req.p || {};
   let token = req.cookies[cookies.COOKIES.TOKEN];
@@ -878,7 +878,7 @@ function handle_POST_metrics(
       json: { (arg0: {}): any; new (): any };
     };
     json: (arg0: {}) => void;
-  }
+  },
 ) {
   var enabled = false;
   if (!enabled) {
@@ -915,7 +915,7 @@ function handle_POST_metrics(
           hashedPc,
           timesInTermsOfServerTime[i],
         ].join(",") +
-        ")"
+        ")",
     );
   }
 
@@ -924,7 +924,7 @@ function handle_POST_metrics(
       "insert into metrics (uid, type, dur, hashedPc, created) values " +
         entries.join(",") +
         ";",
-      []
+      [],
     )
     .then(function (result: any) {
       res.json({});
@@ -944,7 +944,7 @@ function handle_GET_zinvites(
       new (): any;
       json: { (arg0: { codes: any }): void; new (): any };
     };
-  }
+  },
 ) {
   // if uid is not conversation owner, Log.fail
   dbPgQuery.query_readOnly(
@@ -956,7 +956,7 @@ function handle_GET_zinvites(
           res,
           500,
           "polis_err_fetching_zinvite_invalid_conversation_or_owner",
-          err
+          err,
         );
         return;
       }
@@ -976,7 +976,7 @@ function handle_GET_zinvites(
               res,
               500,
               "polis_err_fetching_zinvite_invalid_conversation_or_owner_or_something",
-              err
+              err,
             );
             return;
           }
@@ -990,9 +990,9 @@ function handle_GET_zinvites(
           res.status(200).json({
             codes: results.rows, // _.pluck(results.rows[0],"code");
           });
-        }
+        },
       );
-    }
+    },
   );
 }
 
@@ -1004,7 +1004,7 @@ function handle_POST_zinvites(
       new (): any;
       json: { (arg0: { zinvite: any }): void; new (): any };
     };
-  }
+  },
 ) {
   let generateShortUrl = req.p.short_url;
 
@@ -1017,7 +1017,7 @@ function handle_POST_zinvites(
           res,
           500,
           "polis_err_creating_zinvite_invalid_conversation_or_owner",
-          err
+          err,
         );
         return;
       }
@@ -1031,7 +1031,7 @@ function handle_POST_zinvites(
         .catch(function (err: any) {
           Log.fail(res, 500, "polis_err_creating_zinvite", err);
         });
-    }
+    },
   );
 }
 
@@ -1043,7 +1043,7 @@ function handle_GET_participants(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   // let pid = req.p.pid;
   let uid = req.p.uid;
@@ -1052,7 +1052,7 @@ function handle_GET_participants(
   dbPgQuery
     .queryP_readOnly(
       "select * from participants where uid = ($1) and zid = ($2)",
-      [uid, zid]
+      [uid, zid],
     )
     //     Argument of type '(rows: string | any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
     // Types of parameters 'rows' and 'value' are incompatible.
@@ -1075,7 +1075,7 @@ function handle_GET_dummyButton(
       new (): any;
       end: { (): void; new (): any };
     };
-  }
+  },
 ) {
   let message = req.p.button + " " + req.p.uid;
   emailFeatureRequest(message);
@@ -1101,7 +1101,7 @@ function handle_POST_participants(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let uid = req.p.uid;
@@ -1143,12 +1143,12 @@ function handle_POST_participants(
           },
           function (err: any) {
             Log.fail(res, 500, "polis_err_add_participant", err);
-          }
+          },
         );
       },
       function (err: { message: any }) {
         Log.userFail(res, 400, err.message, err);
-      }
+      },
     );
   }
 
@@ -1184,7 +1184,7 @@ function handle_POST_participants(
                       Log.userFail(
                         res,
                         403,
-                        "polis_err_post_participants_missing_lti_user_for_uid_1"
+                        "polis_err_post_participants_missing_lti_user_for_uid_1",
                       );
                     }
                   })
@@ -1193,14 +1193,14 @@ function handle_POST_participants(
                       res,
                       500,
                       "polis_err_post_participants_missing_lti_user_for_uid_2",
-                      err
+                      err,
                     );
                   });
               } else {
                 Log.userFail(
                   res,
                   403,
-                  "polis_err_post_participants_need_uid_to_check_lti_users_3"
+                  "polis_err_post_participants_need_uid_to_check_lti_users_3",
                 );
               }
             } else {
@@ -1213,13 +1213,13 @@ function handle_POST_participants(
               res,
               500,
               "polis_err_post_participants_need_uid_to_check_lti_users_4",
-              err
+              err,
             );
           });
       },
       function (err: any) {
         Log.fail(res, 500, "polis_err_post_participants_db_err", err);
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_post_participants_misc", err);
@@ -1233,7 +1233,7 @@ function handle_GET_notifications_subscribe(
   res: {
     set: (arg0: string, arg1: string) => void;
     send: (arg0: string) => void;
-  }
+  },
 ) {
   let zid = req.p.zid;
   let email = req.p.email;
@@ -1251,7 +1251,7 @@ function handle_GET_notifications_subscribe(
         return dbPgQuery
           .queryP(
             "update participants set subscribed = 1 where uid = (select uid from users where email = ($2)) and zid = ($1);",
-            [zid, email]
+            [zid, email],
           )
           .then(function () {
             res.set("Content-Type", "text/html");
@@ -1260,15 +1260,15 @@ function handle_GET_notifications_subscribe(
 <p>
 <a href="${createNotificationsUnsubscribeUrl(
                 req.p.conversation_id,
-                req.p.email
+                req.p.email,
               )}">oops, unsubscribe me.</a>
-</p>`
+</p>`,
             );
           });
       },
       function () {
         Log.fail(res, 403, "polis_err_subscribe_signature_mismatch");
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_subscribe_misc", err);
@@ -1281,7 +1281,7 @@ function handle_GET_notifications_unsubscribe(
   res: {
     set: (arg0: string, arg1: string) => void;
     send: (arg0: string) => void;
-  }
+  },
 ) {
   let zid = req.p.zid;
   let email = req.p.email;
@@ -1299,7 +1299,7 @@ function handle_GET_notifications_unsubscribe(
         return dbPgQuery
           .queryP(
             "update participants set subscribed = 0 where uid = (select uid from users where email = ($2)) and zid = ($1);",
-            [zid, email]
+            [zid, email],
           )
           .then(function () {
             res.set("Content-Type", "text/html");
@@ -1308,15 +1308,15 @@ function handle_GET_notifications_unsubscribe(
 <p>
 <a href="${createNotificationsSubscribeUrl(
                 req.p.conversation_id,
-                req.p.email
+                req.p.email,
               )}">oops, subscribe me again.</a>
-</p>`
+</p>`,
             );
           });
       },
       function () {
         Log.fail(res, 403, "polis_err_unsubscribe_signature_mismatch");
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_unsubscribe_misc", err);
@@ -1330,7 +1330,7 @@ function handle_POST_convSubscriptions(
       new (): any;
       json: { (arg0: { subscribed: any }): void; new (): any };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let uid = req.p.uid;
@@ -1361,7 +1361,7 @@ function handle_POST_convSubscriptions(
       res,
       400,
       "polis_err_bad_subscription_type",
-      new Error("polis_err_bad_subscription_type")
+      new Error("polis_err_bad_subscription_type"),
     );
   }
 }
@@ -1381,7 +1381,7 @@ function handle_POST_auth_login(
   res: {
     redirect: (arg0: any) => void;
     json: (arg0: { uid?: any; email: any; token: any }) => void;
-  }
+  },
 ) {
   let password = req.p.password;
   let email = req.p.email || "";
@@ -1410,7 +1410,7 @@ function handle_POST_auth_login(
         Log.fail(
           res,
           403,
-          "polis_err_login_unknown_user_or_password_noresults"
+          "polis_err_login_unknown_user_or_password_noresults",
         );
         console.error("polis_err_login_unknown_user_or_password_noresults");
         return;
@@ -1445,7 +1445,7 @@ function handle_POST_auth_login(
               if (errCompare || !result) {
                 Log.fail(res, 403, "polis_err_login_unknown_user_or_password");
                 console.error(
-                  "polis_err_login_unknown_user_or_password_badpassword"
+                  "polis_err_login_unknown_user_or_password_badpassword",
                 );
                 return;
               }
@@ -1474,14 +1474,14 @@ function handle_POST_auth_login(
                           uid,
                           lti_user_id,
                           tool_consumer_instance_guid,
-                          lti_user_image
+                          lti_user_image,
                         )
                       : Promise.resolve();
                     let ltiContextMembershipPromise = lti_context_id
                       ? User.addLtiContextMembership(
                           uid,
                           lti_context_id,
-                          tool_consumer_instance_guid
+                          tool_consumer_instance_guid,
                         )
                       : Promise.resolve();
                     Promise.all([ltiUserPromise, ltiContextMembershipPromise])
@@ -1514,7 +1514,7 @@ function handle_POST_auth_login(
                           res,
                           500,
                           "polis_err_adding_associating_with_lti_user",
-                          err
+                          err,
                         );
                       });
                   })
@@ -1522,11 +1522,11 @@ function handle_POST_auth_login(
                     Log.fail(res, 500, "polis_err_adding_cookies", err);
                   });
               }); // Session.startSession
-            }
+            },
           ); // compare
-        }
+        },
       ); // pwhash query
-    }
+    },
   ); // users query
 } // /api/v3/auth/login
 
@@ -1548,7 +1548,7 @@ function handle_POST_joinWithInvite(
       new (): any;
       json: { (arg0: { pid: any; uid?: any }): void; new (): any };
     };
-  }
+  },
 ) {
   // if they're already in the conv
   //     this shouldn't get called
@@ -1588,7 +1588,7 @@ function handle_POST_joinWithInvite(
         let uid = o.uid;
         console.log(
           "info",
-          "startSessionAndAddCookies " + uid + " existing " + o.existingAuth
+          "startSessionAndAddCookies " + uid + " existing " + o.existingAuth,
         );
         // TODO check for possible security implications
         if (!o.existingAuth) {
@@ -1617,14 +1617,14 @@ function handle_POST_joinWithInvite(
         if (o.permanentCookieToken) {
           return recordPermanentCookieZidJoin(
             o.permanentCookieToken,
-            o.zid
+            o.zid,
           ).then(
             function () {
               return o;
             },
             function () {
               return o;
-            }
+            },
           );
         } else {
           return o;
@@ -1670,7 +1670,7 @@ function handle_GET_verification(
   res: {
     set: (arg0: string, arg1: string) => void;
     send: (arg0: string) => void;
-  }
+  },
 ) {
   let einvite = req.p.e;
   dbPgQuery
@@ -1701,7 +1701,7 @@ function handle_GET_verification(
             }
             return dbPgQuery.queryP(
               "insert into email_validations (email) values ($1);",
-              [email]
+              [email],
             );
           })
       );
@@ -1713,7 +1713,7 @@ function handle_GET_verification(
 <div style='font-family: Futura, Helvetica, sans-serif;'>
 Email verified! You can close this tab or hit the back button.
 </div>
-</body></html>`
+</body></html>`,
       );
     })
     .catch(function (err: any) {
@@ -1723,7 +1723,7 @@ Email verified! You can close this tab or hit the back button.
 
 function handle_GET_domainWhitelist(
   req: { p: { uid?: any } },
-  res: { json: (arg0: { domain_whitelist: any }) => void }
+  res: { json: (arg0: { domain_whitelist: any }) => void },
 ) {
   getDomainWhitelist(req.p.uid)
     .then(function (whitelist: any) {
@@ -1737,7 +1737,7 @@ function handle_GET_domainWhitelist(
 }
 function handle_POST_domainWhitelist(
   req: { p: { uid?: any; domain_whitelist: any } },
-  res: { json: (arg0: { domain_whitelist: any }) => void }
+  res: { json: (arg0: { domain_whitelist: any }) => void },
 ) {
   setDomainWhitelist(req.p.uid, req.p.domain_whitelist)
     .then(function () {
@@ -1767,7 +1767,7 @@ function handle_GET_conversationStats(
         new (): any;
       };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let uid = req.p.uid;
@@ -1783,7 +1783,7 @@ function handle_GET_conversationStats(
         Log.fail(
           res,
           403,
-          "polis_err_conversationStats_need_report_id_or_moderation_permission"
+          "polis_err_conversationStats_need_report_id_or_moderation_permission",
         );
         return;
       }
@@ -1826,7 +1826,7 @@ function handle_GET_conversationStats(
               // No index signature with a parameter of type 'string' was found on type '{}'.ts(7053)
               // @ts-ignore
               votesHistogramObj[votesByParticipant.length] + 1 || 1;
-          }
+          },
         );
         let votesHistogram: { n_votes: any; n_ptpts: any }[] = [];
         _.each(votesHistogramObj, function (ptptCount: any, voteCount: any) {
@@ -1861,7 +1861,7 @@ function handle_GET_conversationStats(
               }
               prevCreated = vote.created;
             }
-          }
+          },
         );
         let burstHistogramObj = {};
         //         Argument of type '(bursts: string | number, pid: any) => void' is not assignable to parameter of type 'CollectionIterator<unknown, void, {}>'.
@@ -1901,7 +1901,7 @@ function handle_GET_conversationStats(
               n_votes: Number(x.n_votes),
               n_ptpts: Number(x.n_ptpts),
             };
-          }
+          },
         );
 
         res.status(200).json({
@@ -1929,15 +1929,15 @@ function handle_GET_snapshot(
         new (): any;
       };
     };
-  }
+  },
 ) {
   throw new Error(
-    "TODO Needs to clone participants_extended and any other new tables as well."
+    "TODO Needs to clone participants_extended and any other new tables as well.",
   );
 }
 function handle_GET_facebook_delete(
   req: { p: any },
-  res: { json: (arg0: {}) => void }
+  res: { json: (arg0: {}) => void },
 ) {
   deleteFacebookUserRecord(req.p)
     .then(function () {
@@ -1962,7 +1962,7 @@ function handle_POST_auth_facebook(
     headers?: { referer: string };
     cookies?: any;
   },
-  res: any
+  res: any,
 ) {
   let response = JSON.parse(req?.p?.response || "");
   let fb_access_token =
@@ -1972,7 +1972,7 @@ function handle_POST_auth_facebook(
       "polis_err_missing_fb_access_token " +
         req?.headers?.referer +
         "\n\n" +
-        req.p.response
+        req.p.response,
     );
     console.log(req.p.response);
     console.log(JSON.stringify(req.headers));
@@ -2033,7 +2033,7 @@ function handle_POST_auth_facebook(
           info: _.pick(fbRes, fields),
         });
       });
-    }
+    },
   );
 }
 
@@ -2049,7 +2049,7 @@ function handle_POST_tutorial(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
   let step = req.p.step;
@@ -2071,7 +2071,7 @@ function handle_GET_users(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
 
@@ -2087,7 +2087,7 @@ function handle_GET_users(
       },
       function (err: any) {
         Log.fail(res, 500, "polis_err_getting_user_info2", err);
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_getting_user_info", err);
@@ -2114,7 +2114,7 @@ function handle_GET_participation(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let uid = req.p.uid;
@@ -2129,11 +2129,11 @@ function handle_GET_participation(
       return Promise.all([
         dbPgQuery.queryP_readOnly(
           "select pid, count(*) from votes where zid = ($1) group by pid;",
-          [zid]
+          [zid],
         ),
         dbPgQuery.queryP_readOnly(
           "select pid, count(*) from comments where zid = ($1) group by pid;",
-          [zid]
+          [zid],
         ),
         getXids(zid), //dbPgQuery.queryP_readOnly("select pid, xid from xids inner join (select * from participants where zid = ($1)) as p on xids.uid = p.uid;", [zid]),
       ]).then(function (o: any[]) {
@@ -2146,7 +2146,7 @@ function handle_GET_participation(
           Log.fail(
             res,
             409,
-            "polis_err_get_participation_missing_xids This conversation has no xids for its participants."
+            "polis_err_get_participation_missing_xids This conversation has no xids for its participants.",
           );
           return;
         }
@@ -2203,7 +2203,7 @@ function handle_GET_participation(
             Log.fail(
               res,
               409,
-              "polis_err_get_participation_missing_xids This conversation is missing xids for some of its participants."
+              "polis_err_get_participation_missing_xids This conversation is missing xids for some of its participants.",
             );
             return;
           }
@@ -2226,7 +2226,7 @@ function handle_GET_comments_translations(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   const zid = req.p.zid;
   const tid = req.p.tid;
@@ -2241,7 +2241,7 @@ function handle_GET_comments_translations(
       return dbPgQuery
         .queryP(
           "select * from comment_translations where zid = ($1) and tid = ($2) and lang LIKE '$3%';",
-          [zid, tid, firstTwoCharsOfLang]
+          [zid, tid, firstTwoCharsOfLang],
         )
         .then((existingTranslations: any) => {
           if (existingTranslations) {
@@ -2251,7 +2251,7 @@ function handle_GET_comments_translations(
             zid,
             tid,
             comment.txt,
-            req.p.lang
+            req.p.lang,
           );
         })
         .then((rows: any) => {
@@ -2268,7 +2268,7 @@ function handle_GET_comments(
     headers?: Headers;
     p: { rid: any; include_demographics: any; zid: any; uid?: any };
   },
-  res: any
+  res: any,
 ) {
   const rid =
     req?.headers?.["x-request-id"] + " " + req?.headers?.["user-agent"];
@@ -2285,7 +2285,7 @@ function handle_GET_comments(
         return dbPgQuery
           .queryP(
             "select tid, selection from report_comment_selections where rid = ($1);",
-            [req.p.rid]
+            [req.p.rid],
           )
           .then((selections: any) => {
             let tidToSelection = _.indexBy(selections, "tid");
@@ -2294,7 +2294,7 @@ function handle_GET_comments(
                 c.includeInReport =
                   tidToSelection[c.tid] && tidToSelection[c.tid].selection > 0;
                 return c;
-              }
+              },
             );
             return comments;
           });
@@ -2374,7 +2374,7 @@ function handle_POST_comments(
     connection?: { remoteAddress: any; socket: { remoteAddress: any } };
     socket?: { remoteAddress: any };
   },
-  res: { json: (arg0: { tid: any; currentPid: any }) => void }
+  res: { json: (arg0: { tid: any; currentPid: any }) => void },
 ) {
   let zid = req.p.zid;
   let xid = void 0; //req.p.xid;
@@ -2419,21 +2419,21 @@ function handle_POST_comments(
           if (pid === -1) {
             console.log(
               "POST_comments doGetPid addParticipant begin",
-              Date.now()
+              Date.now(),
             );
             //           Argument of type '(rows: any[]) => number' is not assignable to parameter of type '(value: unknown) => number | PromiseLike<number>'.
             // Types of parameters 'rows' and 'value' are incompatible.
             //             Type 'unknown' is not assignable to type 'any[]'.ts(2345)
             // @ts-ignore
             return addParticipant(req.p.zid, req.p.uid).then(function (
-              rows: any[]
+              rows: any[],
             ) {
               let ptpt = rows[0];
               pid = ptpt.pid;
               currentPid = pid;
               console.log(
                 "POST_comments doGetPid addParticipant done",
-                Date.now()
+                Date.now(),
               );
               return pid;
             });
@@ -2441,7 +2441,7 @@ function handle_POST_comments(
             console.log("POST_comments doGetPid done", Date.now());
             return pid;
           }
-        }
+        },
       );
     }
     console.log("POST_comments doGetPid done", Date.now());
@@ -2453,7 +2453,7 @@ function handle_POST_comments(
   } else if (quote_twitter_screen_name) {
     twitterPrepPromise = prepForQuoteWithTwitterUser(
       quote_twitter_screen_name,
-      zid
+      zid,
     );
   }
 
@@ -2539,7 +2539,7 @@ function handle_POST_comments(
                   return Conversation.createXidRecordByZid(zid, uid, xid).then(
                     () => {
                       return pid;
-                    }
+                    },
                   );
                 }
                 return pid;
@@ -2603,7 +2603,7 @@ function handle_POST_comments(
                     "spam test says: " +
                       txt +
                       " " +
-                      (spammy ? "spammy" : "not_spammy")
+                      (spammy ? "spammy" : "not_spammy"),
                   );
                   return spammy;
                 },
@@ -2611,7 +2611,7 @@ function handle_POST_comments(
                   console.error("spam check failed");
                   console.log("info", err);
                   return false; // spam check failed, continue assuming "not spammy".
-                }
+                },
               )
               .then(function (spammy: any) {
                 console.log("POST_comments after isSpamPromise", Date.now());
@@ -2622,14 +2622,14 @@ function handle_POST_comments(
                   active = false;
                   classifications.push("bad");
                   console.log(
-                    "active=false because (bad && conv.profanity_filter)"
+                    "active=false because (bad && conv.profanity_filter)",
                   );
                 }
                 if (spammy && conv.spam_filter) {
                   active = false;
                   classifications.push("spammy");
                   console.log(
-                    "active=false because (spammy && conv.spam_filter)"
+                    "active=false because (spammy && conv.spam_filter)",
                   );
                 }
                 if (conv.strict_moderation) {
@@ -2651,7 +2651,7 @@ function handle_POST_comments(
 
                 console.log(
                   "POST_comments before INSERT INTO COMMENTS",
-                  Date.now()
+                  Date.now(),
                 );
 
                 Promise.all([Comment.detectLanguage(txt)]).then((a: any[]) => {
@@ -2681,7 +2681,7 @@ function handle_POST_comments(
                         is_seed || false,
                         lang,
                         lang_confidence,
-                      ]
+                      ],
                     )
                     .then(
                       //                     Argument of type '(docs: any[]) => any' is not assignable to parameter of type '(value: unknown) => any'.
@@ -2696,11 +2696,11 @@ function handle_POST_comments(
                         if (bad || spammy || conv.strict_moderation) {
                           getNumberOfCommentsWithModerationStatus(
                             zid,
-                            Utils.polisTypes.mod.unmoderated
+                            Utils.polisTypes.mod.unmoderated,
                           )
                             .catch(function (err: any) {
                               Log.yell(
-                                "polis_err_getting_modstatus_comment_count"
+                                "polis_err_getting_modstatus_comment_count",
                               );
                               return void 0;
                             })
@@ -2711,7 +2711,7 @@ function handle_POST_comments(
                               dbPgQuery
                                 .queryP_readOnly(
                                   "select * from users where site_id = (select site_id from page_ids where zid = ($1)) UNION select * from users where uid = ($2);",
-                                  [zid, conv.owner]
+                                  [zid, conv.owner],
                                 )
                                 .then(function (users: any) {
                                   let uids = _.pluck(users, "uid");
@@ -2721,7 +2721,7 @@ function handle_POST_comments(
                                       req,
                                       uid,
                                       zid,
-                                      n
+                                      n,
                                     );
                                   });
                                 });
@@ -2732,7 +2732,7 @@ function handle_POST_comments(
 
                         console.log(
                           "POST_comments before votesPost",
-                          Date.now()
+                          Date.now(),
                         );
 
                         // It should be safe to delete this. Was added to postpone the no-auto-vote change for old conversations.
@@ -2759,11 +2759,11 @@ function handle_POST_comments(
                                 setTimeout(function () {
                                   updateConversationModifiedTime(
                                     zid,
-                                    createdTime
+                                    createdTime,
                                   );
                                   updateLastInteractionTimeForConversation(
                                     zid,
-                                    uid
+                                    uid,
                                   );
                                   if (!_.isUndefined(vote)) {
                                     updateVoteCount(zid, pid);
@@ -2772,7 +2772,7 @@ function handle_POST_comments(
 
                                 console.log(
                                   "POST_comments sending json",
-                                  Date.now()
+                                  Date.now(),
                                 );
                                 res.json({
                                   tid: tid,
@@ -2780,7 +2780,7 @@ function handle_POST_comments(
                                 });
                                 console.log(
                                   "POST_comments sent json",
-                                  Date.now()
+                                  Date.now(),
                                 );
                               },
                               function (err: any) {
@@ -2788,9 +2788,9 @@ function handle_POST_comments(
                                   res,
                                   500,
                                   "polis_err_vote_on_create",
-                                  err
+                                  err,
                                 );
-                              }
+                              },
                             )
                         );
                       },
@@ -2801,12 +2801,12 @@ function handle_POST_comments(
                             res,
                             409,
                             "polis_err_post_comment_duplicate",
-                            err
+                            err,
                           );
                         } else {
                           Log.fail(res, 500, "polis_err_post_comment", err);
                         }
-                      }
+                      },
                     ); // insert
                 }); // lang
               });
@@ -2820,12 +2820,12 @@ function handle_POST_comments(
               Log.fail(res, 500, "polis_err_getting_conv_info", errors[1]);
               return;
             }
-          }
+          },
         );
       },
       function (err: any) {
         Log.fail(res, 500, "polis_err_fetching_tweet", err);
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_post_comment_misc", err);
@@ -2834,7 +2834,7 @@ function handle_POST_comments(
 
 function handle_GET_votes_me(
   req: { p: { zid: any; uid?: any; pid: any } },
-  res: any
+  res: any,
 ) {
   User.getPid(req.p.zid, req.p.uid, function (err: any, pid: number) {
     if (err || pid < 0) {
@@ -2853,7 +2853,7 @@ function handle_GET_votes_me(
           docs.rows[i].weight = docs.rows[i].weight / 32767;
         }
         finishArray(res, docs.rows);
-      }
+      },
     );
   });
 }
@@ -2865,7 +2865,7 @@ function handle_GET_votes(req: { p: any }, res: any) {
     },
     function (err: any) {
       Log.fail(res, 500, "polis_err_votes_get", err);
-    }
+    },
   );
 }
 
@@ -2886,7 +2886,7 @@ function handle_GET_nextComment(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   if (req.timedout) {
     return;
@@ -2903,7 +2903,7 @@ function handle_GET_nextComment(
     req.p.not_voted_by_pid,
     req.p.without,
     req.p.include_social,
-    req.p.lang
+    req.p.lang,
   )
     .then(
       function (c: { currentPid: any }) {
@@ -2928,7 +2928,7 @@ function handle_GET_nextComment(
           return;
         }
         Log.fail(res, 500, "polis_err_get_next_comment2", err);
-      }
+      },
     )
     .catch(function (err: any) {
       if (req.timedout) {
@@ -2970,7 +2970,7 @@ function handle_GET_participationInit(
         new (): any;
       };
     };
-  }
+  },
 ) {
   function ifConv(
     f: {
@@ -2979,7 +2979,7 @@ function handle_GET_participationInit(
         pid: any,
         withoutTids: any,
         include_social: any,
-        lang?: any
+        lang?: any,
       ): CommentType;
       (zid: any, uid?: any, lang?: any): any;
       (p: any): any;
@@ -2987,7 +2987,7 @@ function handle_GET_participationInit(
       (o: any, req: any): any;
       apply?: any;
     },
-    args: any[]
+    args: any[],
   ) {
     if (req.p.conversation_id) {
       return f.apply(null, args);
@@ -3083,7 +3083,7 @@ function handle_GET_participationInit(
       function (err: any) {
         console.error(err);
         Log.fail(res, 500, "polis_err_get_participationInit2", err);
-      }
+      },
     )
     .catch(function (err: any) {
       console.error(err);
@@ -3093,7 +3093,7 @@ function handle_GET_participationInit(
 
 function handle_PUT_participants_extended(
   req: { p: { zid: any; uid?: any; show_translation_activated: any } },
-  res: { json: (arg0: any) => void }
+  res: { json: (arg0: any) => void },
 ) {
   let zid = req.p.zid;
   let uid = req.p.uid;
@@ -3124,39 +3124,14 @@ function handle_POST_votes(
     cookies: { [x: string]: any };
     headers?: Headers;
   },
-  res: any
+  res: any,
 ) {
-  let uid = req.p.uid; // PID_FLOW uid may be undefined here.
+  let uid = req.p.uid; // EDIT zkorum: must not be null here - use ownername
   let zid = req.p.zid;
   let pid = req.p.pid; // PID_FLOW pid may be undefined here.
   let lang = req.p.lang;
-
-  // We allow viewing (and possibly writing) without cookies enabled, but voting requires cookies (except the auto-vote on your own comment, which seems ok)
-  let token = req.cookies[cookies.COOKIES.TOKEN];
-  let apiToken = req?.headers?.authorization || "";
-  let xPolisHeaderToken = req?.headers?.["x-polis"];
-  if (!uid && !token && !apiToken && !xPolisHeaderToken) {
-    Log.fail(res, 403, "polis_err_vote_noauth");
-    return;
-  }
-
-  let permanent_cookie = cookies.getPermanentCookieAndEnsureItIsSet(req, res);
-
-  // PID_FLOW WIP for now assume we have a uid, but need a participant record.
-  let pidReadyPromise = _.isUndefined(req.p.pid)
-    ? addParticipantAndMetadata(
-        req.p.zid,
-        req.p.uid,
-        req,
-        permanent_cookie
-      ).then(function (rows: any[]) {
-        let ptpt = rows[0];
-        pid = ptpt.pid;
-      })
-    : Promise.resolve();
-  pidReadyPromise
-    .then(function () {
-      // let conv;
+  Comment.getTidFromTxt(zid, req.p.txt)
+    .then((tid: any) => {
       let vote;
 
       // PID_FLOW WIP for now assume we have a uid, but need a participant record.
@@ -3173,15 +3148,7 @@ function handle_POST_votes(
 
       return pidReadyPromise
         .then(function () {
-          return votesPost(
-            uid,
-            pid,
-            zid,
-            req.p.tid,
-            req.p.vote,
-            req.p.weight,
-            true
-          );
+          return votesPost(uid, pid, zid, tid, req.p.vote, req.p.weight, true);
         })
         .then(function (o: { vote: any }) {
           // conv = o.conv;
@@ -3197,7 +3164,7 @@ function handle_POST_votes(
           if (_.isUndefined(req.p.starred)) {
             return;
           } else {
-            return addStar(zid, req.p.tid, pid, req.p.starred, createdTime);
+            return addStar(zid, tid, pid, req.p.starred, createdTime);
           }
         })
         .then(function () {
@@ -3238,6 +3205,8 @@ function handle_POST_votes(
     .catch(function (err: string) {
       if (err === "polis_err_vote_duplicate") {
         Log.fail(res, 406, "polis_err_vote_duplicate", err); // TODO allow for changing votes?
+      } else if (err === "polis_err_txt_does_not_match_any_pid") {
+        Log.fail(res, 400, "polis_err_txt_does_not_match_any_pid", err);
       } else if (err === "polis_err_conversation_is_closed") {
         Log.fail(res, 403, "polis_err_conversation_is_closed", err);
       } else if (err === "polis_err_post_votes_social_needed") {
@@ -3268,7 +3237,7 @@ function handle_POST_ptptCommentMod(
       lang: any;
     };
   },
-  res: any
+  res: any,
 ) {
   let zid = req.p.zid;
   let pid = req.p.pid;
@@ -3322,7 +3291,7 @@ function handle_POST_ptptCommentMod(
         req.p.as_offtopic,
         req.p.as_spam,
         req.p.unsure,
-      ]
+      ],
     )
     .then((createdTime: any) => {
       setTimeout(function () {
@@ -3364,7 +3333,7 @@ function handle_POST_upvotes(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
   let zid = req.p.zid;
@@ -3394,7 +3363,7 @@ function handle_POST_upvotes(
                 dbPgQuery
                   .queryP(
                     "update conversations set upvotes = (select count(*) from upvotes where zid = ($1)) where zid = ($1);",
-                    [zid]
+                    [zid],
                   )
                   .then(
                     function () {
@@ -3402,18 +3371,18 @@ function handle_POST_upvotes(
                     },
                     function (err: any) {
                       Log.fail(res, 500, "polis_err_upvote_update", err);
-                    }
+                    },
                   );
               },
               function (err: any) {
                 Log.fail(res, 500, "polis_err_upvote_insert", err);
-              }
+              },
             );
         }
       },
       function (err: any) {
         Log.fail(res, 500, "polis_err_upvote_check", err);
-      }
+      },
     );
 }
 
@@ -3425,7 +3394,7 @@ function handle_POST_stars(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   addStar(req.p.zid, req.p.tid, req.p.pid, req.p.starred)
     //     Argument of type '(result: { rows: { created: any; }[]; }) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
@@ -3458,7 +3427,7 @@ function handle_POST_trashes(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let query =
     "INSERT INTO trashes (pid, zid, tid, trashed, created) VALUES ($1, $2, $3, $4, default);";
@@ -3482,7 +3451,7 @@ function handle_POST_trashes(
       }, 100);
 
       res.status(200).json({}); // TODO don't stop after the first one, map the inserts to deferreds.
-    }
+    },
   );
 }
 
@@ -3496,7 +3465,7 @@ function handle_PUT_comments(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
   let zid = req.p.zid;
@@ -3514,7 +3483,7 @@ function handle_PUT_comments(
           },
           function (err: any) {
             Log.fail(res, 500, "polis_err_update_comment", err);
-          }
+          },
         );
       } else {
         Log.fail(res, 403, "polis_err_update_comment_auth");
@@ -3527,7 +3496,7 @@ function handle_PUT_comments(
 
 function handle_POST_reportCommentSelections(
   req: { p: { uid?: any; zid: any; rid: any; tid: any; include: any } },
-  res: { json: (arg0: {}) => void }
+  res: { json: (arg0: {}) => void },
 ) {
   let uid = req.p.uid;
   let zid = req.p.zid;
@@ -3540,20 +3509,20 @@ function handle_POST_reportCommentSelections(
         return Log.fail(
           res,
           403,
-          "polis_err_POST_reportCommentSelections_auth"
+          "polis_err_POST_reportCommentSelections_auth",
         );
       }
       return dbPgQuery
         .queryP(
           "insert into report_comment_selections (rid, tid, selection, zid, modified) values ($1, $2, $3, $4, now_as_millis()) " +
             "on conflict (rid, tid) do update set selection = ($3), zid  = ($4), modified = now_as_millis();",
-          [rid, tid, selection, zid]
+          [rid, tid, selection, zid],
         )
         .then(() => {
           // The old report isn't valid anymore, so when a user loads the report again a new worker_tasks entry will be created.
           return dbPgQuery.queryP(
             "delete from math_report_correlationmatrix where rid = ($1);",
-            [rid]
+            [rid],
           );
         })
         .then(() => {
@@ -3573,7 +3542,7 @@ function handle_GET_lti_oauthv1_credentials(
       new (): any;
       json: { (arg0: string): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = "FOO";
   if (req.p && req.p.uid) {
@@ -3605,9 +3574,9 @@ function handle_GET_lti_oauthv1_credentials(
         .json(
           "INSERT INTO lti_oauthv1_credentials (uid, oauth_consumer_key, oauth_shared_secret) values (" +
             x +
-            ") returning oauth_consumer_key, oauth_shared_secret;"
+            ") returning oauth_consumer_key, oauth_shared_secret;",
         );
-    }
+    },
   );
 }
 function handle_POST_conversation_close(
@@ -3618,7 +3587,7 @@ function handle_POST_conversation_close(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   var q = "select * from conversations where zid = ($1)";
   var params = [req.p.zid];
@@ -3638,7 +3607,7 @@ function handle_POST_conversation_close(
         Log.fail(
           res,
           500,
-          "polis_err_closing_conversation_no_such_conversation"
+          "polis_err_closing_conversation_no_such_conversation",
         );
         return;
       }
@@ -3648,7 +3617,7 @@ function handle_POST_conversation_close(
       dbPgQuery
         .queryP(
           "update conversations set is_active = false where zid = ($1);",
-          [conv.zid]
+          [conv.zid],
         )
         .then(function () {
           // might need to send some grades
@@ -3665,7 +3634,7 @@ function handle_POST_conversation_close(
                 res,
                 500,
                 "polis_err_closing_conversation_sending_grades",
-                err
+                err,
               );
             });
         })
@@ -3686,7 +3655,7 @@ function handle_POST_conversation_reopen(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   var q = "select * from conversations where zid = ($1)";
   var params = [req.p.zid];
@@ -3706,7 +3675,7 @@ function handle_POST_conversation_reopen(
         Log.fail(
           res,
           500,
-          "polis_err_closing_conversation_no_such_conversation"
+          "polis_err_closing_conversation_no_such_conversation",
         );
         return;
       }
@@ -3729,7 +3698,7 @@ function handle_POST_conversation_reopen(
 
 function handle_PUT_users(
   req: { p: { uid?: any; uid_of_user: any; email: any; hname: any } },
-  res: { json: (arg0: any) => void }
+  res: { json: (arg0: any) => void },
 ) {
   let uid = req.p.uid;
   if (isPolisDev(uid) && req.p.uid_of_user) {
@@ -3790,7 +3759,7 @@ function handle_PUT_conversations(
       context: any;
     };
   },
-  res: any
+  res: any,
 ) {
   let generateShortUrl = req.p.short_url;
   isModerator(req.p.zid, req.p.uid)
@@ -3803,7 +3772,7 @@ function handle_PUT_conversations(
       let verifyMetaPromise;
       if (req.p.verifyMeta) {
         verifyMetaPromise = verifyMetadataAnswersExistForEachQuestion(
-          req.p.zid
+          req.p.zid,
         );
       } else {
         verifyMetaPromise = Promise.resolve();
@@ -3941,14 +3910,14 @@ function handle_PUT_conversations(
                             "\n" +
                             "With gratitude,\n" +
                             "\n" +
-                            "The team at pol.is\n"
+                            "The team at pol.is\n",
                         ).catch(function (err: any) {
                           console.error(err);
                         });
                       })
                       .catch(function (err: any) {
                         Log.yell(
-                          "polis_err_sending_conversation_created_email"
+                          "polis_err_sending_conversation_created_email",
                         );
                         console.log("info", err);
                       });
@@ -3967,7 +3936,7 @@ function handle_PUT_conversations(
                     conv.lti_redirect = {
                       return_type: "url",
                       launch_presentation_return_url: Utils.hexToStr(
-                        req.p.launch_presentation_return_url_hex
+                        req.p.launch_presentation_return_url_hex,
                       ),
                       url:
                         Config.getServerNameWithProtocol(req) +
@@ -3984,7 +3953,7 @@ function handle_PUT_conversations(
                       req.p.zid,
                       req.p.tool_consumer_instance_guid,
                       req.p.context, // lti_context_id,
-                      req.p.custom_canvas_assignment_id
+                      req.p.custom_canvas_assignment_id,
                     )
                       .then(function () {
                         finishOne(res, conv, true, successCode);
@@ -3994,10 +3963,10 @@ function handle_PUT_conversations(
                           res,
                           500,
                           "polis_err_saving_assignment_grading_context",
-                          err
+                          err,
                         );
                         emailBadProblemTime(
-                          "PUT conversation worked, but couldn't save assignment context"
+                          "PUT conversation worked, but couldn't save assignment context",
                         );
                       });
                   } else {
@@ -4009,12 +3978,12 @@ function handle_PUT_conversations(
                 .catch(function (err: any) {
                   Log.fail(res, 500, "polis_err_update_conversation", err);
                 });
-            }
+            },
           );
         },
         function (err: { message: any }) {
           Log.fail(res, 500, err.message, err);
-        }
+        },
       );
     })
     .catch(function (err: any) {
@@ -4024,7 +3993,7 @@ function handle_PUT_conversations(
 
 function handle_DELETE_metadata_questions(
   req: { p: { uid?: any; pmqid: any } },
-  res: { send: (arg0: number) => void }
+  res: { send: (arg0: number) => void },
 ) {
   let uid = req.p.uid;
   let pmqid = req.p.pmqid;
@@ -4035,7 +4004,7 @@ function handle_DELETE_metadata_questions(
         res,
         500,
         "polis_err_delete_participant_metadata_questions_zid",
-        err
+        err,
       );
       return;
     }
@@ -4045,7 +4014,7 @@ function handle_DELETE_metadata_questions(
           res,
           403,
           "polis_err_delete_participant_metadata_questions_auth",
-          err
+          err,
         );
         return;
       }
@@ -4056,7 +4025,7 @@ function handle_DELETE_metadata_questions(
             res,
             500,
             "polis_err_delete_participant_metadata_question",
-            new Error(err)
+            new Error(err),
           );
           return;
         }
@@ -4068,7 +4037,7 @@ function handle_DELETE_metadata_questions(
 
 function handle_DELETE_metadata_answers(
   req: { p: { uid?: any; pmaid: any } },
-  res: { send: (arg0: number) => void }
+  res: { send: (arg0: number) => void },
 ) {
   let uid = req.p.uid;
   let pmaid = req.p.pmaid;
@@ -4079,7 +4048,7 @@ function handle_DELETE_metadata_answers(
         res,
         500,
         "polis_err_delete_participant_metadata_answers_zid",
-        err
+        err,
       );
       return;
     }
@@ -4089,7 +4058,7 @@ function handle_DELETE_metadata_answers(
           res,
           403,
           "polis_err_delete_participant_metadata_answers_auth",
-          err
+          err,
         );
         return;
       }
@@ -4100,7 +4069,7 @@ function handle_DELETE_metadata_answers(
             res,
             500,
             "polis_err_delete_participant_metadata_answers",
-            err
+            err,
           );
           return;
         }
@@ -4112,7 +4081,7 @@ function handle_DELETE_metadata_answers(
 
 function handle_GET_metadata_questions(
   req: { p: { zid: any; zinvite: any; suzinvite: any } },
-  res: any
+  res: any,
 ) {
   let zid = req.p.zid;
   let zinvite = req.p.zinvite;
@@ -4140,7 +4109,7 @@ function handle_GET_metadata_questions(
           dbPgQuery.query_readOnly(
             "SELECT * FROM participant_metadata_questions WHERE alive = true AND zid = ($1);",
             [zid],
-            callback
+            callback,
           );
         },
         //function(callback) { dbPgQuery.query_readOnly("SELECT * FROM participant_metadata_answers WHERE alive = true AND zid = ($1);", [zid], callback); },
@@ -4152,7 +4121,7 @@ function handle_GET_metadata_questions(
             res,
             500,
             "polis_err_get_participant_metadata_questions",
-            err
+            err,
           );
           return;
         }
@@ -4162,7 +4131,7 @@ function handle_GET_metadata_questions(
           return r;
         });
         finishArray(res, rows);
-      }
+      },
     );
   }
 
@@ -4193,7 +4162,7 @@ function handle_GET_metadata_questions(
 
 function handle_POST_metadata_questions(
   req: { p: { zid: any; key: any; uid?: any } },
-  res: any
+  res: any,
 ) {
   let zid = req.p.zid;
   let key = req.p.key;
@@ -4214,7 +4183,7 @@ function handle_POST_metadata_questions(
         }
 
         finishOne(res, results.rows[0]);
-      }
+      },
     );
   }
 
@@ -4223,7 +4192,7 @@ function handle_POST_metadata_questions(
 
 function handle_POST_metadata_answers(
   req: { p: { zid: any; uid?: any; pmqid: any; value: any } },
-  res: any
+  res: any,
 ) {
   let zid = req.p.zid;
   let uid = req.p.uid;
@@ -4249,17 +4218,17 @@ function handle_POST_metadata_answers(
                   res,
                   500,
                   "polis_err_post_participant_metadata_value",
-                  err
+                  err,
                 );
                 return;
               }
               finishOne(res, results.rows[0]);
-            }
+            },
           );
         } else {
           finishOne(res, results.rows[0]);
         }
-      }
+      },
     );
   }
 
@@ -4275,12 +4244,12 @@ function handle_GET_metadata_choices(req: { p: { zid: any } }, res: any) {
     },
     function (err: any) {
       Log.fail(res, 500, "polis_err_get_participant_metadata_choices", err);
-    }
+    },
   );
 }
 function handle_GET_metadata_answers(
   req: { p: { zid: any; zinvite: any; suzinvite: any; pmqid: any } },
-  res: any
+  res: any,
 ) {
   let zid = req.p.zid;
   let zinvite = req.p.zinvite;
@@ -4299,7 +4268,7 @@ function handle_GET_metadata_answers(
 
     if (pmqid) {
       query = query.where(
-        SQL.sql_participant_metadata_answers.pmqid.equals(pmqid)
+        SQL.sql_participant_metadata_answers.pmqid.equals(pmqid),
       );
     }
     dbPgQuery.query_readOnly(
@@ -4314,7 +4283,7 @@ function handle_GET_metadata_answers(
           return r;
         });
         finishArray(res, rows);
-      }
+      },
     );
   }
 
@@ -4347,7 +4316,7 @@ function handle_GET_metadata(
         new (): any;
       };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let zinvite = req.p.zinvite;
@@ -4375,21 +4344,21 @@ function handle_GET_metadata(
           dbPgQuery.query_readOnly(
             "SELECT * FROM participant_metadata_questions WHERE zid = ($1);",
             [zid],
-            callback
+            callback,
           );
         },
         function (callback: any) {
           dbPgQuery.query_readOnly(
             "SELECT * FROM participant_metadata_answers WHERE zid = ($1);",
             [zid],
-            callback
+            callback,
           );
         },
         function (callback: any) {
           dbPgQuery.query_readOnly(
             "SELECT * FROM participant_metadata_choices WHERE zid = ($1);",
             [zid],
-            callback
+            callback,
           );
         },
       ],
@@ -4451,7 +4420,7 @@ function handle_GET_metadata(
           keys: keyNames,
           values: valueNames,
         });
-      }
+      },
     );
   }
 
@@ -4476,7 +4445,7 @@ function handle_GET_metadata(
 
 function handle_POST_reports(
   req: { p: { zid: any; uid?: any } },
-  res: { json: (arg0: {}) => void }
+  res: { json: (arg0: {}) => void },
 ) {
   let zid = req.p.zid;
   let uid = req.p.uid;
@@ -4502,7 +4471,7 @@ function handle_PUT_reports(
   req: {
     p: { [x: string]: any; rid: any; uid?: any; zid: any; report_name: any };
   },
-  res: { json: (arg0: {}) => void }
+  res: { json: (arg0: {}) => void },
 ) {
   let rid = req.p.rid;
   let uid = req.p.uid;
@@ -4557,7 +4526,7 @@ function handle_PUT_reports(
 }
 function handle_GET_reports(
   req: { p: { zid: any; rid: any; uid?: any } },
-  res: { json: (arg0: any) => void }
+  res: { json: (arg0: any) => void },
 ) {
   let zid = req.p.zid;
   let rid = req.p.rid;
@@ -4568,12 +4537,12 @@ function handle_GET_reports(
   if (rid) {
     if (zid) {
       reportsPromise = Promise.reject(
-        "polis_err_get_reports_should_not_specify_both_report_id_and_conversation_id"
+        "polis_err_get_reports_should_not_specify_both_report_id_and_conversation_id",
       );
     } else {
       reportsPromise = dbPgQuery.queryP(
         "select * from reports where rid = ($1);",
-        [rid]
+        [rid],
       );
     }
   } else if (zid) {
@@ -4586,7 +4555,7 @@ function handle_GET_reports(
   } else {
     reportsPromise = dbPgQuery.queryP(
       "select * from reports where zid in (select zid from conversations where owner = ($1));",
-      [uid]
+      [uid],
     );
   }
 
@@ -4609,7 +4578,7 @@ function handle_GET_reports(
       return dbPgQuery
         .queryP(
           "select * from zinvites where zid in (" + zids.join(",") + ");",
-          []
+          [],
         )
         .then((zinvite_entries: any) => {
           let zidToZinvite = _.indexBy(zinvite_entries, "zid");
@@ -4618,7 +4587,7 @@ function handle_GET_reports(
               report.conversation_id = zidToZinvite[report.zid || ""]?.zinvite;
               delete report.zid;
               return report;
-            }
+            },
           );
           res.json(reports);
         });
@@ -4633,7 +4602,7 @@ function handle_GET_reports(
         Log.fail(
           res,
           404,
-          "polis_err_get_reports_should_not_specify_both_report_id_and_conversation_id"
+          "polis_err_get_reports_should_not_specify_both_report_id_and_conversation_id",
         );
       } else {
         Log.fail(res, 500, "polis_err_get_reports_misc", err);
@@ -4645,7 +4614,7 @@ function handle_GET_conversations(
   req: {
     p: ConversationType;
   },
-  res: any
+  res: any,
 ) {
   let courseIdPromise = Promise.resolve();
   if (req.p.course_invite) {
@@ -4654,7 +4623,7 @@ function handle_GET_conversations(
     courseIdPromise = dbPgQuery
       .queryP_readOnly(
         "select course_id from courses where course_invite = ($1);",
-        [req.p.course_invite]
+        [req.p.course_invite],
       )
       //       Argument of type '(rows: { course_id: any; }[]) => any' is not assignable to parameter of type '(value: unknown) => any'.
       // Types of parameters 'rows' and 'value' are incompatible.
@@ -4677,7 +4646,7 @@ function handle_GET_conversations(
           },
           function (err: any) {
             Log.fail(res, 500, "polis_err_get_conversations_2", err);
-          }
+          },
         )
         .catch(function (err: any) {
           Log.fail(res, 500, "polis_err_get_conversations_1", err);
@@ -4698,12 +4667,12 @@ function handle_GET_contexts(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   dbPgQuery
     .queryP_readOnly(
       "select name from contexts where is_public = TRUE order by name;",
-      []
+      [],
     )
     .then(
       function (contexts: any) {
@@ -4711,7 +4680,7 @@ function handle_GET_contexts(
       },
       function (err: any) {
         Log.fail(res, 500, "polis_err_get_contexts_query", err);
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_get_contexts_misc", err);
@@ -4726,7 +4695,7 @@ function handle_POST_contexts(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
   let name = req.p.name;
@@ -4735,7 +4704,7 @@ function handle_POST_contexts(
     return dbPgQuery
       .queryP(
         "insert into contexts (name, creator, is_public) values ($1, $2, $3);",
-        [name, uid, true]
+        [name, uid, true],
       )
       .then(
         function () {
@@ -4743,7 +4712,7 @@ function handle_POST_contexts(
         },
         function (err: any) {
           Log.fail(res, 500, "polis_err_post_contexts_query", err);
-        }
+        },
       )
       .catch(function (err: any) {
         Log.fail(res, 500, "polis_err_post_contexts_misc", err);
@@ -4767,7 +4736,7 @@ function handle_POST_contexts(
       },
       function (err: any) {
         Log.fail(res, 500, "polis_err_post_contexts_check_query", err);
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_post_contexts_check_misc", err);
@@ -4776,7 +4745,7 @@ function handle_POST_contexts(
 
 function handle_POST_reserve_conversation_id(
   req: any,
-  res: { json: (arg0: { conversation_id: any }) => void }
+  res: { json: (arg0: { conversation_id: any }) => void },
 ) {
   const zid = 0;
   const shortUrl = false;
@@ -4816,7 +4785,7 @@ function handle_POST_conversations(
       conversation_id: any;
     };
   },
-  res: any
+  res: any,
 ) {
   let xidStuffReady = Promise.resolve();
 
@@ -4833,7 +4802,7 @@ function handle_POST_conversations(
               res,
               403,
               "polis_err_add_conversation_failed_user_check",
-              err
+              err,
             );
             return;
           }
@@ -4842,7 +4811,7 @@ function handle_POST_conversations(
               res,
               403,
               "polis_err_add_conversation_not_enabled",
-              new Error("polis_err_add_conversation_not_enabled")
+              new Error("polis_err_add_conversation_not_enabled"),
             );
             return;
           }
@@ -4897,12 +4866,15 @@ function handle_POST_conversations(
                 result && result.rows && result.rows[0] && result.rows[0].zid;
 
               const zinvitePromise = req.p.conversation_id
-                ? Conversation.getZidFromConversationId(
-                    req.p.conversation_id
-                  ).then((zid: number) => {
-                    return zid === 0 ? req.p.conversation_id : null;
-                  })
+                ? CreateUser.registerZinvite(zid, req.p.conversation_id)
                 : CreateUser.generateAndRegisterZinvite(zid, generateShortUrl);
+              // const zinvitePromise = req.p.conversation_id
+              //   ? Conversation.getZidFromConversationId(
+              //       req.p.conversation_id,
+              //     ).then((zid: number) => {
+              //       return zid === 0 ? req.p.conversation_id : null;
+              //     })
+              //   : CreateUser.generateAndRegisterZinvite(zid, generateShortUrl);
 
               zinvitePromise
                 .then(function (zinvite: null) {
@@ -4911,7 +4883,7 @@ function handle_POST_conversations(
                       res,
                       400,
                       "polis_err_conversation_id_already_in_use",
-                      err
+                      err,
                     );
                     return;
                   }
@@ -4924,9 +4896,9 @@ function handle_POST_conversations(
                 .catch(function (err: any) {
                   Log.fail(res, 500, "polis_err_zinvite_create", err);
                 });
-            }
+            },
           ); // end insert
-        }
+        },
       ); // end isUserAllowedToCreateConversations
     })
     .catch((err: any) => {
@@ -4942,7 +4914,7 @@ function handle_POST_query_participants_by_metadata(
       new (): any;
       json: { (arg0: never[]): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
   let zid = req.p.zid;
@@ -4975,7 +4947,7 @@ function handle_POST_query_participants_by_metadata(
         // Argument of type 'any[]' is not assignable to parameter of type 'never[]'.ts(2345)
         // @ts-ignore
         res.status(200).json(_.pluck(results.rows, "pid"));
-      }
+      },
     );
   }
 
@@ -4989,7 +4961,7 @@ function handle_POST_sendCreatedLinkToEmail(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   console.log("info", req.p);
   dbPgQuery.query_readOnly(
@@ -5029,8 +5001,9 @@ function handle_POST_sendCreatedLinkToEmail(
               POLIS_FROM_ADDRESS,
               email,
               "Link: " + createdLink,
-              body
-            ).then(function () {
+              body,
+            )
+            .then(function () {
               res.status(200).json({});
             })
             .catch(function (err: any) {
@@ -5038,12 +5011,12 @@ function handle_POST_sendCreatedLinkToEmail(
                 res,
                 500,
                 "polis_err_sending_created_link_to_email",
-                err
+                err,
               );
             });
-        }
+        },
       );
-    }
+    },
   );
 }
 
@@ -5062,7 +5035,7 @@ function handle_POST_notifyTeam(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   if (
     req.p.webserver_pass !== process.env.WEBSERVER_PASS ||
@@ -5097,7 +5070,7 @@ function handle_POST_sendEmailExportReady(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   if (
     req.p.webserver_pass !== process.env.WEBSERVER_PASS ||
@@ -5142,7 +5115,7 @@ Thanks for using Polis!
 
 function handle_GET_twitterBtn(
   req: { p: { dest: string; owner: string } },
-  res: { redirect: (arg0: string) => void }
+  res: { redirect: (arg0: string) => void },
 ) {
   let dest = req.p.dest || "/inbox";
   dest = encodeURIComponent(Config.getServerNameWithProtocol(req) + dest);
@@ -5167,7 +5140,7 @@ function handle_GET_twitterBtn(
 
 function handle_GET_twitter_oauth_callback(
   req: { p: { uid?: any; dest: any; oauth_verifier: any; oauth_token: any } },
-  res: { redirect: (arg0: any) => void }
+  res: { redirect: (arg0: any) => void },
 ) {
   let uid = req.p.uid;
   console.log("info", "twitter oauth callback req.p", req.p);
@@ -5207,7 +5180,7 @@ function handle_GET_twitter_oauth_callback(
           {
             twitter_user_id: kv.user_id,
           },
-          false
+          false,
         )
           .then(
             function (userStringPayload: string) {
@@ -5240,7 +5213,7 @@ function handle_GET_twitter_oauth_callback(
                     u.profile_image_url_https,
                     u.location,
                     JSON.stringify(u),
-                  ]
+                  ],
                 )
                 .then(
                   function () {
@@ -5250,7 +5223,7 @@ function handle_GET_twitter_oauth_callback(
                     dbPgQuery
                       .queryP(
                         "update users set hname = ($2) where uid = ($1) and hname is NULL;",
-                        [uid, u.name]
+                        [uid, u.name],
                       )
                       .then(
                         function () {
@@ -5263,16 +5236,16 @@ function handle_GET_twitter_oauth_callback(
                             res,
                             500,
                             "polis_err_twitter_auth_update",
-                            err
+                            err,
                           );
-                        }
+                        },
                       )
                       .catch(function (err: any) {
                         Log.fail(
                           res,
                           500,
                           "polis_err_twitter_auth_update_misc",
-                          err
+                          err,
                         );
                       });
                   },
@@ -5284,11 +5257,11 @@ function handle_GET_twitter_oauth_callback(
                       Promise.all([
                         dbPgQuery.queryP(
                           "select * from twitter_users where uid = ($1);",
-                          [uid]
+                          [uid],
                         ),
                         dbPgQuery.queryP(
                           "select * from twitter_users where twitter_user_id = ($1);",
-                          [u.id]
+                          [u.id],
                         ),
                       ])
                         //                       No overload matches this call.
@@ -5320,7 +5293,7 @@ function handle_GET_twitter_oauth_callback(
                                     res,
                                     500,
                                     "polis_err_twitter_auth_456",
-                                    err
+                                    err,
                                   );
                                 });
                             }
@@ -5331,7 +5304,7 @@ function handle_GET_twitter_oauth_callback(
                               res,
                               500,
                               "polis_err_twitter_already_attached",
-                              err
+                              err,
                             );
                           } else if (recordForTwitterId) {
                             // currently signed in user has no twitter account attached, but they just signed in with a twitter account which is attached to another user.
@@ -5346,7 +5319,7 @@ function handle_GET_twitter_oauth_callback(
                                   res,
                                   500,
                                   "polis_err_twitter_auth_234",
-                                  err
+                                  err,
                                 );
                               });
                           } else {
@@ -5360,13 +5333,13 @@ function handle_GET_twitter_oauth_callback(
                     } else {
                       Log.fail(res, 500, "polis_err_twitter_auth_05", err);
                     }
-                  }
+                  },
                 );
             },
             function (err: any) {
               console.log("error", "failed to getTwitterUserInfo");
               Log.fail(res, 500, "polis_err_twitter_auth_041", err);
-            }
+            },
           )
           .catch(function (err: any) {
             Log.fail(res, 500, "polis_err_twitter_auth_04", err);
@@ -5374,7 +5347,7 @@ function handle_GET_twitter_oauth_callback(
       },
       function (err: any) {
         Log.fail(res, 500, "polis_err_twitter_auth_gettoken", err);
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_twitter_auth_misc", err);
@@ -5397,9 +5370,9 @@ function handle_GET_groupDemographics(
         meta_comment_agrees: {};
         meta_comment_disagrees: {};
         meta_comment_passes: {};
-      }[]
+      }[],
     ) => void;
-  }
+  },
 ) {
   let zid = req.p.zid;
   Promise.all([
@@ -5547,7 +5520,7 @@ function handle_GET_groupDemographics(
 // this is for testing the encryption
 function handle_GET_logMaxmindResponse(
   req: { p: { uid?: any; zid: any; user_uid?: any } },
-  res: { json: (arg0: {}) => void }
+  res: { json: (arg0: {}) => void },
 ) {
   if (!isPolisDev(req.p.uid) || !devMode) {
     // TODO fix this by piping the error from the usage of this in ./app
@@ -5558,7 +5531,7 @@ function handle_GET_logMaxmindResponse(
   dbPgQuery
     .queryP(
       "select * from participants_extended where zid = ($1) and uid = ($2);",
-      [req.p.zid, req.p.user_uid]
+      [req.p.zid, req.p.user_uid],
     )
     //     Argument of type '(results: string | any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
     // Types of parameters 'results' and 'value' are incompatible.
@@ -5593,7 +5566,7 @@ function handle_GET_locations(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let gid = req.p.gid;
@@ -5628,7 +5601,7 @@ function handle_PUT_ptptois(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let uid = req.p.uid;
@@ -5643,7 +5616,7 @@ function handle_PUT_ptptois(
       return dbPgQuery
         .queryP(
           "update participants set mod = ($3) where zid = ($1) and pid = ($2);",
-          [zid, pid, mod]
+          [zid, pid, mod],
         )
         .then(function () {
           res.status(200).json({});
@@ -5661,7 +5634,7 @@ function handle_GET_ptptois(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   let zid = req.p.zid;
   let mod = req.p.mod;
@@ -5705,7 +5678,7 @@ function handle_GET_votes_famous(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   doFamousQuery(req.p, req)
     .then(
@@ -5714,7 +5687,7 @@ function handle_GET_votes_famous(
       },
       function (err: any) {
         Log.fail(res, 500, "polis_err_famous_proj_get2", err);
-      }
+      },
     )
     .catch(function (err: any) {
       Log.fail(res, 500, "polis_err_famous_proj_get1", err);
@@ -5729,19 +5702,19 @@ function handle_GET_twitter_users(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
   let p;
   if (uid) {
     p = dbPgQuery.queryP_readOnly(
       "select * from twitter_users where uid = ($1);",
-      [uid]
+      [uid],
     );
   } else if (req.p.twitter_user_id) {
     p = dbPgQuery.queryP_readOnly(
       "select * from twitter_users where twitter_user_id = ($1);",
-      [req.p.twitter_user_id]
+      [req.p.twitter_user_id],
     );
   } else {
     Log.fail(res, 401, "polis_err_missing_uid_or_twitter_user_id");
@@ -5767,7 +5740,7 @@ function handle_POST_einvites(
       new (): any;
       json: { (arg0: {}): void; new (): any };
     };
-  }
+  },
 ) {
   let email = req.p.email;
   doSendEinvite(req, email)
@@ -5787,7 +5760,7 @@ function handle_GET_einvites(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   let einvite = req.p.einvite;
 
@@ -5822,7 +5795,7 @@ function handle_POST_contributors(
       company_name: any;
     };
   },
-  res: { json: (arg0: {}) => void }
+  res: { json: (arg0: {}) => void },
 ) {
   const uid = req.p.uid || null;
   const agreement_version = req.p.agreement_version;
@@ -5835,22 +5808,22 @@ function handle_POST_contributors(
     .queryP(
       "insert into contributor_agreement_signatures (uid, agreement_version, github_id, name, email, company_name) " +
         "values ($1, $2, $3, $4, $5, $6);",
-      [uid, agreement_version, github_id, name, email, company_name]
+      [uid, agreement_version, github_id, name, email, company_name],
     )
     .then(
       () => {
         emailTeam(
           "contributer agreement signed",
           [uid, agreement_version, github_id, name, email, company_name].join(
-            "\n"
-          )
+            "\n",
+          ),
         );
 
         res.json({});
       },
       (err: any) => {
         Log.fail(res, 500, "polis_err_POST_contributors_misc", err);
-      }
+      },
     );
 }
 
@@ -5867,7 +5840,7 @@ function handle_POST_lti_setup_assignment(
       uid?: any;
     };
   },
-  res: any
+  res: any,
 ) {
   console.log("info", req);
   // let roles = req.p.roles;
@@ -5877,7 +5850,7 @@ function handle_POST_lti_setup_assignment(
   // let user_image = req.p.user_image || "";
   if (!req.p.tool_consumer_instance_guid) {
     emailBadProblemTime(
-      "couldn't find tool_consumer_instance_guid, maybe this isn't Canvas?"
+      "couldn't find tool_consumer_instance_guid, maybe this isn't Canvas?",
     );
   }
 
@@ -5891,7 +5864,7 @@ function handle_POST_lti_setup_assignment(
       context_id,
       req.p.lis_outcome_service_url || "",
       JSON.stringify(req.p),
-    ]
+    ],
   );
 
   Promise.all([dataSavedPromise])
@@ -5902,7 +5875,7 @@ function handle_POST_lti_setup_assignment(
         dbPgQuery
           .queryP(
             "select * from lti_users left join users on lti_users.uid = users.uid where lti_user_id = ($1);",
-            [user_id]
+            [user_id],
           )
           .then(function (rows: any) {
             // find the correct one - note: this loop may be useful in warning when people have multiple linkages
@@ -5972,7 +5945,7 @@ function handle_POST_lti_conversation_assignment(
     redirect: (arg0: string) => void;
     set: (arg0: { "Content-Type": string }) => void;
     send: (arg0: string) => void;
-  }
+  },
 ) {
   let roles = req.p.roles;
   let isInstructor = /[iI]nstructor/.exec(roles); // others: Learner
@@ -5990,7 +5963,7 @@ function handle_POST_lti_conversation_assignment(
       dbPgQuery
         .queryP(
           "select * from lti_users left join users on lti_users.uid = users.uid where lti_users.lti_user_id = ($1) and lti_users.tool_consumer_instance_guid = ($2);",
-          [user_id, req.p.tool_consumer_instance_guid]
+          [user_id, req.p.tool_consumer_instance_guid],
         )
         //       Argument of type '(rows: string | any[]) => any' is not assignable to parameter of type '(value: unknown) => any'.
         // Types of parameters 'rows' and 'value' are incompatible.
@@ -6003,7 +5976,7 @@ function handle_POST_lti_conversation_assignment(
             userForLtiUserId = rows[0];
             console.log(
               "info",
-              "got user for lti_user_id:" + JSON.stringify(userForLtiUserId)
+              "got user for lti_user_id:" + JSON.stringify(userForLtiUserId),
             );
           }
           return userForLtiUserId;
@@ -6019,7 +5992,7 @@ function handle_POST_lti_conversation_assignment(
       req.p.tool_consumer_instance_guid,
       req.p.lis_outcome_service_url,
       req.p.lis_result_sourcedid,
-      JSON.stringify(req.body)
+      JSON.stringify(req.body),
     )
       .then(function () {
         console.log("info", "grading info added");
@@ -6042,7 +6015,7 @@ function handle_POST_lti_conversation_assignment(
           // this token is used to support cookie-less participation, mainly needed within Canvas's Android webview
           xPolisLti: Session.createPolisLtiToken(
             req.p.tool_consumer_instance_guid,
-            req.p.user_id
+            req.p.user_id,
           ), // x-polis-lti header
         })
       );
@@ -6053,7 +6026,7 @@ function handle_POST_lti_conversation_assignment(
     getCanvasAssignmentInfo(
       req.p.tool_consumer_instance_guid,
       req.p.context_id,
-      req.p.custom_canvas_assignment_id
+      req.p.custom_canvas_assignment_id,
     ),
     getPolisUserForLtiUser(),
   ])
@@ -6099,7 +6072,7 @@ function handle_POST_lti_conversation_assignment(
               res,
               500,
               "polis_err_lti_generating_conversation_url",
-              err
+              err,
             );
           });
       } else {
@@ -6114,14 +6087,14 @@ function handle_POST_lti_conversation_assignment(
                   // this token is used to support cookie-less participation, mainly needed within Canvas's Android webview. It is needed to ensure the canvas user is bound to the polis user, regardless of who is signed in on pol.is
                   xPolisLti: Session.createPolisLtiToken(
                     req.p.tool_consumer_instance_guid,
-                    req.p.user_id
+                    req.p.user_id,
                   ), // x-polis-lti header
                   tool_consumer_instance_guid:
                     req.p.tool_consumer_instance_guid,
                   context: context_id,
                   custom_canvas_assignment_id:
                     req.p.custom_canvas_assignment_id,
-                })
+                }),
             );
           } else {
             let url =
@@ -6147,14 +6120,14 @@ function handle_POST_lti_conversation_assignment(
 
           console.error(
             "Student saw conversation before it was set up. For instructor with key: oauth_consumer_key: " +
-              req.p.oauth_consumer_key
+              req.p.oauth_consumer_key,
           );
           res.set({
             "Content-Type": "text/html",
           });
           res.send(
             '<head><meta name="viewport" content="width=device-width, initial-scale=1;"></head>' +
-              "<body><h1 style='max-width:320px'>Sorry, the pol.is conversation has not been created yet. Please try back later.</h1></body>"
+              "<body><h1 style='max-width:320px'>Sorry, the pol.is conversation has not been created yet. Please try back later.</h1></body>",
           );
         }
       }
@@ -6194,7 +6167,7 @@ function handle_GET_setup_assignment_xml(
       new (): any;
       send: { (arg0: string): void; new (): any };
     };
-  }
+  },
 ) {
   let xml =
     "" +
@@ -6241,7 +6214,7 @@ function handle_GET_conversation_assigmnent_xml(
       new (): any;
       send: { (arg0: string): void; new (): any };
     };
-  }
+  },
 ) {
   let serverName = Config.getServerNameWithProtocol(req);
 
@@ -6287,7 +6260,7 @@ function handle_GET_conversation_assigmnent_xml(
 }
 function handle_GET_canvas_app_instructions_png(
   req: { headers?: { [x: string]: string } },
-  res: any
+  res: any,
 ) {
   let path = "/landerImages/";
   if (/Android/.exec(req?.headers?.["user-agent"] || "")) {
@@ -6314,7 +6287,7 @@ function hangle_GET_testConnection(
       new (): any;
       json: { (arg0: { status: string }): void; new (): any };
     };
-  }
+  },
 ) {
   res.status(200).json({
     status: "ok",
@@ -6329,7 +6302,7 @@ function hangle_GET_testDatabase(
       new (): any;
       json: { (arg0: { status: string }): void; new (): any };
     };
-  }
+  },
 ) {
   dbPgQuery.queryP("select uid from users limit 1", []).then(
     (rows: any) => {
@@ -6339,7 +6312,7 @@ function hangle_GET_testDatabase(
     },
     (err: any) => {
       Log.fail(res, 500, "polis_err_testDatabase", err);
-    }
+    },
   );
 }
 
@@ -6351,7 +6324,7 @@ function handle_POST_users_invite(
       new (): any;
       json: { (arg0: { status: string }): void; new (): any };
     };
-  }
+  },
 ) {
   let uid = req.p.uid;
   let emails = req.p.emails;
@@ -6396,16 +6369,16 @@ function handle_POST_users_invite(
                   req,
                   email,
                   conversation_id,
-                  suzinvite
+                  suzinvite,
                 ).then(
                   function () {
                     return addInviter(uid, email);
                   },
                   function (err: any) {
                     Log.fail(res, 500, "polis_err_sending_invite", err);
-                  }
+                  },
                 );
-              })
+              }),
             )
               .then(function () {
                 res.status(200).json({
@@ -6434,7 +6407,7 @@ function handle_GET_conversationPreloadInfo(
       new (): any;
       json: { (arg0: any): void; new (): any };
     };
-  }
+  },
 ) {
   return doGetConversationPreloadInfo(req.p.conversation_id).then(
     (conv: any) => {
@@ -6442,7 +6415,7 @@ function handle_GET_conversationPreloadInfo(
     },
     (err: any) => {
       Log.fail(res, 500, "polis_err_get_conversation_preload_info", err);
-    }
+    },
   );
 }
 
@@ -6482,7 +6455,7 @@ function handle_GET_implicit_conversation_generation(
     };
     headers?: { origin: string };
   },
-  res: { redirect: (arg0: string) => void }
+  res: { redirect: (arg0: string) => void },
 ) {
   let site_id = /polis_site_id[^\/]*/.exec(req.path) || null;
   let page_id = /\S\/([^\/]*)/.exec(req.path) || null;
@@ -6600,7 +6573,7 @@ function handle_GET_implicit_conversation_generation(
   dbPgQuery
     .queryP_readOnly(
       "select * from page_ids where site_id = ($1) and page_id = ($2);",
-      [site_id, page_id]
+      [site_id, page_id],
     )
     //     Argument of type '(rows: string | any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
     // Types of parameters 'rows' and 'value' are incompatible.
@@ -6626,7 +6599,7 @@ function handle_GET_implicit_conversation_generation(
               page_id,
               url,
               modUrl,
-              seedUrl
+              seedUrl,
             )
               .then(function () {
                 console.log("info", "email sent");
@@ -6665,7 +6638,7 @@ function handle_GET_iip_conversation(
   res: {
     set: (arg0: { "Content-Type": string }) => void;
     send: (arg0: string) => void;
-  }
+  },
 ) {
   let conversation_id = req.params.conversation_id;
   res.set({
@@ -6676,7 +6649,7 @@ function handle_GET_iip_conversation(
       conversation_id +
       "' target='_blank'>" +
       conversation_id +
-      "</a>"
+      "</a>",
   );
 }
 function handle_GET_iim_conversation(
@@ -6684,7 +6657,7 @@ function handle_GET_iim_conversation(
   res: {
     set: (arg0: { "Content-Type": string }) => void;
     send: (arg0: string) => void;
-  }
+  },
 ) {
   let zid = req.p.zid;
   let conversation_id = req.params.conversation_id;
@@ -6703,7 +6676,7 @@ function handle_GET_iim_conversation(
           "<p><a href='https://pol.is/m" +
           conversation_id +
           "' target='_blank'>moderate</a></p>" +
-          (info.description ? "<p>" + info.description + "</p>" : "")
+          (info.description ? "<p>" + info.description + "</p>" : ""),
       );
     })
     .catch(function (err: any) {
@@ -6722,14 +6695,14 @@ function handle_GET_twitter_image(
       new (): any;
       end: { (): void; new (): any };
     };
-  }
+  },
 ) {
   console.log("handle_GET_twitter_image", req.p.id);
   getTwitterUserInfo(
     {
       twitter_user_id: req.p.id,
     },
-    true
+    true,
   )
     .then(function (data: string) {
       let parsedData = JSON.parse(data);
@@ -6746,7 +6719,7 @@ function handle_GET_twitter_image(
             finished = true;
             res.setHeader(
               "Cache-Control",
-              "no-transform,public,max-age=18000,s-maxage=18000"
+              "no-transform,public,max-age=18000,s-maxage=18000",
             );
             twitterResponse.pipe(res);
           }
@@ -6809,10 +6782,10 @@ function handle_GET_localFile_dev_only(
   res: {
     writeHead: (
       arg0: number,
-      arg1?: { "Content-Type": string } | undefined
+      arg1?: { "Content-Type": string } | undefined,
     ) => void;
     end: (arg0?: undefined, arg1?: string) => void;
-  }
+  },
 ) {
   const filenameParts = String(req.path).split("/");
   filenameParts.shift();

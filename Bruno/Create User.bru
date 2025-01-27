@@ -1,0 +1,20 @@
+meta {
+  name: Create User
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8000/api/v3/auth/new
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "hname": "user_id2",
+    "email": "admin+user_id2@example.com",
+    "password": "somepassword",
+    "gatekeeperTosPrivacy": true
+  }
+}

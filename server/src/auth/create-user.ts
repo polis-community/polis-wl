@@ -126,7 +126,7 @@ function createUser(req: any, res: any) {
                       res,
                       500,
                       "polis_err_reg_failed_to_add_user_record",
-                      err
+                      err,
                     );
                     return;
                   }
@@ -136,7 +136,7 @@ function createUser(req: any, res: any) {
                         res,
                         500,
                         "polis_err_reg_failed_to_start_session",
-                        err
+                        err,
                       );
                       return;
                     }
@@ -148,14 +148,14 @@ function createUser(req: any, res: any) {
                                 uid,
                                 lti_user_id,
                                 tool_consumer_instance_guid,
-                                lti_user_image
+                                lti_user_image,
                               )
                             : Promise.resolve();
                           let ltiContextMembershipPromise = lti_context_id
                             ? User.addLtiContextMembership(
                                 uid,
                                 lti_context_id,
-                                tool_consumer_instance_guid
+                                tool_consumer_instance_guid,
                               )
                             : Promise.resolve();
                           Promise.all([
@@ -195,28 +195,28 @@ function createUser(req: any, res: any) {
                                 res,
                                 500,
                                 "polis_err_creating_user_associating_with_lti_user",
-                                err
+                                err,
                               );
                             });
                         },
                         function (err: any) {
                           fail(res, 500, "polis_err_adding_cookies", err);
-                        }
+                        },
                       )
                       .catch(function (err: any) {
                         fail(res, 500, "polis_err_adding_user", err);
                       });
                   }); // end startSession
-                }
+                },
               ); // end insert pwhash
-            }
+            },
           ); // end insert user
-        }
+        },
       ); // end generateHashedPassword
     },
     function (err: any) {
       fail(res, 500, "polis_err_reg_checking_existing_users", err);
-    }
+    },
   );
 }
 
@@ -245,7 +245,7 @@ ${serverName}/api/v3/verify?e=${einvite}`;
     Config.get("POLIS_FROM_ADDRESS"),
     email,
     "Polis verification",
-    body
+    body,
   );
 }
 
@@ -266,6 +266,17 @@ function decodeParams(encodedStringifiedJson: string | string[]) {
   return o;
 }
 
+function registerZinvite(zid: any, zinvite: any) {
+  return pg
+    .queryP(
+      "INSERT INTO zinvites (zid, zinvite, created) VALUES ($1, $2, default);",
+      [zid, zinvite],
+    )
+    .then(function (rows: any) {
+      return zinvite;
+    });
+}
+
 function generateAndRegisterZinvite(zid: any, generateShort: any) {
   let len = 10;
   if (generateShort) {
@@ -275,7 +286,7 @@ function generateAndRegisterZinvite(zid: any, generateShort: any) {
     return pg
       .queryP(
         "INSERT INTO zinvites (zid, zinvite, created) VALUES ($1, $2, default);",
-        [zid, zinvite]
+        [zid, zinvite],
       )
       .then(function (rows: any) {
         return zinvite;
@@ -285,4 +296,9 @@ function generateAndRegisterZinvite(zid: any, generateShort: any) {
 
 export { createUser, doSendVerification, generateAndRegisterZinvite };
 
-export default { createUser, doSendVerification, generateAndRegisterZinvite };
+export default {
+  createUser,
+  doSendVerification,
+  generateAndRegisterZinvite,
+  registerZinvite,
+};
