@@ -1,0 +1,15 @@
+meta {
+  name: Fetch math only
+  type: http
+  seq: 7
+}
+
+get {
+  url: http://localhost:8000/api/v3/math/pca2?conversation_id=conversation_id
+  body: none
+  auth: none
+}
+
+params:query {
+  conversation_id: conversation_id
+}
