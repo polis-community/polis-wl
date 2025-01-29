@@ -11,7 +11,7 @@ import LRUCache from "lru-cache";
 
 function getUserInfoForUid(
   uid: any,
-  callback: (arg0: null, arg1?: undefined) => void
+  callback: (arg0: null, arg1?: undefined) => void,
 ) {
   pg.query_readOnly(
     "SELECT email, hname from users where uid = $1",
@@ -24,7 +24,7 @@ function getUserInfoForUid(
         return callback(null);
       }
       callback(null, results.rows[0]);
-    }
+    },
   );
 }
 
@@ -33,7 +33,7 @@ function getUserInfoForUid2(uid: any) {
   // @ts-ignore
   return new MPromise("getUserInfoForUid2", function (
     resolve: (arg0: any) => void,
-    reject: (arg0: null) => any
+    reject: (arg0: null) => any,
   ) {
     pg.query_readOnly(
       "SELECT * from users where uid = $1",
@@ -47,7 +47,7 @@ function getUserInfoForUid2(uid: any) {
         }
         let o = results.rows[0];
         resolve(o);
-      }
+      },
     );
   });
 }
@@ -56,14 +56,14 @@ function addLtiUserIfNeeded(
   uid: any,
   lti_user_id: any,
   tool_consumer_instance_guid: any,
-  lti_user_image: null
+  lti_user_image: null,
 ) {
   lti_user_image = lti_user_image || null;
   return (
     pg
       .queryP(
         "select * from lti_users where lti_user_id = ($1) and tool_consumer_instance_guid = ($2);",
-        [lti_user_id, tool_consumer_instance_guid]
+        [lti_user_id, tool_consumer_instance_guid],
       )
       //     (local function)(rows: string | any[]): Promise<unknown> | undefined
       // Argument of type '(rows: string | any[]) => Promise<unknown> | undefined' is not assignable to parameter of type '(value: unknown) => unknown'.
@@ -75,7 +75,7 @@ function addLtiUserIfNeeded(
         if (!rows || !rows.length) {
           return pg.queryP(
             "insert into lti_users (uid, lti_user_id, tool_consumer_instance_guid, lti_user_image) values ($1, $2, $3, $4);",
-            [uid, lti_user_id, tool_consumer_instance_guid, lti_user_image]
+            [uid, lti_user_id, tool_consumer_instance_guid, lti_user_image],
           );
         }
       })
@@ -85,13 +85,13 @@ function addLtiUserIfNeeded(
 function addLtiContextMembership(
   uid: any,
   lti_context_id: any,
-  tool_consumer_instance_guid: any
+  tool_consumer_instance_guid: any,
 ) {
   return (
     pg
       .queryP(
         "select * from lti_context_memberships where uid = $1 and lti_context_id = $2 and tool_consumer_instance_guid = $3;",
-        [uid, lti_context_id, tool_consumer_instance_guid]
+        [uid, lti_context_id, tool_consumer_instance_guid],
       )
       //     (local function)(rows: string | any[]): Promise<unknown> | undefined
       // Argument of type '(rows: string | any[]) => Promise<unknown> | undefined' is not assignable to parameter of type '(value: unknown) => unknown'.
@@ -103,7 +103,7 @@ function addLtiContextMembership(
         if (!rows || !rows.length) {
           return pg.queryP(
             "insert into lti_context_memberships (uid, lti_context_id, tool_consumer_instance_guid) values ($1, $2, $3);",
-            [uid, lti_context_id, tool_consumer_instance_guid]
+            [uid, lti_context_id, tool_consumer_instance_guid],
           );
         }
       })
@@ -120,7 +120,7 @@ function renderLtiLinkageSuccessPage(
       send: { (arg0: string): void; new (): any };
     };
   },
-  o: { email: string }
+  o: { email: string },
 ) {
   res.set({
     "Content-Type": "text/html",
@@ -146,11 +146,34 @@ function renderLtiLinkageSuccessPage(
   res.status(200).send(html);
 }
 
+async function getPidToHnames(zid: number) {
+  return (
+    pg
+      .queryP_readOnly(
+        "select participants.pid, users.hname from participants inner join users on users.uid = participants.uid where zid=($1);",
+        [zid],
+      )
+      //     (local function)(rows: string | any[]): any
+      // Argument of type '(rows: string | any[]) => any' is not assignable to parameter of type '(value: unknown) => any'.
+      //   Types of parameters 'rows' and 'value' are incompatible.
+      //     Type 'unknown' is not assignable to type 'string | any[]'.
+      //     Type 'unknown' is not assignable to type 'any[]'.ts(2345)
+      // @ts-ignore
+      .then(function (rows: any[]) {
+        const pidToHnames: Record<number, string> = {};
+        for (const row of rows) {
+          pidToHnames[row.pid] = row.hname;
+        }
+        return pidToHnames;
+      })
+  );
+}
+
 async function getUser(
   uid: number,
   zid_optional: any,
   xid_optional: any,
-  owner_uid_optional: any
+  owner_uid_optional: any,
 ) {
   if (!uid) {
     // this api may be called by a new user, so we don't want to trigger a failure here.
@@ -171,7 +194,7 @@ async function getUser(
     xidInfoPromise = Conversation.getXidRecordByXidOwnerId(
       xid_optional,
       owner_uid_optional,
-      zid_optional
+      zid_optional,
     );
   }
 
@@ -230,14 +253,14 @@ async function getUser(
 function getTwitterInfo(uids: any[]) {
   return pg.queryP_readOnly(
     "select * from twitter_users where uid in ($1);",
-    uids
+    uids,
   );
 }
 
 function getFacebookInfo(uids: any[]) {
   return pg.queryP_readOnly(
     "select * from facebook_users where uid in ($1);",
-    uids
+    uids,
   );
 }
 
@@ -255,7 +278,7 @@ function createDummyUser() {
   // @ts-ignore
   return new MPromise("createDummyUser", function (
     resolve: (arg0: any) => void,
-    reject: (arg0: Error) => void
+    reject: (arg0: Error) => void,
   ) {
     pg.query(
       "INSERT INTO users (created) VALUES (default) RETURNING uid;",
@@ -267,7 +290,7 @@ function createDummyUser() {
           return;
         }
         resolve(results.rows[0].uid);
-      }
+      },
     );
   });
 }
@@ -280,7 +303,7 @@ let pidCache: LRUCache<string, number> = new LruCache({
 function getPid(
   zid: string,
   uid: string,
-  callback: (arg0: null, arg1: number) => void
+  callback: (arg0: null, arg1: number) => void,
 ) {
   let cacheKey = zid + "_" + uid;
   let cachedPid = pidCache.get(cacheKey);
@@ -298,7 +321,7 @@ function getPid(
         pidCache.set(cacheKey, pid);
       }
       callback(err, pid);
-    }
+    },
   );
 }
 
@@ -312,7 +335,7 @@ function getPidPromise(zid: string, uid: string, usePrimary?: boolean) {
   // @ts-ignore
   return new MPromise("getPidPromise", function (
     resolve: (arg0: number) => void,
-    reject: (arg0: any) => any
+    reject: (arg0: any) => any,
   ) {
     if (!_.isUndefined(cachedPid)) {
       resolve(cachedPid);
@@ -333,7 +356,7 @@ function getPidPromise(zid: string, uid: string, usePrimary?: boolean) {
         let pid = results.rows[0].pid;
         pidCache.set(cacheKey, pid);
         resolve(pid);
-      }
+      },
     );
   });
 }
@@ -341,12 +364,12 @@ function getPidPromise(zid: string, uid: string, usePrimary?: boolean) {
 // must follow auth and need('zid'...) middleware
 function getPidForParticipant(
   assigner: (arg0: any, arg1: string, arg2: any) => void,
-  cache: any
+  cache: any,
 ) {
   return function (
     req: { p: { zid: any; uid: any } },
     res: any,
-    next: (arg0?: string) => void
+    next: (arg0?: string) => void,
   ) {
     let zid = req.p.zid;
     let uid = req.p.uid;
@@ -371,7 +394,7 @@ function getPidForParticipant(
       function (err: any) {
         Log.yell("polis_err_get_pid_for_participant");
         next(err);
-      }
+      },
     );
   };
 }
@@ -401,7 +424,7 @@ function getSocialInfoForUsers(uids: any[], zid: any) {
       ")), " +
       "foo as (select *, coalesce(fb.uid, tw.uid) as foouid from fb full outer join tw on tw.uid = fb.uid) " +
       "select *, coalesce(foo.foouid, x.uid) as uid from foo full outer join x on x.uid = foo.foouid;",
-    [zid]
+    [zid],
   );
 }
 
@@ -412,7 +435,7 @@ function getXidRecordByXidOwnerId(
   x_profile_image_url: any,
   x_name: any,
   x_email: any,
-  createIfMissing: any
+  createIfMissing: any,
 ) {
   return (
     pg
@@ -440,7 +463,7 @@ function getXidRecordByXidOwnerId(
                   return conv.use_xid_whitelist
                     ? Conversation.isXidWhitelisted(owner, xid)
                     : Promise.resolve(true);
-                }
+                },
               );
 
           return shouldCreateXidEntryPromise.then((should: any) => {
@@ -455,7 +478,7 @@ function getXidRecordByXidOwnerId(
                 xid,
                 x_profile_image_url || null,
                 x_name || null,
-                x_email || null
+                x_email || null,
               ).then(() => {
                 console.log("created xInfo");
                 return [
@@ -493,7 +516,7 @@ function getXidStuff(xid: any, zid: any) {
         (pidForXid: any) => {
           xidRecordForPtpt.pid = pidForXid;
           return xidRecordForPtpt;
-        }
+        },
       );
     }
     return xidRecordForPtpt;
@@ -525,6 +548,7 @@ export default {
   addLtiContextMembership,
   renderLtiLinkageSuccessPage,
   getUser,
+  getPidToHnames,
   createDummyUser,
   getPid,
   getPidPromise,

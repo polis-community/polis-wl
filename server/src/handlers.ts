@@ -3045,12 +3045,14 @@ function handle_GET_participationInit(
     // @ts-ignore
     ifConv(doFamousQuery, [req.p, req]),
     // getIfConv({uri: "http://" + SELF_HOSTNAME + "/api/v3/votes/famous", qs: famousQs, headers: req.headers, gzip: true}),
+    User.getPidToHnames(req.p.zid),
   ])
     .then(
       function (arr: any[]) {
         let conv = arr[3];
         let o = {
           user: arr[0],
+          pidToHnames: arr[7],
           ptpt: arr[1],
           nextComment: arr[2],
           conversation: conv,
