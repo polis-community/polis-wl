@@ -2718,17 +2718,58 @@ function getTwitterTweetById(twitter_tweet_id: string) {
 }
 
 function addParticipant(zid: any, uid?: any) {
-  return dbPgQuery
-    .queryP("INSERT INTO participants_extended (zid, uid) VALUES ($1, $2);", [
-      zid,
-      uid,
-    ])
-    .then(() => {
-      return dbPgQuery.queryP(
-        "INSERT INTO participants (pid, zid, uid, created) VALUES (NULL, $1, $2, default) RETURNING *;",
-        [zid, uid],
-      );
-    });
+  return new Promise(function (
+    resolve: (rows: any[]) => void,
+    reject: (arg0: Error) => void,
+  ) {
+    dbPgQuery.query_readOnly(
+      "INSERT INTO participants_extended (zid, uid) VALUES ($1, $2);",
+      [zid, uid],
+      function (err: any, _results: { rows: any[] }) {
+        if (err) {
+          if (isDuplicateKey(err)) {
+            console.log(
+              "info",
+              "Ignore duplicate key error in participants_extended table, probably a vote update",
+              err,
+            );
+          } else {
+            reject(err);
+            return;
+          }
+        }
+        dbPgQuery.query_readOnly(
+          "INSERT INTO participants (pid, zid, uid, created) VALUES (NULL, $1, $2, default) RETURNING *;",
+          [zid, uid],
+          function (err: any, results: { rows: any[] }) {
+            if (err) {
+              if (isDuplicateKey(err)) {
+                console.log(
+                  "info",
+                  "Ignore duplicate key error in participants table, probably a vote update--try selecting instead",
+                  err,
+                );
+                dbPgQuery
+                  .queryP(
+                    "SELECT * from participants WHERE zid = ($1) and uid = ($2);",
+                    [zid, uid],
+                  )
+                  // @ts-ignore
+                  .then((newRows: any[]) => {
+                    resolve(newRows);
+                  })
+                  .catch((e) => reject(e));
+              } else {
+                reject(err);
+              }
+            } else {
+              resolve(results.rows);
+            }
+          },
+        );
+      },
+    );
+  });
 }
 
 function getAndInsertTwitterUser(o: any, uid?: any) {

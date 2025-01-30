@@ -2359,7 +2359,7 @@ function handle_POST_comments(
   req: {
     p: {
       zid?: any;
-      uid?: any;
+      ownername: string;
       txt?: any;
       pid?: any;
       vote?: any;
@@ -2376,460 +2376,468 @@ function handle_POST_comments(
   },
   res: { json: (arg0: { tid: any; currentPid: any }) => void },
 ) {
-  let zid = req.p.zid;
-  let xid = void 0; //req.p.xid;
-  let uid = req.p.uid;
-  let txt = req.p.txt;
-  let pid = req.p.pid; // PID_FLOW may be undefined
-  let currentPid = pid;
-  let vote = req.p.vote;
-  let twitter_tweet_id = req.p.twitter_tweet_id;
-  let quote_twitter_screen_name = req.p.quote_twitter_screen_name;
-  let quote_txt = req.p.quote_txt;
-  let quote_src_url = req.p.quote_src_url;
-  let anon = req.p.anon;
-  let is_seed = req.p.is_seed;
-  let mustBeModerator = !!quote_txt || !!twitter_tweet_id || anon;
+  User.getUidFromHname(req.p.ownername).then((uid) => {
+    let zid = req.p.zid;
+    let xid = void 0; //req.p.xid;
+    let txt = req.p.txt;
+    let pid = req.p.pid; // PID_FLOW may be undefined
+    let currentPid = pid;
+    let vote = req.p.vote;
+    let twitter_tweet_id = req.p.twitter_tweet_id;
+    let quote_twitter_screen_name = req.p.quote_twitter_screen_name;
+    let quote_txt = req.p.quote_txt;
+    let quote_src_url = req.p.quote_src_url;
+    let anon = req.p.anon;
+    let is_seed = req.p.is_seed;
+    let mustBeModerator = !!quote_txt || !!twitter_tweet_id || anon;
 
-  console.log("POST_comments begin", Date.now());
-  console.log("POST_comments params", req.p);
+    console.log("POST_comments begin", Date.now());
+    console.log("POST_comments params", req.p);
 
-  // either include txt, or a tweet id
-  if (
-    (_.isUndefined(txt) || txt === "") &&
-    (_.isUndefined(twitter_tweet_id) || twitter_tweet_id === "") &&
-    (_.isUndefined(quote_txt) || quote_txt === "")
-  ) {
-    Log.fail(res, 400, "polis_err_param_missing_txt");
-    return;
-  }
+    // either include txt, or a tweet id
+    if (
+      (_.isUndefined(txt) || txt === "") &&
+      (_.isUndefined(twitter_tweet_id) || twitter_tweet_id === "") &&
+      (_.isUndefined(quote_txt) || quote_txt === "")
+    ) {
+      Log.fail(res, 400, "polis_err_param_missing_txt");
+      return;
+    }
 
-  if (quote_txt && _.isUndefined(quote_src_url)) {
-    Log.fail(res, 400, "polis_err_param_missing_quote_src_url");
-    return;
-  }
+    if (quote_txt && _.isUndefined(quote_src_url)) {
+      Log.fail(res, 400, "polis_err_param_missing_quote_src_url");
+      return;
+    }
 
-  function doGetPid() {
-    console.log("POST_comments doGetPid begin", Date.now());
+    function doGetPid() {
+      console.log("POST_comments doGetPid begin", Date.now());
 
-    // PID_FLOW
-    if (_.isUndefined(pid)) {
-      return User.getPidPromise(req.p.zid, req.p.uid, true).then(
-        (pid: number) => {
-          if (pid === -1) {
-            console.log(
-              "POST_comments doGetPid addParticipant begin",
-              Date.now(),
-            );
-            //           Argument of type '(rows: any[]) => number' is not assignable to parameter of type '(value: unknown) => number | PromiseLike<number>'.
-            // Types of parameters 'rows' and 'value' are incompatible.
-            //             Type 'unknown' is not assignable to type 'any[]'.ts(2345)
-            // @ts-ignore
-            return addParticipant(req.p.zid, req.p.uid).then(function (
-              rows: any[],
-            ) {
-              let ptpt = rows[0];
-              pid = ptpt.pid;
-              currentPid = pid;
+      // PID_FLOW
+      if (_.isUndefined(pid)) {
+        return User.getPidPromise(req.p.zid, String(uid), true).then(
+          (pid: number) => {
+            if (pid === -1) {
               console.log(
-                "POST_comments doGetPid addParticipant done",
+                "POST_comments doGetPid addParticipant begin",
                 Date.now(),
               );
-              return pid;
-            });
-          } else {
-            console.log("POST_comments doGetPid done", Date.now());
-            return pid;
-          }
-        },
-      );
-    }
-    console.log("POST_comments doGetPid done", Date.now());
-    return Promise.resolve(pid);
-  }
-  let twitterPrepPromise = Promise.resolve();
-  if (twitter_tweet_id) {
-    twitterPrepPromise = prepForTwitterComment(twitter_tweet_id, zid);
-  } else if (quote_twitter_screen_name) {
-    twitterPrepPromise = prepForQuoteWithTwitterUser(
-      quote_twitter_screen_name,
-      zid,
-    );
-  }
-
-  console.log("POST_comments before twitterPrepPromise", Date.now());
-
-  twitterPrepPromise
-    .then(
-      //       No overload matches this call.
-      // Overload 1 of 2, '(onFulfill?: ((value: void) => any) | undefined, onReject?: ((error: any) => any) | undefined): Bluebird<any>', gave the following error.
-      //   Argument of type '(info: { ptpt: any; tweet: any; }) => Bluebird<any>' is not assignable to parameter of type '(value: void) => any'.
-      //     Types of parameters 'info' and 'value' are incompatible.
-      //       Type 'void' is not assignable to type '{ ptpt: any; tweet: any; }'.
-      // Overload 2 of 2, '(onfulfilled?: ((value: void) => any) | null | undefined, onrejected?: ((reason: any) => Resolvable<void>) | null | undefined): Bluebird<any>', gave the following error.
-      //   Argument of type '(info: { ptpt: any; tweet: any; }) => Bluebird<any>' is not assignable to parameter of type '(value: void) => any'.
-      //     Types of parameters 'info' and 'value' are incompatible.
-      //       Type 'void' is not assignable to type '{ ptpt: any; tweet: any; }'.ts(2769)
-      // @ts-ignore
-      function (info: { ptpt: any; tweet: any }) {
-        console.log("POST_comments after twitterPrepPromise", Date.now());
-
-        let ptpt = info && info.ptpt;
-        // let twitterUser = info && info.twitterUser;
-        let tweet = info && info.tweet;
-
-        if (tweet) {
-          console.log("Post comments tweet", txt, tweet.txt);
-          txt = tweet.text;
-        } else if (quote_txt) {
-          console.log("Post comments quote_txt", txt, quote_txt);
-          txt = quote_txt;
-        } else {
-          console.log("Post comments txt", txt);
-        }
-
-        let ip =
-          req?.headers?.["x-forwarded-for"] || // TODO This header may contain multiple IP addresses. Which should we report?
-          req?.connection?.remoteAddress ||
-          req?.socket?.remoteAddress ||
-          req?.connection?.socket.remoteAddress;
-
-        let isSpamPromise = isSpam({
-          comment_content: txt,
-          comment_author: uid,
-          permalink: "https://pol.is/" + zid,
-          user_ip: ip,
-          user_agent: req?.headers?.["user-agent"],
-          referrer: req?.headers?.referer,
-        });
-        isSpamPromise.catch(function (err: any) {
-          console.error("isSpam failed");
-          console.log("info", err);
-        });
-        // let isSpamPromise = Promise.resolve(false);
-        let isModeratorPromise = isModerator(zid, uid);
-
-        let conversationInfoPromise = Conversation.getConversationInfo(zid);
-
-        // return xidUserPromise.then(function(xidUser) {
-
-        let shouldCreateXidRecord = false;
-
-        let pidPromise;
-        if (ptpt) {
-          pidPromise = Promise.resolve(ptpt.pid);
-        } else {
-          let xidUserPromise =
-            !_.isUndefined(xid) && !_.isNull(xid)
-              ? User.getXidStuff(xid, zid)
-              : Promise.resolve();
-          pidPromise = xidUserPromise.then((xidUser: UserType) => {
-            // @ts-ignore
-            shouldCreateXidRecord = xidUser === "noXidRecord";
-            if (xidUser && xidUser.uid) {
-              uid = xidUser.uid;
-              pid = xidUser.pid;
-              return pid;
-            } else {
-              return doGetPid().then((pid: any) => {
-                if (shouldCreateXidRecord) {
-                  // Expected 6 arguments, but got 3.ts(2554)
-                  // conversation.ts(34, 3): An argument for 'x_profile_image_url' was not provided.
-                  // @ts-ignore
-                  return Conversation.createXidRecordByZid(zid, uid, xid).then(
-                    () => {
-                      return pid;
-                    },
-                  );
-                }
-                return pid;
-              });
-            }
-          });
-        }
-
-        let commentExistsPromise = commentExists(zid, txt);
-
-        console.log("POST_comments before Promise.all", Date.now());
-
-        return Promise.all([
-          pidPromise,
-          conversationInfoPromise,
-          isModeratorPromise,
-          commentExistsPromise,
-        ]).then(
-          function (results: any[]) {
-            console.log("POST_comments after Promise.all", Date.now());
-
-            let pid = results[0];
-            let conv = results[1];
-            let is_moderator = results[2];
-            let commentExists = results[3];
-
-            if (!is_moderator && mustBeModerator) {
-              Log.fail(res, 403, "polis_err_post_comment_auth");
-              return;
-            }
-
-            if (pid < 0) {
-              // NOTE: this API should not be called in /demo mode
-              Log.fail(res, 500, "polis_err_post_comment_bad_pid");
-              return;
-            }
-
-            if (commentExists) {
-              Log.fail(res, 409, "polis_err_post_comment_duplicate");
-              return;
-            }
-
-            if (!conv.is_active) {
-              Log.fail(res, 403, "polis_err_conversation_is_closed");
-              return;
-            }
-
-            if (_.isUndefined(txt)) {
-              console.log("undefined txt");
-              console.log(req.p);
-              throw "polis_err_post_comments_missing_txt";
-            }
-            let bad = hasBadWords(txt);
-
-            console.log("POST_comments before isSpamPromise", Date.now());
-            return isSpamPromise
-              .then(
-                function (spammy: any) {
-                  console.log(
-                    "info",
-                    "spam test says: " +
-                      txt +
-                      " " +
-                      (spammy ? "spammy" : "not_spammy"),
-                  );
-                  return spammy;
-                },
-                function (err: any) {
-                  console.error("spam check failed");
-                  console.log("info", err);
-                  return false; // spam check failed, continue assuming "not spammy".
-                },
-              )
-              .then(function (spammy: any) {
-                console.log("POST_comments after isSpamPromise", Date.now());
-                let velocity = 1;
-                let active = true;
-                let classifications = [];
-                if (bad && conv.profanity_filter) {
-                  active = false;
-                  classifications.push("bad");
-                  console.log(
-                    "active=false because (bad && conv.profanity_filter)",
-                  );
-                }
-                if (spammy && conv.spam_filter) {
-                  active = false;
-                  classifications.push("spammy");
-                  console.log(
-                    "active=false because (spammy && conv.spam_filter)",
-                  );
-                }
-                if (conv.strict_moderation) {
-                  active = false;
-                  console.log("active=false because (conv.strict_moderation)");
-                }
-                if (active) {
-                  console.log("active=true");
-                }
-
-                let mod = 0; // hasn't yet been moderated.
-
-                // moderators' comments are automatically in (when prepopulating).
-                if (is_moderator && is_seed) {
-                  mod = Utils.polisTypes.mod.ok;
-                  active = true;
-                }
-                let authorUid = ptpt ? ptpt.uid : uid;
-
+              //           Argument of type '(rows: any[]) => number' is not assignable to parameter of type '(value: unknown) => number | PromiseLike<number>'.
+              // Types of parameters 'rows' and 'value' are incompatible.
+              //             Type 'unknown' is not assignable to type 'any[]'.ts(2345)
+              // @ts-ignore
+              return addParticipant(req.p.zid, uid).then(function (
+                rows: any[],
+              ) {
+                let ptpt = rows[0];
+                pid = ptpt.pid;
+                currentPid = pid;
                 console.log(
-                  "POST_comments before INSERT INTO COMMENTS",
+                  "POST_comments doGetPid addParticipant done",
                   Date.now(),
                 );
-
-                Promise.all([Comment.detectLanguage(txt)]).then((a: any[]) => {
-                  let detections = a[0];
-                  let detection = Array.isArray(detections)
-                    ? detections[0]
-                    : detections;
-                  let lang = detection.language;
-                  let lang_confidence = detection.confidence;
-
-                  return dbPgQuery
-                    .queryP(
-                      "INSERT INTO COMMENTS " +
-                        "(pid, zid, txt, velocity, active, mod, uid, tweet_id, quote_src_url, anon, is_seed, created, tid, lang, lang_confidence) VALUES " +
-                        "($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, default, null, $12, $13) RETURNING *;",
-                      [
-                        pid,
-                        zid,
-                        txt,
-                        velocity,
-                        active,
-                        mod,
-                        authorUid,
-                        twitter_tweet_id || null,
-                        quote_src_url || null,
-                        anon || false,
-                        is_seed || false,
-                        lang,
-                        lang_confidence,
-                      ],
-                    )
-                    .then(
-                      //                     Argument of type '(docs: any[]) => any' is not assignable to parameter of type '(value: unknown) => any'.
-                      // Types of parameters 'docs' and 'value' are incompatible.
-                      //                     Type 'unknown' is not assignable to type 'any[]'.ts(2345)
-                      // @ts-ignore
-                      function (docs: any[]) {
-                        let comment = docs && docs[0];
-                        let tid = comment && comment.tid;
-                        // let createdTime = comment && comment.created;
-
-                        if (bad || spammy || conv.strict_moderation) {
-                          getNumberOfCommentsWithModerationStatus(
-                            zid,
-                            Utils.polisTypes.mod.unmoderated,
-                          )
-                            .catch(function (err: any) {
-                              Log.yell(
-                                "polis_err_getting_modstatus_comment_count",
-                              );
-                              return void 0;
-                            })
-                            .then(function (n: number) {
-                              if (n === 0) {
-                                return;
-                              }
-                              dbPgQuery
-                                .queryP_readOnly(
-                                  "select * from users where site_id = (select site_id from page_ids where zid = ($1)) UNION select * from users where uid = ($2);",
-                                  [zid, conv.owner],
-                                )
-                                .then(function (users: any) {
-                                  let uids = _.pluck(users, "uid");
-                                  // also notify polis team for moderation
-                                  uids.forEach(function (uid?: any) {
-                                    sendCommentModerationEmail(
-                                      req,
-                                      uid,
-                                      zid,
-                                      n,
-                                    );
-                                  });
-                                });
-                            });
-                        } else {
-                          addNotificationTask(zid);
-                        }
-
-                        console.log(
-                          "POST_comments before votesPost",
-                          Date.now(),
-                        );
-
-                        // It should be safe to delete this. Was added to postpone the no-auto-vote change for old conversations.
-                        if (is_seed && _.isUndefined(vote) && zid <= 17037) {
-                          vote = 0;
-                        }
-
-                        let createdTime = comment.created;
-                        let votePromise = _.isUndefined(vote)
-                          ? Promise.resolve()
-                          : votesPost(uid, pid, zid, tid, vote, 0, false);
-
-                        return (
-                          votePromise
-                            // This expression is not callable.
-                            //Each member of the union type '{ <U>(onFulfill?: ((value: void) => Resolvable<U>) | undefined, onReject?: ((error: any) => Resolvable<U>) | undefined): Bluebird<U>; <TResult1 = void, TResult2 = never>(onfulfilled?: ((value: void) => Resolvable<...>) | ... 1 more ... | undefined, onrejected?: ((reason: any) => Resolvable<...>) | ... 1 more ... | u...' has signatures, but none of those signatures are compatible with each other.ts(2349)
-                            // @ts-ignore
-                            .then(
-                              function (o: { vote: { created: any } }) {
-                                if (o && o.vote && o.vote.created) {
-                                  createdTime = o.vote.created;
-                                }
-
-                                setTimeout(function () {
-                                  updateConversationModifiedTime(
-                                    zid,
-                                    createdTime,
-                                  );
-                                  updateLastInteractionTimeForConversation(
-                                    zid,
-                                    uid,
-                                  );
-                                  if (!_.isUndefined(vote)) {
-                                    updateVoteCount(zid, pid);
-                                  }
-                                }, 100);
-
-                                console.log(
-                                  "POST_comments sending json",
-                                  Date.now(),
-                                );
-                                res.json({
-                                  tid: tid,
-                                  currentPid: currentPid,
-                                });
-                                console.log(
-                                  "POST_comments sent json",
-                                  Date.now(),
-                                );
-                              },
-                              function (err: any) {
-                                Log.fail(
-                                  res,
-                                  500,
-                                  "polis_err_vote_on_create",
-                                  err,
-                                );
-                              },
-                            )
-                        );
-                      },
-                      function (err: { code: string | number }) {
-                        if (err.code === "23505" || err.code === 23505) {
-                          // duplicate comment
-                          Log.fail(
-                            res,
-                            409,
-                            "polis_err_post_comment_duplicate",
-                            err,
-                          );
-                        } else {
-                          Log.fail(res, 500, "polis_err_post_comment", err);
-                        }
-                      },
-                    ); // insert
-                }); // lang
+                return pid;
               });
-          },
-          function (errors: any[]) {
-            if (errors[0]) {
-              Log.fail(res, 500, "polis_err_getting_pid", errors[0]);
-              return;
-            }
-            if (errors[1]) {
-              Log.fail(res, 500, "polis_err_getting_conv_info", errors[1]);
-              return;
+            } else {
+              console.log("POST_comments doGetPid done", Date.now());
+              return pid;
             }
           },
         );
-      },
-      function (err: any) {
-        Log.fail(res, 500, "polis_err_fetching_tweet", err);
-      },
-    )
-    .catch(function (err: any) {
-      Log.fail(res, 500, "polis_err_post_comment_misc", err);
-    });
+      }
+      console.log("POST_comments doGetPid done", Date.now());
+      return Promise.resolve(pid);
+    }
+    let twitterPrepPromise = Promise.resolve();
+    if (twitter_tweet_id) {
+      twitterPrepPromise = prepForTwitterComment(twitter_tweet_id, zid);
+    } else if (quote_twitter_screen_name) {
+      twitterPrepPromise = prepForQuoteWithTwitterUser(
+        quote_twitter_screen_name,
+        zid,
+      );
+    }
+
+    console.log("POST_comments before twitterPrepPromise", Date.now());
+
+    twitterPrepPromise
+      .then(
+        //       No overload matches this call.
+        // Overload 1 of 2, '(onFulfill?: ((value: void) => any) | undefined, onReject?: ((error: any) => any) | undefined): Bluebird<any>', gave the following error.
+        //   Argument of type '(info: { ptpt: any; tweet: any; }) => Bluebird<any>' is not assignable to parameter of type '(value: void) => any'.
+        //     Types of parameters 'info' and 'value' are incompatible.
+        //       Type 'void' is not assignable to type '{ ptpt: any; tweet: any; }'.
+        // Overload 2 of 2, '(onfulfilled?: ((value: void) => any) | null | undefined, onrejected?: ((reason: any) => Resolvable<void>) | null | undefined): Bluebird<any>', gave the following error.
+        //   Argument of type '(info: { ptpt: any; tweet: any; }) => Bluebird<any>' is not assignable to parameter of type '(value: void) => any'.
+        //     Types of parameters 'info' and 'value' are incompatible.
+        //       Type 'void' is not assignable to type '{ ptpt: any; tweet: any; }'.ts(2769)
+        // @ts-ignore
+        function (info: { ptpt: any; tweet: any }) {
+          console.log("POST_comments after twitterPrepPromise", Date.now());
+
+          let ptpt = info && info.ptpt;
+          // let twitterUser = info && info.twitterUser;
+          let tweet = info && info.tweet;
+
+          if (tweet) {
+            console.log("Post comments tweet", txt, tweet.txt);
+            txt = tweet.text;
+          } else if (quote_txt) {
+            console.log("Post comments quote_txt", txt, quote_txt);
+            txt = quote_txt;
+          } else {
+            console.log("Post comments txt", txt);
+          }
+
+          let ip =
+            req?.headers?.["x-forwarded-for"] || // TODO This header may contain multiple IP addresses. Which should we report?
+            req?.connection?.remoteAddress ||
+            req?.socket?.remoteAddress ||
+            req?.connection?.socket.remoteAddress;
+
+          let isSpamPromise = isSpam({
+            comment_content: txt,
+            comment_author: uid,
+            permalink: "https://pol.is/" + zid,
+            user_ip: ip,
+            user_agent: req?.headers?.["user-agent"],
+            referrer: req?.headers?.referer,
+          });
+          isSpamPromise.catch(function (err: any) {
+            console.error("isSpam failed");
+            console.log("info", err);
+          });
+          // let isSpamPromise = Promise.resolve(false);
+          let isModeratorPromise = isModerator(zid, uid);
+
+          let conversationInfoPromise = Conversation.getConversationInfo(zid);
+
+          let shouldCreateXidRecord = false;
+
+          let pidPromise;
+          if (ptpt) {
+            pidPromise = Promise.resolve(ptpt.pid);
+          } else {
+            let xidUserPromise =
+              !_.isUndefined(xid) && !_.isNull(xid)
+                ? User.getXidStuff(xid, zid)
+                : Promise.resolve();
+            pidPromise = xidUserPromise.then((xidUser: UserType) => {
+              // @ts-ignore
+              shouldCreateXidRecord = xidUser === "noXidRecord";
+              if (xidUser && xidUser.uid) {
+                pid = xidUser.pid;
+                return pid;
+              } else {
+                return doGetPid().then((pid: any) => {
+                  if (shouldCreateXidRecord) {
+                    // Expected 6 arguments, but got 3.ts(2554)
+                    // conversation.ts(34, 3): An argument for 'x_profile_image_url' was not provided.
+                    // @ts-ignore
+                    return Conversation.createXidRecordByZid(
+                      zid,
+                      uid,
+                      xid,
+                    ).then(() => {
+                      return pid;
+                    });
+                  }
+                  return pid;
+                });
+              }
+            });
+          }
+
+          let commentExistsPromise = commentExists(zid, txt);
+
+          console.log("POST_comments before Promise.all", Date.now());
+
+          return Promise.all([
+            pidPromise,
+            conversationInfoPromise,
+            isModeratorPromise,
+            commentExistsPromise,
+          ]).then(
+            function (results: any[]) {
+              console.log("POST_comments after Promise.all", Date.now());
+
+              let pid = results[0];
+              let conv = results[1];
+              let is_moderator = results[2];
+              let commentExists = results[3];
+
+              if (!is_moderator && mustBeModerator) {
+                Log.fail(res, 403, "polis_err_post_comment_auth");
+                return;
+              }
+
+              if (pid < 0) {
+                // NOTE: this API should not be called in /demo mode
+                Log.fail(res, 500, "polis_err_post_comment_bad_pid");
+                return;
+              }
+
+              if (commentExists) {
+                Log.fail(res, 409, "polis_err_post_comment_duplicate");
+                return;
+              }
+
+              if (!conv.is_active) {
+                Log.fail(res, 403, "polis_err_conversation_is_closed");
+                return;
+              }
+
+              if (_.isUndefined(txt)) {
+                console.log("undefined txt");
+                console.log(req.p);
+                throw "polis_err_post_comments_missing_txt";
+              }
+              let bad = hasBadWords(txt);
+
+              console.log("POST_comments before isSpamPromise", Date.now());
+              return isSpamPromise
+                .then(
+                  function (spammy: any) {
+                    console.log(
+                      "info",
+                      "spam test says: " +
+                        txt +
+                        " " +
+                        (spammy ? "spammy" : "not_spammy"),
+                    );
+                    return spammy;
+                  },
+                  function (err: any) {
+                    console.error("spam check failed");
+                    console.log("info", err);
+                    return false; // spam check failed, continue assuming "not spammy".
+                  },
+                )
+                .then(function (spammy: any) {
+                  console.log("POST_comments after isSpamPromise", Date.now());
+                  let velocity = 1;
+                  let active = true;
+                  let classifications = [];
+                  if (bad && conv.profanity_filter) {
+                    active = false;
+                    classifications.push("bad");
+                    console.log(
+                      "active=false because (bad && conv.profanity_filter)",
+                    );
+                  }
+                  if (spammy && conv.spam_filter) {
+                    active = false;
+                    classifications.push("spammy");
+                    console.log(
+                      "active=false because (spammy && conv.spam_filter)",
+                    );
+                  }
+                  if (conv.strict_moderation) {
+                    active = false;
+                    console.log(
+                      "active=false because (conv.strict_moderation)",
+                    );
+                  }
+                  if (active) {
+                    console.log("active=true");
+                  }
+
+                  let mod = 0; // hasn't yet been moderated.
+
+                  // moderators' comments are automatically in (when prepopulating).
+                  if (is_moderator && is_seed) {
+                    mod = Utils.polisTypes.mod.ok;
+                    active = true;
+                  }
+                  let authorUid = ptpt ? ptpt.uid : uid;
+
+                  console.log(
+                    "POST_comments before INSERT INTO COMMENTS",
+                    Date.now(),
+                  );
+
+                  Promise.all([Comment.detectLanguage(txt)]).then(
+                    (a: any[]) => {
+                      let detections = a[0];
+                      let detection = Array.isArray(detections)
+                        ? detections[0]
+                        : detections;
+                      let lang = detection.language;
+                      let lang_confidence = detection.confidence;
+
+                      return dbPgQuery
+                        .queryP(
+                          "INSERT INTO COMMENTS " +
+                            "(pid, zid, txt, velocity, active, mod, uid, tweet_id, quote_src_url, anon, is_seed, created, tid, lang, lang_confidence) VALUES " +
+                            "($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, default, null, $12, $13) RETURNING *;",
+                          [
+                            pid,
+                            zid,
+                            txt,
+                            velocity,
+                            active,
+                            mod,
+                            authorUid,
+                            twitter_tweet_id || null,
+                            quote_src_url || null,
+                            anon || false,
+                            is_seed || false,
+                            lang,
+                            lang_confidence,
+                          ],
+                        )
+                        .then(
+                          //                     Argument of type '(docs: any[]) => any' is not assignable to parameter of type '(value: unknown) => any'.
+                          // Types of parameters 'docs' and 'value' are incompatible.
+                          //                     Type 'unknown' is not assignable to type 'any[]'.ts(2345)
+                          // @ts-ignore
+                          function (docs: any[]) {
+                            let comment = docs && docs[0];
+                            let tid = comment && comment.tid;
+                            // let createdTime = comment && comment.created;
+
+                            if (bad || spammy || conv.strict_moderation) {
+                              getNumberOfCommentsWithModerationStatus(
+                                zid,
+                                Utils.polisTypes.mod.unmoderated,
+                              )
+                                .catch(function (err: any) {
+                                  Log.yell(
+                                    "polis_err_getting_modstatus_comment_count",
+                                  );
+                                  return void 0;
+                                })
+                                .then(function (n: number) {
+                                  if (n === 0) {
+                                    return;
+                                  }
+                                  dbPgQuery
+                                    .queryP_readOnly(
+                                      "select * from users where site_id = (select site_id from page_ids where zid = ($1)) UNION select * from users where uid = ($2);",
+                                      [zid, conv.owner],
+                                    )
+                                    .then(function (users: any) {
+                                      let uids = _.pluck(users, "uid");
+                                      // also notify polis team for moderation
+                                      uids.forEach(function (uid?: any) {
+                                        sendCommentModerationEmail(
+                                          req,
+                                          uid,
+                                          zid,
+                                          n,
+                                        );
+                                      });
+                                    });
+                                });
+                            } else {
+                              addNotificationTask(zid);
+                            }
+
+                            console.log(
+                              "POST_comments before votesPost",
+                              Date.now(),
+                            );
+
+                            // It should be safe to delete this. Was added to postpone the no-auto-vote change for old conversations.
+                            if (
+                              is_seed &&
+                              _.isUndefined(vote) &&
+                              zid <= 17037
+                            ) {
+                              vote = 0;
+                            }
+
+                            let createdTime = comment.created;
+                            let votePromise = _.isUndefined(vote)
+                              ? Promise.resolve()
+                              : votesPost(uid, pid, zid, tid, vote, 0, false);
+
+                            return (
+                              votePromise
+                                // This expression is not callable.
+                                //Each member of the union type '{ <U>(onFulfill?: ((value: void) => Resolvable<U>) | undefined, onReject?: ((error: any) => Resolvable<U>) | undefined): Bluebird<U>; <TResult1 = void, TResult2 = never>(onfulfilled?: ((value: void) => Resolvable<...>) | ... 1 more ... | undefined, onrejected?: ((reason: any) => Resolvable<...>) | ... 1 more ... | u...' has signatures, but none of those signatures are compatible with each other.ts(2349)
+                                // @ts-ignore
+                                .then(
+                                  function (o: { vote: { created: any } }) {
+                                    if (o && o.vote && o.vote.created) {
+                                      createdTime = o.vote.created;
+                                    }
+
+                                    setTimeout(function () {
+                                      updateConversationModifiedTime(
+                                        zid,
+                                        createdTime,
+                                      );
+                                      updateLastInteractionTimeForConversation(
+                                        zid,
+                                        uid,
+                                      );
+                                      if (!_.isUndefined(vote)) {
+                                        updateVoteCount(zid, pid);
+                                      }
+                                    }, 100);
+
+                                    console.log(
+                                      "POST_comments sending json",
+                                      Date.now(),
+                                    );
+                                    res.json({
+                                      tid: tid,
+                                      currentPid: currentPid,
+                                    });
+                                    console.log(
+                                      "POST_comments sent json",
+                                      Date.now(),
+                                    );
+                                  },
+                                  function (err: any) {
+                                    Log.fail(
+                                      res,
+                                      500,
+                                      "polis_err_vote_on_create",
+                                      err,
+                                    );
+                                  },
+                                )
+                            );
+                          },
+                          function (err: { code: string | number }) {
+                            if (err.code === "23505" || err.code === 23505) {
+                              // duplicate comment
+                              Log.fail(
+                                res,
+                                409,
+                                "polis_err_post_comment_duplicate",
+                                err,
+                              );
+                            } else {
+                              Log.fail(res, 500, "polis_err_post_comment", err);
+                            }
+                          },
+                        ); // insert
+                    },
+                  ); // lang
+                });
+            },
+            function (errors: any[]) {
+              if (errors[0]) {
+                Log.fail(res, 500, "polis_err_getting_pid", errors[0]);
+                return;
+              }
+              if (errors[1]) {
+                Log.fail(res, 500, "polis_err_getting_conv_info", errors[1]);
+                return;
+              }
+            },
+          );
+        },
+        function (err: any) {
+          Log.fail(res, 500, "polis_err_fetching_tweet", err);
+        },
+      )
+      .catch(function (err: any) {
+        Log.fail(res, 500, "polis_err_post_comment_misc", err);
+      });
+  });
 } // end POST /api/v3/comments
 
 function handle_GET_votes_me(
@@ -2956,17 +2964,7 @@ function handle_GET_participationInit(
       (): any;
       new (): any;
       json: {
-        (arg0: {
-          user: any;
-          ptpt: any;
-          nextComment: any;
-          conversation: any;
-          votes: any;
-          pca: any;
-          famous: any;
-          // famous: JSON.parse(arr[6]),
-          acceptLanguage: any;
-        }): void;
+        (arg0: { pca: any; pidToHnames: any; tidToTxts: any }): void;
         new (): any;
       };
     };
@@ -2996,43 +2994,17 @@ function handle_GET_participationInit(
     }
   }
 
-  function ifConvAndAuth(f: (zid: any, uid?: any) => any, args: any[]) {
-    if (req.p.uid) {
-      return ifConv(f, args);
-    } else {
-      return Promise.resolve(null);
-    }
-  }
-
-  let acceptLanguage =
-    req?.headers?.["accept-language"] ||
-    req?.headers?.["Accept-Language"] ||
-    "en-US";
-
-  if (req.p.lang === "acceptLang") {
-    // "en-US,en;q=0.8,da;q=0.6,it;q=0.4,es;q=0.2,pt-BR;q=0.2,pt;q=0.2" --> "en-US"
-    // req.p.lang = acceptLanguage.match("^[^,;]*")[0];
-    req.p.lang = acceptLanguage.substr(0, 2);
-  }
-
-  cookies.getPermanentCookieAndEnsureItIsSet(req, res);
-
   Promise.all([
-    User.getUser(req.p.uid, req.p.zid, req.p.xid, req.p.owner_uid),
-    ifConvAndAuth(getParticipant, [req.p.zid, req.p.uid]),
     //
     // Argument of type '(zid?: any, pid?: any, withoutTids?: any, include_social?: boolean | undefined, lang?: string | undefined) => Bluebird<any>' is not assignable to parameter of type '{ (zid: any, pid: any, withoutTids: any, include_social: any, lang?: any): CommentType; (zid: any, uid?: any, lang?: any): any; (p: any): any; (zid: any, math_tick: any): any; (o: any, req: any): any; apply?: any; }'.
     //  Type 'Bluebird<any>' is missing the following properties from type 'CommentType': zid, not_voted_by_pid, withoutTids, include_voting_patterns, and 9 more.ts(2345)
     // @ts-ignore
-    ifConv(getNextComment, [req.p.zid, req.p.pid, [], true, req.p.lang]),
     // getIfConv({uri: "http://" + SELF_HOSTNAME + "/api/v3/conversations", qs: qs, headers: req.headers, gzip: true}),
     //
     // Argument of type '(zid: any, uid?: any, lang?: null | undefined) => Bluebird<any>' is not assignable to parameter of type '{ (zid: any, pid: any, withoutTids: any, include_social: any, lang?: any): CommentType; (zid: any, uid?: any, lang?: any): any; (p: any): any; (zid: any, math_tick: any): any; (o: any, req: any): any; apply?: any; }'.
     // Type 'Bluebird<any>' is not assignable to type 'CommentType'.ts(2345)
     // @ts-ignore
-    ifConv(getOneConversation, [req.p.zid, req.p.uid, req.p.lang]),
     // getIfConv({uri: "http://" + SELF_HOSTNAME + "/api/v3/votes", qs: votesByMeQs, headers: req.headers, gzip: true}),
-    ifConv(getVotesForSingleParticipant, [req.p]),
     //
     // Argument of type '(zid?: any, math_tick?: number | undefined) => Promise<any>' is not assignable to parameter of type '{ (zid: any, pid: any, withoutTids: any, include_social: any, lang?: any): CommentType; (zid: any, uid?: any, lang?: any): any; (p: any): any; (zid: any, math_tick: any): any; (o: any, req: any): any; apply?: any; }'.
     // Type 'Promise<any>' is missing the following properties from type 'CommentType': zid, not_voted_by_pid, withoutTids, include_voting_patterns, and 9 more.ts(2345)
@@ -3043,43 +3015,17 @@ function handle_GET_participationInit(
     // Argument of type '(o?: { uid?: any; zid: any; math_tick: any; ptptoiLimit: any; } | undefined, req?: any) => Bluebird<{}>' is not assignable to parameter of type '{ (zid: any, pid: any, withoutTids: any, include_social: any, lang?: any): CommentType; (zid: any, uid?: any, lang?: any): any; (p: any): any; (zid: any, math_tick: any): any; (o: any, req: any): any; apply?: any; }'.
     //   Type 'Bluebird<{}>' is missing the following properties from type 'CommentType': zid, not_voted_by_pid, withoutTids, include_voting_patterns, and 9 more.ts(2345)
     // @ts-ignore
-    ifConv(doFamousQuery, [req.p, req]),
     // getIfConv({uri: "http://" + SELF_HOSTNAME + "/api/v3/votes/famous", qs: famousQs, headers: req.headers, gzip: true}),
     User.getPidToHnames(req.p.zid),
+    Comment.getTidToTxts(req.p.zid),
   ])
     .then(
       function (arr: any[]) {
-        let conv = arr[3];
         let o = {
-          user: arr[0],
-          pidToHnames: arr[7],
-          ptpt: arr[1],
-          nextComment: arr[2],
-          conversation: conv,
-          votes: arr[4] || [],
-          pca: arr[5] ? (arr[5].asJSON ? arr[5].asJSON : null) : null,
-          famous: arr[6],
-          // famous: JSON.parse(arr[6]),
-          acceptLanguage: acceptLanguage,
+          pca: arr[0] ? (arr[0].asJSON ? arr[0].asJSON : null) : null,
+          pidToHnames: arr[1],
+          tidToTxts: arr[2],
         };
-        if (o.conversation) {
-          delete o.conversation.zid;
-          o.conversation.conversation_id = req.p.conversation_id;
-        }
-        if (o.ptpt) {
-          delete o.ptpt.zid;
-        }
-        for (var i = 0; i < o.votes.length; i++) {
-          delete o.votes[i].zid; // strip zid for security
-          // delete o.votes[i].pid; // because it's extra crap. Feel free to delete this line if you need pid.
-        }
-        if (!o.nextComment) {
-          o.nextComment = {};
-        }
-        if (!_.isUndefined(req.p.pid)) {
-          o.nextComment.currentPid = req.p.pid;
-        }
-
         res.status(200).json(o);
       },
       function (err: any) {
@@ -3128,95 +3074,104 @@ function handle_POST_votes(
   },
   res: any,
 ) {
-  let uid = req.p.uid; // EDIT zkorum: must not be null here - use ownername
-  let zid = req.p.zid;
-  let pid = req.p.pid; // PID_FLOW pid may be undefined here.
-  let lang = req.p.lang;
-  Comment.getTidFromTxt(zid, req.p.txt)
-    .then((tid: any) => {
-      let vote;
+  User.getUidFromHname(req.p.ownername).then((uid) => {
+    let zid = req.p.zid;
+    let pid = req.p.pid; // PID_FLOW pid may be undefined here.
+    let lang = req.p.lang;
+    Comment.getTidFromTxt(zid, req.p.txt)
+      .then((tid: any) => {
+        let vote;
 
-      // PID_FLOW WIP for now assume we have a uid, but need a participant record.
-      let pidReadyPromise = _.isUndefined(pid)
-        ? //         Argument of type '(rows: any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
-          // Types of parameters 'rows' and 'value' are incompatible.
-          //         Type 'unknown' is not assignable to type 'any[]'.ts(2345)
-          // @ts-ignore
-          addParticipant(zid, uid).then(function (rows: any[]) {
-            let ptpt = rows[0];
-            pid = ptpt.pid;
+        // PID_FLOW WIP for now assume we have a uid, but need a participant record.
+        let pidReadyPromise = _.isUndefined(pid)
+          ? //         Argument of type '(rows: any[]) => void' is not assignable to parameter of type '(value: unknown) => void | PromiseLike<void>'.
+            // Types of parameters 'rows' and 'value' are incompatible.
+            //         Type 'unknown' is not assignable to type 'any[]'.ts(2345)
+            // @ts-ignore
+            addParticipant(zid, uid).then(function (rows: any[]) {
+              let ptpt = rows[0];
+              pid = ptpt.pid;
+            })
+          : Promise.resolve();
+
+        return pidReadyPromise
+          .then(function () {
+            return votesPost(
+              uid,
+              pid,
+              zid,
+              tid,
+              req.p.vote,
+              req.p.weight,
+              true,
+            );
           })
-        : Promise.resolve();
+          .then(function (o: { vote: any }) {
+            // conv = o.conv;
+            vote = o.vote;
+            let createdTime = vote.created;
+            setTimeout(function () {
+              updateConversationModifiedTime(zid, createdTime);
+              updateLastInteractionTimeForConversation(zid, uid);
 
-      return pidReadyPromise
-        .then(function () {
-          return votesPost(uid, pid, zid, tid, req.p.vote, req.p.weight, true);
-        })
-        .then(function (o: { vote: any }) {
-          // conv = o.conv;
-          vote = o.vote;
-          let createdTime = vote.created;
-          setTimeout(function () {
-            updateConversationModifiedTime(zid, createdTime);
-            updateLastInteractionTimeForConversation(zid, uid);
-
-            // NOTE: may be greater than number of comments, if they change votes
-            updateVoteCount(zid, pid);
-          }, 100);
-          if (_.isUndefined(req.p.starred)) {
-            return;
-          } else {
-            return addStar(zid, tid, pid, req.p.starred, createdTime);
-          }
-        })
-        .then(function () {
-          return getNextComment(zid, pid, [], true, lang);
-        })
-        .then(function (nextComment: any) {
-          let result: PidReadyResult = {};
-          if (nextComment) {
-            result.nextComment = nextComment;
-          } else {
-            // no need to wait for this to finish
-            addNoMoreCommentsRecord(zid, pid);
-          }
-          // PID_FLOW This may be the first time the client gets the pid.
-          result.currentPid = pid;
-          // result.shouldMod = true; // TODO
-          if (result.shouldMod) {
-            result.modOptions = {};
-            if (req.p.vote === Utils.polisTypes.reactions.pull) {
-              result.modOptions.as_important = true;
-              result.modOptions.as_factual = true;
-              result.modOptions.as_feeling = true;
-            } else if (req.p.vote === Utils.polisTypes.reactions.push) {
-              result.modOptions.as_notmyfeeling = true;
-              result.modOptions.as_notgoodidea = true;
-              result.modOptions.as_notfact = true;
-              result.modOptions.as_abusive = true;
-            } else if (req.p.vote === Utils.polisTypes.reactions.pass) {
-              result.modOptions.as_unsure = true;
-              result.modOptions.as_spam = true;
-              result.modOptions.as_abusive = true;
+              // NOTE: may be greater than number of comments, if they change votes
+              updateVoteCount(zid, pid);
+            }, 100);
+            if (_.isUndefined(req.p.starred)) {
+              return;
+            } else {
+              return addStar(zid, tid, pid, req.p.starred, createdTime);
             }
-          }
+          })
+          .then(function () {
+            return getNextComment(zid, pid, [], true, lang);
+          })
+          .then(function (nextComment: any) {
+            let result: PidReadyResult = {};
+            if (nextComment) {
+              result.nextComment = nextComment;
+            } else {
+              // no need to wait for this to finish
+              addNoMoreCommentsRecord(zid, pid);
+            }
+            // PID_FLOW This may be the first time the client gets the pid.
+            result.currentPid = pid;
+            // result.shouldMod = true; // TODO
+            if (result.shouldMod) {
+              result.modOptions = {};
+              if (req.p.vote === Utils.polisTypes.reactions.pull) {
+                result.modOptions.as_important = true;
+                result.modOptions.as_factual = true;
+                result.modOptions.as_feeling = true;
+              } else if (req.p.vote === Utils.polisTypes.reactions.push) {
+                result.modOptions.as_notmyfeeling = true;
+                result.modOptions.as_notgoodidea = true;
+                result.modOptions.as_notfact = true;
+                result.modOptions.as_abusive = true;
+              } else if (req.p.vote === Utils.polisTypes.reactions.pass) {
+                result.modOptions.as_unsure = true;
+                result.modOptions.as_spam = true;
+                result.modOptions.as_abusive = true;
+              }
+            }
 
-          finishOne(res, result);
-        });
-    })
-    .catch(function (err: string) {
-      if (err === "polis_err_vote_duplicate") {
-        Log.fail(res, 406, "polis_err_vote_duplicate", err); // TODO allow for changing votes?
-      } else if (err === "polis_err_txt_does_not_match_any_pid") {
-        Log.fail(res, 400, "polis_err_txt_does_not_match_any_pid", err);
-      } else if (err === "polis_err_conversation_is_closed") {
-        Log.fail(res, 403, "polis_err_conversation_is_closed", err);
-      } else if (err === "polis_err_post_votes_social_needed") {
-        Log.fail(res, 403, "polis_err_post_votes_social_needed", err);
-      } else {
-        Log.fail(res, 500, "polis_err_vote", err);
-      }
-    });
+            finishOne(res, result);
+          });
+      })
+      .catch(function (err: string) {
+        if (err === "polis_err_vote_duplicate") {
+          Log.fail(res, 406, "polis_err_vote_duplicate", err); // TODO allow for changing votes?
+        } else if (err === "polis_err_txt_does_not_match_any_pid") {
+          Log.fail(res, 400, "polis_err_txt_does_not_match_any_pid", err);
+        } else if (err === "polis_err_conversation_is_closed") {
+          Log.fail(res, 403, "polis_err_conversation_is_closed", err);
+        } else if (err === "polis_err_post_votes_social_needed") {
+          Log.fail(res, 403, "polis_err_post_votes_social_needed", err);
+        } else {
+          Log.fail(res, 500, "polis_err_vote", err);
+        }
+      });
+  });
 }
 
 function handle_POST_ptptCommentMod(
@@ -4767,7 +4722,7 @@ function handle_POST_conversations(
     p: {
       context: any;
       short_url: any;
-      uid?: any;
+      ownername: string;
       org_id: any;
       topic: any;
       description: any;
@@ -4789,15 +4744,13 @@ function handle_POST_conversations(
   },
   res: any,
 ) {
-  let xidStuffReady = Promise.resolve();
-
-  xidStuffReady
-    .then(() => {
+  User.getUidFromHname(req.p.ownername)
+    .then((uid) => {
       console.log("info", "context", req.p.context);
       let generateShortUrl = req.p.short_url;
 
       isUserAllowedToCreateConversations(
-        req.p.uid,
+        uid,
         function (err: any, isAllowed: any) {
           if (err) {
             Log.fail(
@@ -4819,8 +4772,8 @@ function handle_POST_conversations(
           }
           let q = SQL.sql_conversations
             .insert({
-              owner: req.p.uid, // creator
-              org_id: req.p.org_id || req.p.uid, // assume the owner is the creator if there's no separate owner specified (
+              owner: uid, // creator
+              org_id: req.p.org_id || uid, // assume the owner is the creator if there's no separate owner specified (
               topic: req.p.topic,
               description: req.p.description,
               is_active: req.p.is_active,

@@ -26,6 +26,11 @@ type Row = {
   pass_count: number;
 };
 
+type RowTidAndTxt = {
+  tid: number;
+  txt: string;
+};
+
 type Docs = {
   rows: Row[];
 };
@@ -86,6 +91,24 @@ function getTidFromTxt(zid: Id, txt: string) {
         }
       });
   });
+}
+
+function getTidToTxts(zid: Id) {
+  return (
+    pg
+      .queryP_readOnly("select tid, txt from comments where zid = ($1);", [zid])
+      // Argument of type '(rows: Row[]) => Row' is not assignable to parameter of type '(value: unknown) => Row | PromiseLike<Row>'.
+      // Types of parameters 'rows' and 'value' are incompatible.
+      // Type 'unknown' is not assignable to type 'Row[]'.ts(2345)
+      // @ts-ignore
+      .then((rows: RowTidAndTxt[]) => {
+        const tidtoTxts: Record<number, string> = {};
+        for (const row of rows) {
+          tidtoTxts[row.tid] = row.txt;
+        }
+        return tidtoTxts;
+      })
+  );
 }
 
 function getComments(o: CommentType) {
@@ -472,6 +495,7 @@ export {
 export default {
   getComment,
   getTidFromTxt,
+  getTidToTxts,
   getComments,
   _getCommentsForModerationList,
   _getCommentsList,

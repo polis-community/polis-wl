@@ -195,7 +195,7 @@ export type Demo = {
 };
 
 export type Vote = {
-  uid: any;
+  ownername: string;
   zid: any;
   pid: any;
   lang: any;
