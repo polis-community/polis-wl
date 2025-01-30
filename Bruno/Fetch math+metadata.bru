@@ -5,12 +5,12 @@ meta {
 }
 
 get {
-  url: http:/localhost:8000/api/v3/participationInit?conversation_id=conversation_id&pid=mypid
+  url: http:/localhost:8000/api/v3/participationInit?conversation_id=conversation_id
   body: none
   auth: none
 }
 
 params:query {
   conversation_id: conversation_id
-  pid: mypid
+  ~pid: mypid
 }

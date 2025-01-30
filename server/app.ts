@@ -708,12 +708,12 @@ helpersInitialized.then(
     // TODO probably need to add a retry mechanism like on joinConversation to handle possibility of duplicate tid race-condition exception
     app.post(
       "/api/v3/comments",
-      authOptional(assignToP),
       need(
         "conversation_id",
         getConversationIdFetchZid,
         assignToPCustom("zid"),
       ),
+      need("ownername", getStringLimitLength(1, 9999), assignToP),
       want("txt", getOptionalStringLimitLength(997), assignToP),
       want("vote", getIntInRange(-1, 1), assignToP),
       want("twitter_tweet_id", getStringLimitLength(999), assignToP),
@@ -795,9 +795,8 @@ helpersInitialized.then(
     app.get(
       "/api/v3/participationInit",
       moveToBody,
-      authOptional(assignToP),
       want("ptptoiLimit", getInt, assignToP),
-      want(
+      need(
         "conversation_id",
         getConversationIdFetchZid,
         assignToPCustom("zid"),
@@ -819,15 +818,15 @@ helpersInitialized.then(
 
     app.post(
       "/api/v3/votes",
-      authOptional(assignToP),
       // need("tid", getInt, assignToP),
-      need("txt", getStringLimitLength(1, 997), assignToP),
+      need("txt", getStringLimitLength(997), assignToP),
       need(
         "conversation_id",
         getConversationIdFetchZid,
         assignToPCustom("zid"),
       ),
       need("vote", getIntInRange(-1, 1), assignToP),
+      need("ownername", getStringLimitLength(1, 9999), assignToP),
       want("starred", getBool, assignToP),
       want("weight", getNumberInRange(-1, 1), assignToP, 0),
       resolve_pidThing("pid", assignToP, "post:votes"),
@@ -1152,7 +1151,6 @@ helpersInitialized.then(
     app.get(
       "/api/v3/conversations",
       moveToBody,
-      authOptional(assignToP),
       want("include_all_conversations_i_am_in", getBool, assignToP),
       want("is_active", getBool, assignToP),
       want("is_draft", getBool, assignToP),
@@ -1262,7 +1260,7 @@ helpersInitialized.then(
     // TODO check to see if ptpt has answered necessary metadata questions.
     app.post(
       "/api/v3/conversations",
-      authOptional(assignToP),
+      need("ownername", getStringLimitLength(1, 9999), assignToP),
       want("is_active", getBool, assignToP, true),
       want("is_draft", getBool, assignToP, false),
       want("is_anon", getBool, assignToP, false),

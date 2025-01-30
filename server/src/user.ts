@@ -169,6 +169,29 @@ async function getPidToHnames(zid: number) {
   );
 }
 
+interface RowWithUid {
+  uid: number;
+}
+
+async function getUidFromHname(hname: string): Promise<number> {
+  return (
+    pg
+      .queryP_readOnly("select uid from users where hname=($1);", [hname])
+      //     (local function)(rows: string | any[]): any
+      // Argument of type '(rows: string | any[]) => any' is not assignable to parameter of type '(value: unknown) => any'.
+      //   Types of parameters 'rows' and 'value' are incompatible.
+      //     Type 'unknown' is not assignable to type 'string | any[]'.
+      //     Type 'unknown' is not assignable to type 'any[]'.ts(2345)
+      // @ts-ignore
+      .then(function (rows: RowWithUid[]) {
+        if (rows?.length === 0) {
+          throw `polis_err_no_user_for_given_hname: ${hname}`;
+        }
+        return rows[0].uid;
+      })
+  );
+}
+
 async function getUser(
   uid: number,
   zid_optional: any,
@@ -554,4 +577,5 @@ export default {
   getPidPromise,
   getPidForParticipant,
   getSocialInfoForUsers,
+  getUidFromHname,
 };
