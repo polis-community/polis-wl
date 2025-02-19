@@ -1,2 +1,4 @@
 postgres-data/
 flyway/flyway.conf
+flyway/flyway.conf.dev
+*.prod

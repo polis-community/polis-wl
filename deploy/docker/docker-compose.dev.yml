@@ -16,7 +16,7 @@ services:
     environment:
       STATIC_FILES_HOST: file-server
       STATIC_FILES_PORT: 8080
-      DATABASE_URL: postgres://postgres:mypwd@postgres_container:5432/polis
+      DATABASE_URL: postgres://postgres:7QPgtYETx4EdzvqUeNfo@postgres_container:5432/polis
       DOMAIN_OVERRIDE: server:8000
     image: polis-server:latest
     build:
@@ -35,7 +35,7 @@ services:
     env_file: ../../math/.envrc
     # The following overrides the env_file ...
     environment:
-      DATABASE_URL: postgres://postgres:mypwd@postgres_container:5432/polis
+      DATABASE_URL: postgres://postgres:7QPgtYETx4EdzvqUeNfo@postgres_container:5432/polis
     image: polis-math:latest
     build:
       context: ../../math
