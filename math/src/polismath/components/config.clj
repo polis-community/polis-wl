@@ -7,10 +7,8 @@
             [environ.core :as environ]
             [clojure.string :as string]))
 
-
 ;; I think we need to just move to this: https://github.com/juxt/aero
 ;; Good set of features without baking in too many assumptions or constraining design
-
 
 (defn ->long [x]
   (try
@@ -30,7 +28,6 @@
   (when x
     ;; anything other than these values will be considered truthy
     (not (#{"false" "0" "no"} x))))
-
 
 ;; XXX This should be computed; that is be a function of the rules.
 ;; :default specification should be in the rules themselves
@@ -59,13 +56,16 @@
          (map ->long)
          (set))))
 
-
 (def rules
   "Mapping of env keys to parsing options"
   {:math-env                   {:parse ->keyword}
    ;; Have to use :port since that's what heroku expects...
    :port                       {:path [:server :port] :parse ->long}
-   :database-url               {:path [:database :url]}
+   :database-user              {:path [:database :user]}
+   :database-password          {:path [:database :password]}
+   :database-host              {:path [:database :host]}
+   :database-port              {:path [:database :port]}
+   :database-db                {:path [:database :db]}
    :database-for-reads-name    {:path [:database :reads-name]}
    :database-pool-size         {:path [:database :pool-size] :parse ->long}
    :database-ignore-ssl        {:path [:database :ignore-ssl] :parse ->boolean}
@@ -115,7 +115,6 @@
    ;; XXX TODO & Thoughts
    ;; Mini batch sizes (see polismath.math.conversation)
 
-
 (defn assoc-inferred-values
   [{:as config-map :keys [math-env]}]
   (let [math-env-string (name math-env)
@@ -123,20 +122,18 @@
                            (when-not (= math-env :prod) (str math-env-string "."))
                            "pol.is/api/v3")]
     (assoc config-map
-      :math-env-string math-env-string
-      :webserver-url webserver-url)))
-
-
+           :math-env-string math-env-string
+           :webserver-url webserver-url)))
 
 (defn get-environ-config [rules env]
   ;; reduce over rules and assoc-in mappings into empty map
   (reduce
-    (fn [config [name {:keys [parse path] :or {parse identity}}]]
-      (if-let [env-var-val (get env name)]
-        (assoc-in config (or path [name]) (parse env-var-val))
-        config))
-    {}
-    rules))
+   (fn [config [name {:keys [parse path] :or {parse identity}}]]
+     (if-let [env-var-val (get env name)]
+       (assoc-in config (or path [name]) (parse env-var-val))
+       config))
+   {}
+   rules))
 
 (defn deep-merge
   "Like merge, but merges maps recursively."
@@ -149,10 +146,10 @@
   ([overrides]
     ;; Then infer additional values
    (assoc-inferred-values
-     (deep-merge defaults
+    (deep-merge defaults
                  ;(read-string (slurp "config.edn"))
-                 (get-environ-config rules environ/env)
-                 overrides)))
+                (get-environ-config rules environ/env)
+                overrides)))
   ([] (get-config {})))
 
 (defrecord Config [overrides]
@@ -170,9 +167,7 @@
    (Config. config-overrides))
   ([] (create-config {})))
 
-
 :ok
-
 
 ;; XXX This bit of refactoring is a WIP for switching to aero and mount (v component)...
 

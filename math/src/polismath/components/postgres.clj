@@ -21,13 +21,10 @@
   (:import (org.postgresql.util PGobject)))
             ;[alex-and-georges.debug-repl :as dbr]
 
-
-
 (defn heroku-db-spec
   "Create a korma db-spec given a heroku db-uri"
-  [db-uri ignore-ssl]
-  (let [[_ user password host port db] (re-matches #"postgres://(?:(.+):(.*)@)?([^:]+)(?::(\d+))?/(.+)" db-uri)
-        settings {:user user
+  [user password host port db ignore_ssl]
+  (let [settings {:user user
                   :password password
                   :host host
                   :port (or port 80)
@@ -39,8 +36,6 @@
                    ;(merge settings {:sslfactory "org.postgresql.ssl.NonValidatingFactory"})
                    ;settings)]
     (kdb/postgres settings)))
-
-
 
 ;; The executor function for honeysql queries (which we'll be rewriting everything in over time)
 
@@ -56,9 +51,16 @@
   component/Lifecycle
   (start [component]
     (log/info ">> Starting Postgres component")
-    (let [database-url (-> config :database :url)]
-      (assert database-url "Missing database url. Make sure to set env variables.")
-      (assoc component :db-spec (heroku-db-spec database-url (-> config :database :ignore-ssl)))))
+    (let [user (-> config :database :user)
+          password (-> config :database :password)
+          host (-> config :database :host)
+          port (-> config :database :port)
+          db (-> config :database :db)]
+      (assert user "Missing database user Make sure to set env variables.")
+      (assert password "Missing database password Make sure to set env variables.")
+      (assert host "Missing database host Make sure to set env variables.")
+      (assert db "Missing database db Make sure to set env variables.")
+      (assoc component :db-spec (heroku-db-spec user password host port db (-> config :database :ignore-ssl)))))
   (stop [component]
     (log/info "<< Stopping Postgres component")
     (assoc component :db-spec nil)))
@@ -67,7 +69,6 @@
   "Creates a new Postgres component"
   []
   (map->Postgres {}))
-
 
 (defn poll
   "Query for all data since last-vote-timestamp, given a db-spec"
@@ -84,7 +85,6 @@
       (.printStackTrace e)
       [])))
 
-
 (defn mod-poll
   "Moderation query: basically look for when things were last modified, since this is the only time they will
   have been moderated."
@@ -100,39 +100,38 @@
       (log/error "moderation polling failed " (.getMessage e))
       [])))
 
-
 (defn get-zid-from-zinvite
   [component zinvite]
   (log/debug "get-zid-from-zinvite for zinvite" zinvite)
   (->
-    (query component
-           {:select [:zid :zinvite]
-            :from [:zinvites]
-            :where [:= :zinvite zinvite]})
-    first
-    :zid))
+   (query component
+          {:select [:zid :zinvite]
+           :from [:zinvites]
+           :where [:= :zinvite zinvite]})
+   first
+   :zid))
 
 (defn get-meta-tids
   [component zid]
   (->>
-    (query component
-           {:select [:tid]
-            :from [:comments]
-            :where [:and [:= :zid zid]
-                         :is_meta]})
-    (map :tid)
-    (into #{})))
+   (query component
+          {:select [:tid]
+           :from [:comments]
+           :where [:and [:= :zid zid]
+                   :is_meta]})
+   (map :tid)
+   (into #{})))
 
 (defn get-zinvite-from-zid
   [component zid]
   (log/debug "get-zinvite-from-zid for zid" zid)
   (->
-    (query component
-           {:select [:zid :zinvite]
-            :from [:zinvites]
-            :where [:= :zid zid]})
-    first
-    :zinvite))
+   (query component
+          {:select [:zid :zinvite]
+           :from [:zinvites]
+           :where [:= :zid zid]})
+   first
+   :zinvite))
 
 (defn conv-poll
   "Query for all vote data since last-vote-timestamp for a given zid, given an implicit db-spec"
@@ -156,14 +155,13 @@
   [component zid last-mod-timestamp]
   (log/info "conv-mod-poll for zid" zid ", last-vote-timestap" last-mod-timestamp)
   (query
-    component
-    {:select [:*]
-     :from [:comments]
-     :order-by [:tid :modified]
-     :where [:and
-             [:> :modified last-mod-timestamp]
-             [:= :zid zid]]}))
-
+   component
+   {:select [:*]
+    :from [:comments]
+    :order-by [:tid :modified]
+    :where [:and
+            [:> :modified last-mod-timestamp]
+            [:= :zid zid]]}))
 
 (defn format-as-json-for-db
   "Formats data for pg json, first passing through a prep function which may strip out uneeded junk or
@@ -183,24 +181,22 @@
 ;      (str rootname "_" (name math-env) "_" math-schema-date)))
 ;   ([mongo rootname basename] (str (collection-name mongo rootname) "_" basename)))
 
-
-
 (defn poll-tasks
   [component last-timestamp]
   (->>
-    (query
-      component
-      (sql/format
-        {:select [:*]
-         :from [:worker_tasks]
-         :where [:and
-                 [:> :created last-timestamp]
-                 [:= :math_env (-> component :config :math-env-string)]
-                 [:= :finished_time nil]]}))
-    (map (fn [task-record]
-           (-> task-record
-               (update :task_type keyword)
-               (update :task_data (comp #(cheshire/parse-string % true) #(.toString %))))))))
+   (query
+    component
+    (sql/format
+     {:select [:*]
+      :from [:worker_tasks]
+      :where [:and
+              [:> :created last-timestamp]
+              [:= :math_env (-> component :config :math-env-string)]
+              [:= :finished_time nil]]}))
+   (map (fn [task-record]
+          (-> task-record
+              (update :task_type keyword)
+              (update :task_data (comp #(cheshire/parse-string % true) #(.toString %))))))))
 
 (defn zid-from-rid
   [rid]
@@ -218,13 +214,13 @@
 
 (defn ptpt-counts [postgres]
   (query
-    postgres
-    {:select [:*]
-     :from [[{:select [:zid [:%count-distinct.pid :ptpt_cnt]]
-              :from [:votes]
-              :group-by [:zid]}
-             :counts]]
-     :where [:> :counts.ptpt_cnt 5]}))
+   postgres
+   {:select [:*]
+    :from [[{:select [:zid [:%count-distinct.pid :ptpt_cnt]]
+             :from [:votes]
+             :group-by [:zid]}
+            :counts]]
+    :where [:> :counts.ptpt_cnt 5]}))
 
 (defn query-zid-from-rid [component rid]
   (query component (zid-from-rid rid)))
@@ -237,13 +233,12 @@
 (defn pg-json
   [data]
   (doto (PGobject.)
-        (.setType "json")
-        (.setValue (cheshire/encode data))))
+    (.setType "json")
+    (.setValue (cheshire/encode data))))
 
 (defn insert-correlationmatrix!
   [postgres rid math-tick data]
   (query postgres ["insert into math_report_correlationmatrix (rid, math_env, math_tick, data) values (?,?,?,?) on conflict (rid, math_env) do update set data = excluded.data, math_tick = excluded.math_tick returning rid;" rid (-> postgres :config :math-env-string) math-tick (pg-json data)]))
-
 
 ;; TODO Fix this; need task-type in here as well for this to work
 ;(defn mark-task-complete!
@@ -324,19 +319,18 @@
   {:pre [postgres zid filename data]}
   (log/info "upload-math-exportstatus for zid" zid)
   (query
-    postgres
-    ["insert into math_exportstatus (zid, math_env, filename, data, modified)
+   postgres
+   ["insert into math_exportstatus (zid, math_env, filename, data, modified)
       values (?,?,?,?, now_as_millis())
       on conflict (zid, math_env)
       do update set modified = now_as_millis(),
                     data = excluded.data,
                     filename = excluded.filename
       returning zid;"
-     zid
-     (-> postgres :config :math-env-string)
-     filename
-     (pg-json data)]))
-
+    zid
+    (-> postgres :config :math-env-string)
+    filename
+    (pg-json data)]))
 
 (defn decode-pg-json
   [data]
@@ -346,15 +340,14 @@
   [postgres zid filename]
   (log/info "get-math-exportstatus for zid" zid)
   (->>
-    (query postgres ["select * from math_exportstatus where zid = (?) and math_env = (?) and filename = (?);" zid (-> postgres :config :math-env-string) filename])
-    first
-    :data
-    decode-pg-json))
+   (query postgres ["select * from math_exportstatus where zid = (?) and math_env = (?) and filename = (?);" zid (-> postgres :config :math-env-string) filename])
+   first
+   :data
+   decode-pg-json))
 
 (defn get-math-tick
   [postgres zid]
   (:math_tick (first (query postgres ["select math_tick from math_ticks where zid = (?) and math_env = (?);" zid (-> postgres :config :math-env-string)]))))
-
 
 (defn load-conv
   "Very bare bones reloading of the conversation; no cleanup for keyword/int hash-map key mismatches,
@@ -365,19 +358,18 @@
     (if row
       ;; TODO Make sure this loads with keywords for map keys, except where they should be integers
       (ch/parse-string
-        (.toString (:data row))
-        (fn [x]
-          (try
-            (Long/parseLong x)
-            (catch Exception _
-              (keyword x)))))
+       (.toString (:data row))
+       (fn [x]
+         (try
+           (Long/parseLong x)
+           (catch Exception _
+             (keyword x)))))
       row)))
 
   ; (mc/find-one-as-map
     ; (:db mongo)
     ; (math-collection-name mongo "main")
     ; {:zid zid}))
-
 
 (comment
   (require '[polismath.runner :as runner])
@@ -390,28 +382,26 @@
   (conv-mod-poll postgres 18747 0)
   (get-)
 
-
   (get-math-exportstatus postgres 15077 "polis-export-9ma5xnjxpj-1491632824548.zip")
   ;(query postgres ["insert into math_ticks (zid) values (?) on conflict (zid) do update set modified = now_as_millis(), math_tick = (math_ticks.math_tick + 1) returning *;" 12480])
   (poll-tasks postgres 0)
   (query
-    postgres
-    (-> (honey/update :worker_tasks)
-        (honey/values [{}])))
+   postgres
+   (-> (honey/update :worker_tasks)
+       (honey/values [{}])))
 
   (jdbc/execute!
-    (:db-spec postgres)
-    (-> (honey/update :worker_tasks)
-        (honey/value)))
+   (:db-spec postgres)
+   (-> (honey/update :worker_tasks)
+       (honey/value)))
 
   (try
     (mark-task-complete! postgres 1)
     (catch Exception e (log/error (.getNextException e))))
 
-
   (query
-    postgres
-    (report-tids 1))
+   postgres
+   (report-tids 1))
   :endcomment)
 
 :ok
