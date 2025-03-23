@@ -35,7 +35,11 @@ services:
     env_file: ../../math/.envrc
     # The following overrides the env_file ...
     environment:
-      DATABASE_URL: postgres://postgres:7QPgtYETx4EdzvqUeNfo@postgres_container:5432/polis
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: 7QPgtYETx4EdzvqUeNfo
+      DATABASE_HOST: postgres_container
+      DATABASE_PORT: 5432
+      DATABASE_DB: polis
     image: polis-math:latest
     build:
       context: ../../math
